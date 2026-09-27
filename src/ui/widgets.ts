@@ -602,3 +602,6 @@ export function compileCell(at: number, w: number, n?: number): Cell {
     },
   };
 }
+export const dsIcon = (g: G, x: number, y: number) => {
+  [5, 4, 3, 1, 1].forEach((v, i) => { g.fillStyle = i === 0 ? '#DD1100' : '#9EC1E0'; g.fillRect(x + i * 6.5, y + 30 - v * 5, 5, v * 5); });
+};
