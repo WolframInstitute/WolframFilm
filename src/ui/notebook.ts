@@ -208,18 +208,18 @@ export const NB = {
   // 1.0, Macintosh: bold Courier input, plain output, italic labels above, thin black brackets
   mac1: {
     bg: '#FFFFFF', aa: true, left: 22, gap: 6, labelAbove: true,
-    input: { family: courier, size: 12, weight: 700, color: '#000' },
-    output: { family: courier, size: 12, weight: 400, color: '#000' },
+    input: { family: courier, size: 13, weight: 700, color: '#000' },
+    output: { family: courier, size: 13, weight: 700, color: '#000' },
     text: { family: F.tinos, size: 13, color: '#000' },
-    label: { family: arimo, size: 9, italic: true, color: '#000', fmt: L },
+    label: { family: arimo, size: 10.5, italic: true, color: '#000', fmt: L },
     bracket: { color: '#000', width: 1, kind: 'mac1' },
   } satisfies NbStyle,
   next: {
     bg: '#FFFFFF', aa: true, left: 22, gap: 6, labelAbove: true,
-    input: { family: courier, size: 12, weight: 700, color: '#000' },
-    output: { family: courier, size: 12, weight: 400, color: '#000' },
+    input: { family: courier, size: 13, weight: 700, color: '#000' },
+    output: { family: courier, size: 13, weight: 700, color: '#000' },
     text: { family: F.tinos, size: 13, color: '#000' },
-    label: { family: arimo, size: 9, italic: true, color: '#000', fmt: L },
+    label: { family: arimo, size: 10.5, italic: true, color: '#000', fmt: L },
     bracket: { color: '#000', width: 1, kind: 'mac1' },
   } satisfies NbStyle,
   // 2.x on Windows 3.1: pure blue brackets

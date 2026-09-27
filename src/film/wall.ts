@@ -98,7 +98,6 @@ export function drawWall(g: G, bar: number, presence: number, opts: { dimBefore?
     }
     if (opts.fade !== undefined) a *= opts.fade;
     let s = p.size * (0.6 + 0.4 * pop) * (1 + 0.25 * heat);
-    if (opts.only) s = Math.max(s, 15 * (opts.fade ?? 1));
     const f = font(F.sans, Math.round(s * 4) / 4, 600);
     if (f !== lastFont) { g.font = f; lastFont = f; }
     g.globalAlpha = clamp(a + heat * 0.9);

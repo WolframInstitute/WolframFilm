@@ -2,6 +2,7 @@
 import { F, font, text, measure, clamp, inv, ease, mix, type G } from '../core/draw';
 import { byName } from '../core/lexicon';
 import usage from '../data/usage.json';
+import { img } from '../core/assets';
 import { P, darkness } from './palette';
 
 const USAGE = usage as Record<string, string>;
@@ -97,4 +98,28 @@ export function entry(g: G, bar: number, at: number, until: number, name: string
   });
   g.restore();
   void hf;
+}
+
+/** An archival photo or scan, pinned in the right column like a print, with a short caption. */
+export function archive(g: G, bar: number, at: number, until: number, file: string, year: string, cap: string, o: { x?: number; y?: number; w?: number; h?: number; tilt?: number } = {}) {
+  if (bar < at || bar >= until + 0.25) return;
+  const im = img(file);
+  if (!im) return;
+  const x = o.x ?? COL_X, y = o.y ?? 150, maxW = o.w ?? COL_W, maxH = o.h ?? 420;
+  const s = Math.min(maxW / im.width, maxH / im.height);
+  const w = im.width * s, h = im.height * s;
+  const u = ease.outBack(inv(at, at + 0.25, bar), 1.3), leave = ease.inCubic(inv(until, until + 0.25, bar));
+  const dk = darkness(bar);
+  g.save();
+  g.globalAlpha = clamp(u) * (1 - leave);
+  g.translate(x + w / 2, y + h / 2 + (1 - clamp(u)) * 40);
+  g.rotate(((o.tilt ?? -1.5) * Math.PI) / 180 + (1 - clamp(u)) * 0.05);
+  g.shadowColor = 'rgba(0,0,0,0.35)'; g.shadowBlur = 24; g.shadowOffsetY = 10;
+  g.fillStyle = '#FBFAF6'; g.fillRect(-w / 2 - 12, -h / 2 - 12, w + 24, h + 58);
+  g.shadowBlur = 0; g.shadowOffsetY = 0; g.shadowColor = 'transparent';
+  g.drawImage(im, -w / 2, -h / 2, w, h);
+  text(g, `FROM THE ARCHIVE · ${year}`, -w / 2, h / 2 + 22, { font: font(F.sans, 13, 700), color: P.red, tracking: 2 });
+  text(g, cap, -w / 2, h / 2 + 40, { font: font(F.serif, 16, 400, true), color: '#3A3833' });
+  g.restore();
+  void dk;
 }

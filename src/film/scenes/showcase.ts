@@ -6,12 +6,14 @@ import { W, H, S } from '../../core/time';
 const F0 = S.families[0], R0 = S.repos[0], A0 = S.agents[0];
 import { P, darkness } from '../palette';
 import { drawAsset, img } from '../../core/assets';
+import { drawRotating } from '../../ui/widgets';
 import { WORDS, byName } from '../../core/lexicon';
 import { COL_X, COL_W, wrap } from '../narrator';
 
 // ---------------------------------------------------------------- 32–34: words come in families
-const FAMILY = WORDS.filter((w) => /(Plot|Plot3D|Chart)$/.test(w.name)).sort((a, b) => parseFloat(a.ver) - parseFloat(b.ver) || a.name.localeCompare(b.name));
+const FAMILY = WORDS.filter((w) => /(Plot|Plot3D|Chart|Chart3D)$/.test(w.name)).sort((a, b) => parseFloat(a.ver) - parseFloat(b.ver) || a.name.localeCompare(b.name));
 const TILES = ['ContourPlot', 'DensityPlot', 'StreamPlot', 'PolarPlot', 'ParametricPlot3D', 'SphericalPlot3D', 'RegionPlot3D', 'ComplexPlot3D'];
+const ROT: Record<string, string> = { ParametricPlot3D: 'fam_knot', SphericalPlot3D: 'fam_spherical', RegionPlot3D: 'fam_region3d', ComplexPlot3D: 'fam_complex' };
 export const TILE_FILE: Record<string, string> = {
   ContourPlot: 'fam_contour.png', DensityPlot: 'fam_density.png', StreamPlot: 'fam_stream.png', PolarPlot: 'fam_polar.png',
   ParametricPlot3D: 'fam_knot.png', SphericalPlot3D: 'fam_spherical.png', RegionPlot3D: 'fam_region3d.png', ComplexPlot3D: 'fam_complex.png',
@@ -41,7 +43,7 @@ export function families(c: Ctx) {
   const x = 96, y = 150;
   const w1 = text(g, 'Words come in families: ', x, y, { font: f, color: col });
   text(g, '…Plot', x + w1, y, { font: f, color: P.red });
-  text(g, `${FAMILY.length} words end in Plot or Chart.`, x + 2, y + 52, { font: font(F.sans, 30, 400), color: mix('#6B675F', '#9A9CA3', darkness(bar)) });
+  text(g, `${FAMILY.length} words in the …Plot and …Chart families.`, x + 2, y + 52, { font: font(F.sans, 30, 400), color: mix('#6B675F', '#9A9CA3', darkness(bar)) });
   g.restore();
   // tiles: one per beat
   const tw = 400, th = 330, gx = 96, gy = 250, gap = 36;
@@ -56,8 +58,10 @@ export function families(c: Ctx) {
     g.fillStyle = '#FFFFFF';
     g.shadowColor = 'rgba(0,0,0,0.18)'; g.shadowBlur = 24; g.shadowOffsetY = 8;
     g.beginPath(); g.roundRect(cx, cy, tw, th, 8); g.fill();
-    g.shadowBlur = 0;
-    drawAsset(g, TILE_FILE[name]!, cx + 10, cy + 10, tw - 20, th - 20);
+    g.shadowBlur = 0; g.shadowOffsetY = 0; g.shadowColor = 'transparent';
+    const rot = ROT[name];
+    if (rot) drawRotating(g, rot, cx + 10, cy + 10, tw - 20, th - 20, (bar - at) * 1.3, i === Math.min(7, Math.floor((bar - F0) * 4)));
+    else drawAsset(g, TILE_FILE[name]!, cx + 10, cy + 10, tw - 20, th - 20);
     g.restore();
     const wv = byName.get(name);
     text(g, name, cx + 4, cy + th + 34, { font: font(F.code, 24, 600), color: col, alpha: clamp(u) });

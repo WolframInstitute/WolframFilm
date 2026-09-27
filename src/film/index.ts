@@ -7,12 +7,13 @@ const wallFocus = () => { const p = wall().find((p) => p.w.name === 'List')!; re
 import { drawRuler, drawCounter, drawEraLabel } from './hud';
 import { coldOpen, smp, y1986 } from './scenes/intro';
 import { drawWindow, FLIGHT_FROM } from './window';
-import { caption, entry, COL_X } from './narrator';
-import { CAPTIONS, ENTRIES, LABELS } from './story';
+import { caption, entry, archive, COL_X } from './narrator';
+import { CAPTIONS, ENTRIES, LABELS, PRINTS } from './story';
 import { RELEASES } from '../core/lexicon';
 import { grammarTree, breakdownText, wlTitle } from './scenes/beats';
 import { families, repoCards, agents } from './scenes/showcase';
 import { climax, outro, climaxEmph } from './scenes/finale';
+import { spikeyMascot } from './spikey';
 
 const inS = (bar: number, r: readonly [number, number]) => bar >= r[0] && bar < r[1];
 const narratorOn = (bar: number) => bar >= S.v1[0] && bar < S.agents[0] && !inS(bar, S.families);
@@ -67,6 +68,8 @@ setScenes([
 ]);
 
 setOverlays([
+  (g, bar) => { for (const p of PRINTS) archive(g, bar, p.at, p.until, p.file, p.year, p.cap, p.box); },
+  (g, bar) => spikeyMascot(g, bar),
   (g, bar) => {
     if (!narratorOn(bar)) return;
     for (const c of CAPTIONS) caption(g, bar, c.at, c.until, c.text, { redWords: c.red, y: c.y ?? 720, size: c.size });

@@ -380,14 +380,17 @@ export const netIcon = (g: G, x: number, y: number) => {
 };
 
 // ------------------------------------------------------------------ computed outputs (assets/wl)
-import { drawAsset, json } from '../core/assets';
+import { drawAsset, json, img } from '../core/assets';
+import { dithered } from './screen';
 
 /** An output that is a picture computed by the Wolfram Language. Pops in on `at`. */
-export function imageCell(at: number, asset: string, w: number, h: number, n?: number): Cell {
+export function imageCell(at: number, asset: string, w: number, h: number, n?: number, opts: { dither?: boolean } = {}): Cell {
   return {
     kind: 'custom', at, h: h + 6, n,
     draw: (g, x, y, _w, bar) => {
       const u = ease.outCubic(inv(at, at + 0.12, bar));
+      const im = img(asset);
+      if (opts.dither && im) { g.save(); g.globalAlpha = u; g.drawImage(dithered(im, w, h, asset), x, y); g.restore(); return; }
       drawAsset(g, asset, x, y, w, h, u);
     },
   };
@@ -517,6 +520,7 @@ export function parallelCell(at: number, w: number, h: number, n?: number): Cell
   };
 }
 
+const SEEDS = new Set(['List', 'Plot', 'Map', 'Graph', 'Entity', 'Image', 'Manipulate', 'GeoGraphics', 'Audio', 'Molecule', 'Classify', 'StringReplace', 'Table', 'Association', 'Dataset', 'Interpreter']);
 /** Graph of the language's own words: symbols linked to their related symbols. */
 export function relGraphCell(at: number, grow: number, w: number, h: number, n?: number): Cell {
   return {
@@ -542,10 +546,10 @@ export function relGraphCell(at: number, grow: number, w: number, h: number, n?:
         const vu = ease.outBack(clamp(u * 1.4 - (i / G0.vertices.length) * 0.4), 2);
         if (vu <= 0) return;
         const { px, py } = P(i);
-        const big = v.deg >= 5;
+        const big = SEEDS.has(v.name);
         g.fillStyle = big ? '#DD1100' : '#E8B04B';
         g.beginPath(); g.arc(px, py, (big ? 5 : 3) * vu, 0, 7); g.fill();
-        if (big && vu > 0.9) T(g, v.name, px + 7, py + 4, F.code, 11.5, 600, '#222');
+        if (SEEDS.has(v.name) && vu > 0.9) T(g, v.name, px + 7, py + 4, F.code, 12.5, 700, '#222');
       });
       g.restore();
     },
@@ -605,3 +609,27 @@ export function compileCell(at: number, w: number, n?: number): Cell {
 export const dsIcon = (g: G, x: number, y: number) => {
   [5, 4, 3, 1, 1].forEach((v, i) => { g.fillStyle = i === 0 ? '#DD1100' : '#9EC1E0'; g.fillRect(x + i * 6.5, y + 30 - v * 5, 5, v * 5); });
 };
+
+/** The classic arrow cursor. */
+export function cursor(g: G, x: number, y: number, s = 1) {
+  g.save(); g.translate(x, y); g.scale(s, s);
+  g.beginPath(); g.moveTo(0, 0); g.lineTo(0, 17); g.lineTo(4.2, 13); g.lineTo(7.2, 19.5); g.lineTo(9.6, 18.4); g.lineTo(6.6, 12); g.lineTo(12, 12); g.closePath();
+  g.fillStyle = '#000'; g.fill(); g.strokeStyle = '#FFF'; g.lineWidth = 1.2; g.stroke();
+  g.restore();
+}
+/** A 3D output being dragged with the mouse: frames rendered by the kernel from 24 viewpoints. */
+export function drawRotating(g: G, prefix: string, x: number, y: number, w: number, h: number, t: number, drag: boolean, alpha = 1) {
+  const k = ((Math.floor(t * 24) % 24) + 24) % 24;
+  drawAsset(g, `rot/${prefix}_${String(k).padStart(2, '0')}.png`, x, y, w, h, alpha);
+  if (drag) cursor(g, x + w / 2 + Math.sin((2 * Math.PI * k) / 24) * w * 0.22, y + h * 0.55 - Math.sin((4 * Math.PI * k) / 24) * h * 0.06);
+}
+export function rotateCell(at: number, prefix: string, w: number, h: number, n?: number, speed = 1.1): Cell {
+  return {
+    kind: 'custom', at, h: h + 6, n,
+    draw: (g, x, y, _w, bar) => {
+      const u = ease.outCubic(inv(at, at + 0.12, bar));
+      const t = Math.max(0, bar - at - 0.2) * speed;
+      drawRotating(g, prefix, x, y, w, h, t, bar > at + 0.2, u);
+    },
+  };
+}

@@ -8,7 +8,7 @@ import type { OSKind } from '../ui/chrome';
 import {
   exprFlipCell, manipulateCell, freeformCell, suggestionsCell, entityCell, chatInputCell, chatResponseCell,
   tabularCell, musicScoreCell, summaryBoxCell, netIcon, dsIcon, imageCell, arrayGrowCell,
-  parallelCell, graphGrowCell, pendulumCell, compileCell,
+  parallelCell, graphGrowCell, relGraphCell, pendulumCell, compileCell, rotateCell,
 } from '../ui/widgets';
 import { RELEASES } from '../core/lexicon';
 import { HOOK, slider, MANIP } from '../music/score';
@@ -47,7 +47,7 @@ export const ERAS: Era[] = [
     cells: [
       inp(at('v1'), 1, 'Names["*"]', 0.2), out(at('v1', 0.5), 1, v1List),
       inp(at('v1', 2), 2, 'Plot3D[Sin[x y], {x, 0, 3}, {y, 0, 3}]', 0.3),
-      imageCell(at('v1', 2.45), 'v1_plot3d.png', 250, 200), out(at('v1', 2.6), 2, '-SurfaceGraphics-'),
+      imageCell(at('v1', 2.45), 'v1_plot3d.png', 250, 200, undefined, { dither: true }), out(at('v1', 2.6), 2, '-SurfaceGraphics-'),
     ],
   },
   {
@@ -119,8 +119,7 @@ export const ERAS: Era[] = [
       inp(at('v10', 1.2), 2, CODE.v10_globe, 0.3), imageCell(at('v10', 1.55), 'v10_globe.png', 400, 400, 2),
       inp(at('v10', 3), 3, 'WordTranslation["language", "French"]', 0.2), out(at('v10', 3.25), 3, '{langue, langage}'),
       inp(at('v10', 3.6), 4, CODE.v10_stars, 0.25), imageCell(at('v10', 3.9), 'v10_stars.png', 460, 300, 4),
-      inp(at('v10', 4.9), 5, 'CountryData["Europe"][[;; 4]]', 0.2),
-      entityCell(at('v10', 5.2), [['Albania', 'country'], ['Andorra', 'country'], ['Austria', 'country'], ['Belarus', 'country']]),
+      inp(at('v10', 4.85), 5, CODE.x_graph, 0.2), relGraphCell(at('v10', 5.1), 0.7, 620, 380, 5),
     ],
   },
   {
@@ -132,7 +131,7 @@ export const ERAS: Era[] = [
       inp(at('repos', 1.1), 3, 'ResourceFunction["BirdSay"]["Every language starts with a few words."]', 0.25),
       imageCell(at('repos', 1.4), 'v11_birdsay.png', 360, 225, 3),
       inp(at('v12'), 4, CODE.x_compile, 0.25), compileCell(at('v12', 0.3), 460, 4),
-      inp(at('v12', 0.7), 5, CODE.v12_molecule, 0.15), imageCell(at('v12', 0.9), 'v12_molecule.png', 280, 230, 5),
+      inp(at('v12', 0.7), 5, CODE.v12_molecule, 0.15), rotateCell(at('v12', 0.9), 'v12_molecule', 280, 230, 5, 1.6),
       inp(at('v12', 1.2), 6, CODE.v12_system, 0.2), pendulumCell(at('v12', 1.35), 0.65, 380, 260, 6),
       inp(at('v123'), 12, 'pq = CreateDataStructure["PriorityQueue"]; Scan[pq["Push", #] &, {3, 1, 4, 1, 5}]; pq', 0.25),
       { ...summaryBoxCell(at('v123', 0.35), 'DataStructure', [['Type', 'PriorityQueue'], ['Length', '5']], dsIcon), n: 12 },
@@ -188,7 +187,7 @@ export const CAPTIONS: Line[] = [
   L('v9', 0.05, 0.9, 'It learns units.'),
   L('v10', 1.0, 2.8, 'Version 10 adds 1,022 words: the most ever.', ['1,022']),
   L('v10', 2.95, 4.8, 'The Earth, the stars, every country and language.'),
-  L('v10', 4.9, 5.85, 'Words for things in the world.'),
+  L('v10', 4.9, 5.85, 'It even knows about its own words.', ['own']),
   L('v11', 0.05, 0.45, 'It learns to learn.'),
   L('v11', 0.5, 0.95, 'And it takes your words, too.'),
   L('repos', 0.0, 1.9, 'Now anyone can add words.', ['anyone']),
@@ -208,11 +207,10 @@ export interface Entry { at: number; until: number; name: string; note?: string;
 const E = (k: Section, a: number, u: number, name: string, extra: Partial<Entry> = {}): Entry => ({ at: at(k, a), until: at(k, u), name, ...extra });
 export const ENTRIES: Entry[] = [
   E('v1', 0.3, 1.85, 'Names', { note: 'symbol · since 1.0, 1988' }),
-  E('v1', 2.1, 3.85, 'Plot3D'),
-  E('v2', 0.2, 1.85, 'StringReverse'),
-  E('v3', 0.2, 1.85, 'Cell'),
+  E('v2', 0.2, 0.95, 'StringReverse'),
+  E('v3', 0.2, 0.95, 'Cell'),
   E('v4', 0.1, 1.85, 'CellularAutomaton'),
-  E('v5', 0.2, 1.85, 'Red'),
+  E('v5', 0.2, 0.95, 'Red'),
   E('v6', 0.2, 1.25, 'CountryData'),
   E('v6', 1.3, 1.9, 'TuringMachine'),
   E('v6', 2.0, 3.85, 'Manipulate'),
@@ -220,7 +218,7 @@ export const ENTRIES: Entry[] = [
   E('v8', 1.05, 1.9, 'Graph'),
   E('v10', 1.2, 2.85, 'GeoGraphics'),
   E('v10', 3.6, 4.8, 'StarData'),
-  E('v10', 4.9, 5.85, 'Entity'),
+  E('v10', 4.85, 5.85, 'WolframLanguageData'),
   E('v12', 0.0, 0.65, 'FunctionCompile'),
   E('v12', 1.2, 1.9, 'SystemModel'),
   E('v11', 0.5, 0.95, 'EntityStore'),
@@ -228,9 +226,26 @@ export const ENTRIES: Entry[] = [
   E('v123', 0.9, 1.9, 'ExpressionTree'),
   E('v132', 0.05, 0.95, 'AstroGraphics'),
   E('v132', 1.0, 1.9, 'PacletInstall'),
-  E('llm', 0.2, 3.85, 'LLMFunction'),
-  E('v14', 0.1, 1.85, 'Tabular'),
+  E('llm', 0.2, 1.95, 'LLMFunction'),
   E('v15', 0.2, 5.7, 'MusicNote', { note: 'symbol · new in 15.0, 2026', usage: 'MusicNote[p, d] returns a music note with the specified pitch p and duration d.' }),
+];
+
+/** Archive prints (photos and scans from Stephen Wolfram's scrapbook and writings; one Wikimedia photo, credited). */
+export interface Print { at: number; until: number; file: string; year: string; cap: string; box?: { x?: number; y?: number; w?: number; h?: number; tilt?: number } }
+const A = (k: Section, a: number, u: number, file: string, year: string, cap: string, box?: Print['box']): Print => ({ at: at(k, a), until: at(k, u), file: `../archive/${file}`, year, cap, box });
+export const PRINTS: Print[] = [
+  A('smp', 2.0, 3.7, 'smp-manual-1.jpg', '1981', 'The SMP manual, Caltech, July 1981', { x: 1330, y: 120, w: 380, h: 480, tilt: 3 }),
+  A('y1986', 0.3, 1.8, 'first-code-1986-1.jpg', '1986', 'The first Mathematica code: the evaluator, Nov 27, 1986', { x: 1080, y: 170, w: 720, h: 560, tilt: -2 }),
+  A('name', 0.25, 1.6, 'product-names-1987-1.jpg', '1987', 'Some perhaps possible product names, Aug 1987', { x: 1370, y: 650, w: 440, h: 270, tilt: 2 }),
+  A('v1', 2.1, 3.85, 'v1-box-1.png', '1988', 'Mathematica 1.0 for the Macintosh'),
+  A('next', 0.1, 1.0, 'next-display-1.jpg', '1988', 'Mathematica on a NeXT computer'),
+  A('next', 1.0, 1.9, 'next-cube-1.jpg', '1990', 'A NeXTcube at CERN · photo: Geni, CC BY-SA 4.0', { tilt: 1.5 }),
+  A('v2', 1.0, 1.85, 'v2-box-book-1.png', '1991', 'Mathematica 2.0 and The Mathematica Book'),
+  A('v3', 1.0, 1.85, 'v3-book-1.jpg', '1996', 'The Mathematica Book, third edition', { tilt: 1.5 }),
+  A('v5', 1.0, 1.85, 'spikey-versions-1.png', '1988 – 2019', 'Spikey, version by version'),
+  A('v10', 0.5, 1.35, 'wl2013-raspberry-pi-1.png', '2013', 'Free on every Raspberry Pi', { x: 1380, y: 740, w: 380, h: 170, tilt: 2 }),
+  A('llm', 2.0, 3.85, 'chat-notebooks-2023-1.png', '2023', 'The 1988 notebook, and a 2023 chat notebook'),
+  A('v14', 0.1, 1.85, 'v14-functions-1.png', '2024', 'Built-in functions by version, 1 to 14', { tilt: -1 }),
 ];
 
 /** Era-label schedule (top left). */
@@ -248,6 +263,7 @@ export const LABELS: { at: number; title: string; sub: string }[] = [
   LB('v9', 0, 'Mathematica 9', 'November 2012'),
   LB('v10', 0.4, 'The Wolfram Language', 'Named Nov 2013 · free on every Raspberry Pi'),
   LB('v10', 1, 'Version 10', 'July 2014 · 1,022 new words'),
+  LB('v10', 4.85, 'Version 10.2', '2015 · the language describes itself'),
   LB('v11', 0, 'Version 11', 'August 2016'),
   LB('repos', 0, 'The repositories', 'Data 2017 · Neural Nets 2018 · Functions 2019'),
   LB('v12', 0, 'Version 12', 'April 2019'),

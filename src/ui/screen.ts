@@ -43,7 +43,7 @@ export function renderScreen(g: G, R: Rect, pixel: number, depth: Depth, draw: (
     for (let i = 0; i < d.length; i += 4) {
       const L = 0.299 * d[i]! + 0.587 * d[i + 1]! + 0.114 * d[i + 2]!;
       let v: number;
-      if (depth === 'bit') { const px = (i >> 2) % lw, py = Math.floor((i >> 2) / lw); v = L < 255 * BAYER[(py & 3) * 4 + (px & 3)]! ? 0 : 255; }
+      if (depth === 'bit') v = L < 160 ? 0 : 255; // crisp threshold; pictures arrive pre-dithered
       else v = L < 52 ? 0 : L < 144 ? 104 : L < 220 ? 184 : 255; // NeXT MegaPixel greys
       d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 255;
     }
@@ -53,4 +53,28 @@ export function renderScreen(g: G, R: Rect, pixel: number, depth: Depth, draw: (
   g.imageSmoothingEnabled = !Number.isInteger(pixel);
   g.drawImage(c, R.x, R.y, R.w, R.h);
   g.restore();
+}
+
+/** A picture reduced to 1-bit with ordered (Bayer) dithering at a given size, cached. */
+const ditherCache = new Map<string, any>();
+export function dithered(im: any, w: number, h: number, key: string) {
+  const k = `${key}|${w}x${h}`;
+  let c = ditherCache.get(k);
+  if (c) return c;
+  c = makeCanvas(Math.round(w), Math.round(h));
+  const cg = c.getContext('2d') as G;
+  cg.fillStyle = '#FFF'; cg.fillRect(0, 0, c.width, c.height);
+  const s = Math.min(c.width / im.width, c.height / im.height);
+  cg.drawImage(im, (c.width - im.width * s) / 2, (c.height - im.height * s) / 2, im.width * s, im.height * s);
+  const id = cg.getImageData(0, 0, c.width, c.height), d = id.data;
+  const B = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+  for (let i = 0; i < d.length; i += 4) {
+    const p = i >> 2, x = p % c.width, y = Math.floor(p / c.width);
+    const L = (0.299 * d[i]! + 0.587 * d[i + 1]! + 0.114 * d[i + 2]!) / 255;
+    const v = L > (B[(y & 3) * 4 + (x & 3)]! + 0.5) / 16 ? 255 : 0;
+    d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 255;
+  }
+  cg.putImageData(id, 0, 0);
+  ditherCache.set(k, c);
+  return c;
 }

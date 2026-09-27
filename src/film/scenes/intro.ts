@@ -41,12 +41,23 @@ export function coldOpen(c: Ctx) {
 
 // ---------------------------------------------------------------- 4–8 SMP, green phosphor
 const SMP_LINES: { at: number; s: string; out?: boolean; dim?: boolean }[] = [
-  { at: 4.15, s: '#I[1]::  Ex[(a + b)^3]' },
-  { at: 4.9, s: '#O[1]:   a^3 + 3 a^2 b + 3 a b^2 + b^3', out: true },
-  { at: 5.35, s: '#I[2]::  f[$x] : $x^2' },
-  { at: 5.9, s: '#I[3]::  f[y + 1]' },
-  { at: 6.3, s: '#O[3]:   (y + 1)^2', out: true },
+  { at: 4.1, s: '#I[1]::  Ex[(a + b)^3]' },
+  { at: 4.6, s: '#O[1]:   a^3 + 3 a^2 b + 3 a b^2 + b^3', out: true },
+  { at: 4.9, s: '#I[2]::  Plot[Sin[$x] Exp[-$x/8], {$x, 0, 20}]' },
 ];
+/** A line-printer plot of sin(x) e^(-x/8), 0 ≤ x ≤ 20, drawn with characters. */
+const ASCII_PLOT: string[] = (() => {
+  const W = 56, Hh = 13, rows: string[][] = Array.from({ length: Hh }, () => Array(W).fill(' '));
+  const mid = Math.floor(Hh / 2);
+  for (let c = 0; c < W; c++) rows[mid]![c] = '-';
+  for (let r = 0; r < Hh; r++) rows[r]![0] = '|';
+  for (let c = 0; c < W; c++) {
+    const x = (c / (W - 1)) * 20, y = Math.sin(x) * Math.exp(-x / 8);
+    const r = Math.round(mid - y * mid);
+    rows[Math.max(0, Math.min(Hh - 1, r))]![c] = '*';
+  }
+  return rows.map((r) => r.join(''));
+})();
 export function smp(c: Ctx) {
   const { g, bar } = c;
   // bezel
@@ -70,8 +81,8 @@ export function smp(c: Ctx) {
   g.save();
   g.beginPath(); g.roundRect(sx, sy, sw, sh, 38); g.clip();
   const phosphor = '#6BFF8E';
-  const tf = font(F.term, 50, 400);
-  let y = sy + 110;
+  const tf = font(F.term, 46, 400);
+  let y = sy + 90;
   const x0 = sx + 90;
   g.shadowColor = rgba('#39FF6A', 0.85);
   g.shadowBlur = 16;
@@ -79,17 +90,25 @@ export function smp(c: Ctx) {
     if (bar < L.at) break;
     const u = L.out ? 1 : inv(L.at, L.at + 0.4, bar);
     text(g, typed(L.s, u), x0, y, { font: tf, color: L.out ? mix(phosphor, '#C9FFD6', 0.3) : phosphor });
-    y += L.out ? 78 : 58;
+    y += L.out ? 62 : 52;
   }
+  // the plot, printed row by row
+  const tfp = font(F.term, 30, 400);
+  ASCII_PLOT.forEach((row, i) => {
+    const at = 5.3 + i * 0.07;
+    if (bar < at) return;
+    text(g, row, x0 + 40, y + i * 26, { font: tfp, color: mix(phosphor, '#C9FFD6', 0.25) });
+  });
+  if (bar >= 5.3) y += ASCII_PLOT.length * 26 + 20;
   // caption, typed like program output
   const cap1 = 'NOVEMBER 1979. CALTECH.';
   const cap2 = 'A 20-YEAR-OLD PHYSICIST WRITES A LANGUAGE';
   const cap3 = 'FOR TALKING TO HIS COMPUTER: SMP.';
-  const cy = sy + sh - 190;
+  const cy = sy + sh - 150;
   text(g, typed(cap1, inv(6.5, 6.8, bar)), x0, cy, { font: font(F.term, 44), color: '#B8FFC8' });
   text(g, typed(cap2, inv(6.8, 7.25, bar)), x0, cy + 52, { font: font(F.term, 58), color: '#E6FFEC' });
   text(g, typed(cap3, inv(7.2, 7.55, bar)), x0, cy + 110, { font: font(F.term, 58), color: '#E6FFEC' });
-  g.shadowBlur = 0;
+  g.shadowBlur = 0; g.shadowOffsetY = 0; g.shadowColor = 'transparent';
   // cursor
   if (cursorOn(bar)) { g.fillStyle = phosphor; g.fillRect(x0, y - 40, 26, 46); }
   // scanlines + flicker
