@@ -1,0 +1,11 @@
+p[label_, e_] := Print["### ", label, "\n", ToString[e, InputForm, PageWidth -> 200]];
+p["worddata", WordData["language", "Definitions"]];
+p["fullform", FullForm[{x -> 1, f[y]}]];
+p["alice", Quiet@Check[Take[WordCounts[ExampleData[{"Text", "AliceInWonderland"}], IgnoreCase -> True], 12], $Failed]];
+p["alice-nostop", Quiet@Check[Take[WordCounts[DeleteStopwords[ExampleData[{"Text", "AliceInWonderland"}]], IgnoreCase -> True], 10], $Failed]];
+p["europe", Quiet@Check[CommonName /@ Take[CountryData["Europe"], 12], $Failed]];
+p["versions", Table[s -> Quiet@WolframLanguageData[s, "VersionIntroduced"], {s, {"ToUpperCase","StringReverse","Install","EdgeDetect","Interpreter","FullForm","TreeForm","Names","Module","Speak","WordData","Style","Export","Import","RGBColor","Purple","Magenta","Cyan","Brown","Pink","LightBlue","WordCounts","DeleteStopwords","Quantity","UnitConvert","SpeechRecognize","NetChain","SemanticSearch","Tabular","LLMFunction","ChatObject","TextSentences","WordCloud","Entity","EntityValue","ExampleData","CellPrint","NotebookGet","Cell","ToBoxes","Plot3D","StringJoin","StringLength","Characters","Transliterate","WordStem","Pluralize","LanguageIdentify","TextTranslation","Capitalize","DictionaryLookup","SpellingCorrectionList","Rhyme","WordFrequencyData","ImageIdentify"}}]];
+p["pluralize", Pluralize /@ {"word", "language", "mouse"}];
+p["langid", LanguageIdentify["Every language starts with a few words."]];
+p["wordstem", WordStem /@ {"languages", "computing", "evaluated"}];
+p["french", Quiet@Check[Interpreter["Country"]["france"], $Failed]];
