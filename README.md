@@ -35,3 +35,10 @@ bun src/render.ts video --out out/film.mp4 [--from s --to s] [--samples 4]
 Scenes use only paths, text, images and affine transforms (→ `Graphics`); the score is note events
 in bars (→ `MusicNote`/`SoundNote`); the timeline is bar-indexed; the lexicon comes from
 `WolframLanguageData`, so the WL version can compute it live.
+
+## Credits & sources
+
+- Window outputs are computed by the Wolfram Language 15.0 kernel (`data/assets/*.wls`, `data/assets2/*.wls`), SystemModeler for the double pendulum, the Wolfram Data Repository ("Fireballs and Bolides") and Function Repository (`BirdSay`), the Quantum Framework paclet.
+- Archive prints (`assets/archive/`, see its `manifest.json` for per-image source URLs): Stephen Wolfram's scrapbook (stephenwolfram.com/scrapbook), the Mathematica Scrapbook (wolfram.com/mathematica/scrapbook), and posts on writings.stephenwolfram.com.
+- `next-cube-1.jpg`: NeXTcube at CERN, photo by Geni, Wikimedia Commons, CC BY-SA 4.0 (credited on screen).
+- Facts: docs/SCRIPT.md lists every date/claim with its source.
