@@ -6,6 +6,8 @@ export type Depth = 'bit' | 'gray4' | 'color' | 'full';
 export interface Rect { x: number; y: number; w: number; h: number }
 
 const cache = new Map<string, { c: any; g: G }>();
+// ordered dither (4x4 Bayer), biased so thin text strokes survive
+const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => 0.18 + 0.72 * ((v + 0.5) / 16));
 function offscreen(w: number, h: number) {
   const k = `${w}x${h}`;
   let o = cache.get(k);
@@ -41,7 +43,7 @@ export function renderScreen(g: G, R: Rect, pixel: number, depth: Depth, draw: (
     for (let i = 0; i < d.length; i += 4) {
       const L = 0.299 * d[i]! + 0.587 * d[i + 1]! + 0.114 * d[i + 2]!;
       let v: number;
-      if (depth === 'bit') v = L < 172 ? 0 : 255;
+      if (depth === 'bit') { const px = (i >> 2) % lw, py = Math.floor((i >> 2) / lw); v = L < 255 * BAYER[(py & 3) * 4 + (px & 3)]! ? 0 : 255; }
       else v = L < 52 ? 0 : L < 144 ? 104 : L < 220 ? 184 : 255; // NeXT MegaPixel greys
       d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 255;
     }

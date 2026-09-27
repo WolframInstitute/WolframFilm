@@ -1,30 +1,37 @@
 // The eras: which OS and front end, what is typed and evaluated, and what the narrator says.
+// Every time is relative to a section of the film (S in core/time.ts), so sections can move freely.
 import type { G } from '../core/draw';
 import { F, font, text, clamp, inv, ease, mix, rgba } from '../core/draw';
+import { S, type Section } from '../core/time';
 import { NB, type Cell, type NbStyle } from '../ui/notebook';
 import type { OSKind } from '../ui/chrome';
 import {
   exprFlipCell, manipulateCell, freeformCell, suggestionsCell, entityCell, chatInputCell, chatResponseCell,
-  tabularCell, musicScoreCell, speakCell, summaryBoxCell, netIcon,
+  tabularCell, musicScoreCell, summaryBoxCell, netIcon, imageCell, arrayGrowCell,
+  parallelCell, graphGrowCell, pendulumCell, compileCell,
 } from '../ui/widgets';
 import { RELEASES } from '../core/lexicon';
-import { HOOK, slider } from '../music/score';
+import { HOOK, slider, MANIP } from '../music/score';
+import { drawAsset } from '../core/assets';
+import { CODE } from './codes';
 
 export interface Era {
   from: number; to: number;
   os: OSKind; title: string; nb: NbStyle; cells: Cell[];
   menus?: string[]; zoom?: string;
-  label: [string, string]; // era label: title, sub
   extras?: 'palette95' | 'chatbar15';
 }
+
+/** Bar `o` into section `k`. */
+export const at = (k: Section, o = 0) => S[k][0] + o;
 
 const v1Names = [...RELEASES[0]!.words].map((w) => w.name).sort((a, b) => a.replace('$', '').localeCompare(b.replace('$', '')));
 const v1List = '{' + v1Names.slice(0, 72).join(', ') + ', ...}';
 
-const inp = (at: number, n: number, text: string, type = 0.35): Cell => ({ kind: 'input', at, n, text, type });
-const out = (at: number, n: number, text: string): Cell => ({ kind: 'output', at, n, text });
+const inp = (t: number, n: number, text: string, type = 0.35): Cell => ({ kind: 'input', at: t, n, text, type });
+const out = (t: number, n: number, text: string): Cell => ({ kind: 'output', at: t, n, text });
 
-// the 15.0 score: the bell phrase heard in bars 54–60 (hook + first half of B)
+// the 15.0 score: the bell phrase heard in the 15.0 section (hook + first half of B)
 const HOOK_B8: [number, number, number][] = [[0, 1.5, 76], [1.5, 0.5, 74], [2, 1, 76], [3, 1, 81], [4, 1.5, 77], [5.5, 0.5, 76], [6, 1, 72], [7, 1, 69]];
 export const V15_NOTES: [number, number, number][] = [...HOOK.map(([b, l, m]) => [b, l, m] as [number, number, number]), ...HOOK_B8.map(([b, l, m]) => [b + 16, l, m] as [number, number, number])];
 const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
@@ -36,173 +43,214 @@ const releaseRows = RELEASES.filter((r) => r.key !== 'v15').map((r) => [r.label,
 
 export const ERAS: Era[] = [
   {
-    from: 12, to: 16, os: 'mac1', title: 'Untitled-1', nb: NB.mac1,
-    label: ['Mathematica 1.0', 'June 23, 1988 · Macintosh'],
-    cells: [inp(12.0, 1, 'Names["*"]', 0.2), out(12.5, 1, v1List)],
-  },
-  {
-    from: 16, to: 20, os: 'next', title: 'Untitled-1.ma  —', nb: NB.next,
-    label: ['Mathematica 1.0', '1988 · NeXT'],
+    from: at('v1'), to: S.v1[1], os: 'mac1', title: 'Untitled-1', nb: NB.mac1,
     cells: [
-      inp(16.0, 2, 'Characters["NeXT"]', 0.25), out(16.5, 2, '{N, e, X, T}'),
-      inp(18.0, 3, 'FullForm[{x -> 1, f[y]}]', 0.4), { kind: 'output', at: 18.6, n: 3, text: 'List[Rule[x, 1], f[y]]' },
+      inp(at('v1'), 1, 'Names["*"]', 0.2), out(at('v1', 0.5), 1, v1List),
+      inp(at('v1', 2), 2, 'Plot3D[Sin[x y], {x, 0, 3}, {y, 0, 3}]', 0.3),
+      imageCell(at('v1', 2.45), 'v1_plot3d.png', 250, 200), out(at('v1', 2.6), 2, '-SurfaceGraphics-'),
     ],
   },
   {
-    from: 20, to: 22, os: 'win31', title: 'Mathematica for Windows - [Untitled-1]', nb: NB.win31,
-    label: ['Mathematica 2.0', 'January 1991 · Windows 3.1'],
-    cells: [inp(20.0, 1, 'Module[{word = "language"}, StringReverse[word]]', 0.5), out(20.75, 1, 'egaugnal')],
-  },
-  {
-    from: 22, to: 24, os: 'win95', title: 'Mathematica - [Untitled-1]', nb: NB.v3,
-    label: ['Mathematica 3.0', 'September 1996 · Windows 95'], extras: 'palette95',
+    from: at('next'), to: S.grammar[1], os: 'next', title: 'Untitled-1.ma  —', nb: NB.next,
     cells: [
-      { kind: 'title', at: 22.0, text: 'Notes on Language' },
-      exprFlipCell(22.1, 23.0, 'Every language starts with a few words.', NB.v3),
+      inp(at('next'), 2, 'Characters["NeXT"]', 0.25), out(at('next', 0.5), 2, '{N, e, X, T}'),
+      inp(at('grammar'), 3, 'FullForm[{x -> 1, f[y]}]', 0.4), out(at('grammar', 0.6), 3, 'List[Rule[x, 1], f[y]]'),
     ],
   },
   {
-    from: 24, to: 26, os: 'mac9', title: 'Untitled-1', nb: NB.v4,
-    label: ['Mathematica 4.0', 'May 1999 · Mac OS 9'],
+    from: at('v2'), to: S.v2[1], os: 'win31', title: 'Mathematica for Windows - [Untitled-1]', nb: NB.win31,
     cells: [
-      inp(24.0, 1, 'words = Import["survey.csv"]', 0.3),
-      out(24.45, 1, '{{"word", "language"}, {"hello", "English"}, {"bonjour", "French"}, {"hola", "Spanish"}}'),
-      inp(25.0, 2, 'Export["survey.xls", words]', 0.3), out(25.45, 2, 'survey.xls'),
+      inp(at('v2'), 1, 'Module[{word = "language"}, StringReverse[word]]', 0.4), out(at('v2', 0.5), 1, 'egaugnal'),
+      inp(at('v2', 0.75), 2, CODE.v2_surface, 0.3), imageCell(at('v2', 1.1), 'v2_surface.png', 250, 190),
     ],
   },
   {
-    from: 26, to: 28, os: 'xp', title: 'Mathematica 5.1 - [Untitled-1]', nb: NB.v4,
-    label: ['Mathematica 5.1', 'October 2004 · Windows XP'],
+    from: at('v3'), to: S.v3[1], os: 'win95', title: 'Mathematica - [Untitled-1]', nb: NB.v3, extras: 'palette95',
     cells: [
-      inp(26.0, 1, '{Red, Green, Blue, Orange, Purple}', 0.35),
-      out(26.5, 1, '{RGBColor[1, 0, 0], RGBColor[0, 1, 0], RGBColor[0, 0, 1], RGBColor[1, 0.5, 0], RGBColor[0.5, 0, 0.5]}'),
+      { kind: 'title', at: at('v3'), text: 'Notes on Language' },
+      exprFlipCell(at('v3', 0.1), at('v3', 1), 'Every language starts with a few words.', NB.v3),
     ],
   },
   {
-    from: 28, to: 35, os: 'osx', title: 'Untitled-1', nb: NB.v6,
-    label: ['Mathematica 6.0', 'May 2007 · Mac OS X'],
+    from: at('v4'), to: S.v4[1], os: 'mac9', title: 'Untitled-1', nb: NB.v4,
     cells: [
-      inp(28.0, 1, 'WordData["language", "Definitions"]', 0.35),
-      out(28.5, 1, '{{language, Noun, Faculty} -> the mental faculty or power of vocal communication, {language, Noun, Communication} -> a systematic means of communicating by the use of sounds or conventional symbols, ...}'),
-      inp(29.75, 2, 'Manipulate[Style["language", s], {s, 12, 72}]', 0.2),
-      manipulateCell(30.0, 150, slider, (g, x, y, w, h, v) => {
-        const s = 12 + 60 * v;
-        g.font = font(F.courier, s, 400); g.fillStyle = '#000'; g.textAlign = 'center'; g.textBaseline = 'middle';
-        g.fillText('language', x + w / 2, y + h / 2 + 2); g.textAlign = 'left'; g.textBaseline = 'alphabetic';
-      }),
-      inp(32.0, 3, 'Speak["Now I can speak."]', 0.2), speakCell(32.3, 'Now I can speak.'),
-      freeformCell(33.0, 'countries in europe', 'CountryData', 'CountryData["Europe"]', NB.v6),
-      out(33.6, 4, '{Albania, Andorra, Austria, Belarus, Belgium, Bosnia and Herzegovina, Bulgaria, Croatia, ...}'),
-      inp(34.0, 5, 'UnitConvert[Quantity[5., "Kilometers"], "Miles"]', 0.3), out(34.4, 5, '3.10686 mi'),
-      suggestionsCell(34.55, ['convert to feet', 'exact form', 'more...']),
+      inp(at('v4'), 1, 'words = Import["survey.csv"]', 0.2),
+      out(at('v4', 0.3), 1, '{{"word", "language"}, {"hello", "English"}, {"bonjour", "French"}, ...}'),
+      inp(at('v4', 0.6), 2, CODE.v4_rule30, 0.25),
+      arrayGrowCell(at('v4', 0.9), 'v4_rule30.json', 1.0, 420, 210, ['#FFFFFF', '#1A1A2E'], 2),
     ],
   },
   {
-    from: 37, to: 45, os: 'yosemite', title: 'Untitled-1.nb', nb: NB.modern,
-    label: ['The Wolfram Language', 'Named Nov 2013 · Version 10, July 2014'],
+    from: at('v5'), to: S.v5[1], os: 'xp', title: 'Mathematica 5.1 - [Untitled-1]', nb: NB.v4,
     cells: [
-      inp(38.5, 1, 'Interpreter["Country"]["france"]', 0.3),
-      entityCell(38.95, [['France', 'country']]),
-      inp(39.5, 2, 'WordTranslation["language", "French"]', 0.3), out(39.95, 2, '{langue, langage}'),
-      inp(40.5, 3, 'Pluralize["mouse"]', 0.2), out(40.8, 3, 'mice'),
-      inp(41.5, 4, 'CountryData["Europe"][[;; 4]]', 0.25),
-      entityCell(41.9, [['Albania', 'country'], ['Andorra', 'country'], ['Austria', 'country'], ['Belarus', 'country']]),
-      inp(43.0, 5, 'Entity["Language", "French"]', 0.25),
-      entityCell(43.35, [['French', 'language']]),
+      inp(at('v5'), 1, '{Red, Green, Blue, Orange, Purple}', 0.25),
+      out(at('v5', 0.35), 1, '{RGBColor[1, 0, 0], RGBColor[0, 1, 0], RGBColor[0, 0, 1], RGBColor[1, 0.5, 0], RGBColor[0.5, 0, 0.5]}'),
+      inp(at('v5', 0.75), 2, CODE.v5_colors, 0.3), imageCell(at('v5', 1.1), 'v5_colors.png', 250, 250, 2),
     ],
   },
   {
-    from: 45, to: 52, os: 'bigsur', title: 'Untitled-1.nb', nb: NB.v13,
-    label: ['Version 11', 'August 2016'],
+    from: at('v6'), to: S.breakdown[0], os: 'osx', title: 'Untitled-1', nb: NB.v6,
     cells: [
-      inp(45.0, 1, 'NetTrain[net, examples]', 0.2), { ...summaryBoxCell(45.35, 'NetChain', [['Input', 'image'], ['Output', 'class']], netIcon), n: 1 },
-      inp(46.0, 2, 'SpeechRecognize[recording]', 0.2), out(46.35, 2, 'every language starts with a few words'),
-      chatInputCell(48.0, 'What are the ten most common words in Alice in Wonderland?', 0.55),
-      chatResponseCell(48.75, 'You can count them with WordCounts:', 'WordCounts', ['Take[WordCounts[ExampleData[{"Text", "AliceInWonderland"}],', '  IgnoreCase -> True], 10]'], NB.v13),
-      inp(50.0, 3, 'Take[WordCounts[ExampleData[{"Text", "AliceInWonderland"}], IgnoreCase -> True], 10]', 0.3),
-      out(50.4, 3, '<|the -> 630, and -> 338, a -> 277, to -> 249, she -> 239, of -> 198, it -> 171, was -> 167, in -> 162, alice -> 161|>'),
+      inp(at('v6'), 1, 'WordData["language", "Definitions"]', 0.2),
+      out(at('v6', 0.3), 1, '{{language, Noun, Faculty} -> the mental faculty or power of vocal communication, ...}'),
+      inp(at('v6', 0.5), 2, CODE.v6_europe, 0.2), imageCell(at('v6', 0.75), 'v6_europe.png', 330, 250, 2),
+      inp(at('v6', 1.3), 3, CODE.v7_turing, 0.2),
+      arrayGrowCell(at('v6', 1.5), 'v7_turing.json', 0.45, 520, 150, ['#FFFFFF', '#E0701A', '#2D4A8A'], 3, { transpose: true }),
+      inp(MANIP - 0.15, 4, 'Manipulate[Plot3D[Sin[a x] Cos[y], {x, -3, 3}, {y, -3, 3}], {a, 0.5, 3}]', 0.15),
+      manipulateCell(MANIP, 290, slider, (g, x, y, w, h, v) => {
+        drawAsset(g, `v6_manip_${String(Math.round(v * 15)).padStart(2, '0')}.png`, x + 4, y + 4, w - 8, h - 8);
+      }, 'a'),
+      // 7 · 2008: parallel computing
+      inp(at('v7'), 5, CODE.x_parallel, 0.2), parallelCell(at('v7', 0.25), 460, 290, 5),
+      // 8 · 2010: plain English in, code out; and Graph
+      freeformCell(at('v8'), 'countries in europe', 'CountryData', 'CountryData["Europe"]', NB.v6),
+      out(at('v8', 0.5), 6, '{Albania, Andorra, Austria, Belarus, Belgium, Bosnia and Herzegovina, Bulgaria, Croatia, ...}'),
+      inp(at('v8', 1), 7, CODE.v8_graph, 0.2), graphGrowCell(at('v8', 1.25), 'v8_europe_graph.json', 0.6, 520, 330, { vertex: '#DD1100', edge: '#6D82C7', label: '#333' }, 7),
+      // 9 · 2012: units, and the Suggestions Bar
+      inp(at('v9'), 8, 'UnitConvert[Quantity[5., "Kilometers"], "Miles"]', 0.25), out(at('v9', 0.35), 8, '3.10686 mi'),
+      suggestionsCell(at('v9', 0.5), ['convert to feet', 'exact form', 'more...']),
     ],
   },
   {
-    from: 52, to: 54, os: 'dark', title: 'Untitled-1.nb', nb: NB.dark,
-    label: ['Version 14', '2024 – 2025 · dark mode arrives in 14.3'],
+    from: at('v10'), to: S.v10[1], os: 'yosemite', title: 'Untitled-1.nb', nb: NB.modern,
     cells: [
-      inp(52.1, 1, 'Tabular[releases]', 0.2),
-      tabularCell(52.4, ['version', 'year', 'new words'], releaseRows.slice(0, 15), true),
+      inp(at('v10', 0.5), 1, 'Interpreter["Country"]["france"]', 0.25),
+      entityCell(at('v10', 0.85), [['France', 'country']]),
+      inp(at('v10', 1.2), 2, CODE.v10_globe, 0.3), imageCell(at('v10', 1.55), 'v10_globe.png', 400, 400, 2),
+      inp(at('v10', 3), 3, 'WordTranslation["language", "French"]', 0.2), out(at('v10', 3.25), 3, '{langue, langage}'),
+      inp(at('v10', 3.6), 4, CODE.v10_stars, 0.25), imageCell(at('v10', 3.9), 'v10_stars.png', 460, 300, 4),
+      inp(at('v10', 4.9), 5, 'CountryData["Europe"][[;; 4]]', 0.2),
+      entityCell(at('v10', 5.2), [['Albania', 'country'], ['Andorra', 'country'], ['Austria', 'country'], ['Belarus', 'country']]),
     ],
   },
   {
-    from: 54, to: 60, os: 'bigsur', title: 'Soundtrack.nb', nb: NB.v13,
-    label: ['Version 15', 'June 16, 2026'], extras: 'chatbar15',
+    from: at('v11'), to: S.llm[0], os: 'bigsur', title: 'Untitled-1.nb', nb: NB.v13,
     cells: [
-      inp(55.0, 1, v15Code, 0.35),
-      musicScoreCell(55.4, V15_NOTES, 24, (bar) => (bar >= 54 && bar < 60 ? (bar - 54) * 4 : null), 6),
+      inp(at('v11'), 1, 'NetTrain[net, examples]', 0.2), { ...summaryBoxCell(at('v11', 0.3), 'NetChain', [['Input', 'image'], ['Output', 'class']], netIcon), n: 1 },
+      inp(at('repos'), 2, CODE.x_fireballs, 0.25), imageCell(at('repos', 0.35), 'x_fireballs.png', 470, 250, 2),
+      inp(at('repos', 1.1), 3, 'ResourceFunction["BirdSay"]["Every language starts with a few words."]', 0.25),
+      imageCell(at('repos', 1.4), 'v11_birdsay.png', 360, 225, 3),
+      inp(at('v12'), 4, CODE.x_compile, 0.25), compileCell(at('v12', 0.3), 460, 4),
+      inp(at('v12', 0.7), 5, CODE.v12_molecule, 0.15), imageCell(at('v12', 0.9), 'v12_molecule.png', 280, 230, 5),
+      inp(at('v12', 1.2), 6, CODE.v12_system, 0.2), pendulumCell(at('v12', 1.35), 0.65, 380, 260, 6),
+      inp(at('v123'), 7, CODE.x_tree, 0.25), imageCell(at('v123', 0.3), 'x_tree.png', 420, 280, 7),
+      inp(at('v132'), 8, CODE.v13_astro, 0.25), imageCell(at('v132', 0.3), 'v13_astro.png', 520, 350, 8),
+      inp(at('v132', 1), 9, 'PacletInstall["Wolfram/QuantumFramework"]', 0.15),
+      inp(at('v132', 1.2), 10, CODE.x_quantum, 0.2), imageCell(at('v132', 1.45), 'x_quantum_circuit.png', 360, 210, 10),
+    ],
+  },
+  {
+    from: at('llm'), to: S.llm[1], os: 'bigsur', title: 'Chat.nb', nb: NB.v13,
+    cells: [
+      chatInputCell(at('llm'), 'What are the ten most common words in Alice in Wonderland?', 0.55),
+      chatResponseCell(at('llm', 0.75), 'You can count them with WordCounts:', 'WordCounts', ['Take[WordCounts[ExampleData[{"Text", "AliceInWonderland"}],', '  IgnoreCase -> True], 10]'], NB.v13),
+      inp(at('llm', 2), 1, 'Take[WordCounts[ExampleData[{"Text", "AliceInWonderland"}], IgnoreCase -> True], 10]', 0.3),
+      out(at('llm', 2.4), 1, '<|the -> 630, and -> 338, a -> 277, to -> 249, she -> 239, of -> 198, it -> 171, was -> 167, in -> 162, alice -> 161|>'),
+    ],
+  },
+  {
+    from: at('v14'), to: S.v14[1], os: 'dark', title: 'Untitled-1.nb', nb: NB.dark,
+    cells: [
+      inp(at('v14', 0.1), 1, 'Tabular[releases]', 0.2),
+      tabularCell(at('v14', 0.4), ['version', 'year', 'new words'], releaseRows.slice(0, 15), true),
+    ],
+  },
+  {
+    from: at('v15'), to: S.v15[1], os: 'bigsur', title: 'Soundtrack.nb', nb: NB.v13, extras: 'chatbar15',
+    cells: [
+      inp(at('v15', 1), 1, v15Code, 0.35),
+      musicScoreCell(at('v15', 1.4), V15_NOTES, 24, (bar) => (bar >= S.v15[0] && bar < S.v15[1] ? (bar - S.v15[0]) * 4 : null), 6),
     ],
   },
 ];
 
 // ---------------------------------------------------------------- narration (right column)
 export interface Line { at: number; until: number; text: string; red?: string[]; size?: number; y?: number }
+const L = (k: Section, a: number, u: number, text: string, red?: string[]): Line => ({ at: at(k, a), until: at(k, u), text, red });
 export const CAPTIONS: Line[] = [
-  { at: 12.25, until: 15.8, text: 'Its first vocabulary: 554 words.', red: ['554'] },
-  { at: 16.25, until: 17.8, text: 'Bundled with every NeXT computer.' },
-  { at: 18.2, until: 19.85, text: 'One grammar for everything.', red: ['grammar'] },
-  { at: 20.3, until: 21.85, text: 'It learns to play with words.' },
-  { at: 22.3, until: 23.85, text: 'The notebook itself is written in the language.' },
-  { at: 24.3, until: 25.85, text: 'It learns to read and write other formats.' },
-  { at: 26.3, until: 27.85, text: 'It learns the names of colours.' },
-  { at: 28.3, until: 29.85, text: 'It learns about the world.' },
-  { at: 30.1, until: 31.85, text: 'And it starts to answer back.' },
-  { at: 32.05, until: 32.9, text: 'It learns to speak.' },
-  { at: 33.05, until: 33.9, text: 'It learns to understand English.' },
-  { at: 34.05, until: 34.9, text: 'It learns units.' },
-  { at: 39.0, until: 41.85, text: 'Version 10 adds 1,022 words: the most ever.', red: ['1,022'] },
-  { at: 42.0, until: 44.85, text: 'Words for things in the world: countries, cities, languages.' },
-  { at: 45.05, until: 45.9, text: 'It learns to learn.' },
-  { at: 46.05, until: 46.9, text: 'It learns to listen.' },
-  { at: 47.05, until: 47.9, text: 'It keeps growing.' },
-  { at: 48.25, until: 49.9, text: 'Now machines learn to speak it.', red: ['machines'] },
-  { at: 50.1, until: 51.85, text: 'Natural language for people. Computational language for both.' },
-  { at: 52.2, until: 53.85, text: 'It keeps a record of itself.' },
-  { at: 54.25, until: 56.85, text: 'Version 15: it learns music.', red: ['music'] },
-  { at: 57.0, until: 59.7, text: 'The notes you are hearing, as expressions.' },
+  L('v1', 0.25, 1.85, 'Its first vocabulary: 554 words.', ['554']),
+  L('v1', 2.1, 3.85, 'Words for pictures, too.'),
+  L('next', 0.25, 1.8, 'Bundled with every NeXT computer.'),
+  L('grammar', 0.2, 1.85, 'One grammar for everything.', ['grammar']),
+  L('v2', 0.2, 1.85, 'It learns to play with words, and to draw in colour.'),
+  L('v3', 0.3, 1.85, 'The notebook itself is written in the language.'),
+  L('v4', 0.15, 1.85, 'It learns to read other formats, and to grow patterns.'),
+  L('v5', 0.2, 1.85, 'It learns the names of colours.', ['colours']),
+  L('v6', 0.2, 1.25, 'It learns about the world.'),
+  L('v6', 1.3, 1.9, 'And about computation itself.'),
+  L('v6', 2.05, 3.85, 'And it starts to answer back.'),
+  L('v7', 0.05, 0.9, 'It learns to work in parallel.', ['parallel']),
+  L('v8', 0.05, 0.95, 'It learns to understand English.'),
+  L('v8', 1.05, 1.9, 'It learns graphs: countries, linked by their borders.'),
+  L('v9', 0.05, 0.9, 'It learns units.'),
+  L('v10', 1.0, 2.8, 'Version 10 adds 1,022 words: the most ever.', ['1,022']),
+  L('v10', 2.95, 4.8, 'The Earth, the stars, every country and language.'),
+  L('v10', 4.9, 5.85, 'Words for things in the world.'),
+  L('v11', 0.05, 0.9, 'It learns to learn.'),
+  L('repos', 0.0, 1.9, 'Now anyone can add words.', ['anyone']),
+  L('v12', 0.05, 0.65, 'Compiled, it runs fast.'),
+  L('v12', 0.7, 1.9, 'Molecules, machines, whole systems.'),
+  L('v123', 0.05, 0.9, 'Code is an expression too: a tree.'),
+  L('v132', 0.05, 0.95, 'From the Earth to the stars.', ['stars']),
+  L('v132', 1.0, 1.9, 'Whole frameworks, one install away.'),
+  L('llm', 0.25, 1.9, 'Now machines learn to speak it.', ['machines']),
+  L('llm', 2.1, 3.85, 'Natural language for people. Computational language for both.'),
+  L('v14', 0.2, 1.85, 'It keeps a record of itself.'),
+  L('v15', 0.25, 2.85, 'Version 15: it learns music.', ['music']),
+  L('v15', 3.0, 5.7, 'The notes you are hearing, as expressions.'),
 ];
 export interface Entry { at: number; until: number; name: string; note?: string; usage?: string }
+const E = (k: Section, a: number, u: number, name: string, extra: Partial<Entry> = {}): Entry => ({ at: at(k, a), until: at(k, u), name, ...extra });
 export const ENTRIES: Entry[] = [
-  { at: 12.3, until: 15.8, name: 'Names', note: 'symbol · since 1.0, 1988' },
-  { at: 20.2, until: 21.85, name: 'StringReverse' },
-  { at: 22.2, until: 23.85, name: 'Cell' },
-  { at: 24.2, until: 25.85, name: 'Import' },
-  { at: 26.2, until: 27.85, name: 'Red' },
-  { at: 28.2, until: 29.85, name: 'WordData' },
-  { at: 30.0, until: 31.85, name: 'Manipulate' },
-  { at: 42.0, until: 44.85, name: 'Entity' },
-  { at: 48.2, until: 51.85, name: 'LLMFunction' },
-  { at: 52.1, until: 53.85, name: 'Tabular' },
-  { at: 54.2, until: 59.7, name: 'MusicNote', note: 'symbol · new in 15.0, 2026', usage: 'MusicNote[p, d] returns a music note with the specified pitch p and duration d.' },
+  E('v1', 0.3, 1.85, 'Names', { note: 'symbol · since 1.0, 1988' }),
+  E('v1', 2.1, 3.85, 'Plot3D'),
+  E('v2', 0.2, 1.85, 'StringReverse'),
+  E('v3', 0.2, 1.85, 'Cell'),
+  E('v4', 0.1, 1.85, 'CellularAutomaton'),
+  E('v5', 0.2, 1.85, 'Red'),
+  E('v6', 0.2, 1.25, 'CountryData'),
+  E('v6', 1.3, 1.9, 'TuringMachine'),
+  E('v6', 2.0, 3.85, 'Manipulate'),
+  E('v7', 0.05, 0.9, 'ParallelTable'),
+  E('v8', 1.05, 1.9, 'Graph'),
+  E('v10', 1.2, 2.85, 'GeoGraphics'),
+  E('v10', 3.6, 4.8, 'StarData'),
+  E('v10', 4.9, 5.85, 'Entity'),
+  E('v12', 0.0, 0.65, 'FunctionCompile'),
+  E('v12', 1.2, 1.9, 'SystemModel'),
+  E('v123', 0.05, 0.9, 'ExpressionTree'),
+  E('v132', 0.05, 0.95, 'AstroGraphics'),
+  E('v132', 1.0, 1.9, 'PacletInstall'),
+  E('llm', 0.2, 3.85, 'LLMFunction'),
+  E('v14', 0.1, 1.85, 'Tabular'),
+  E('v15', 0.2, 5.7, 'MusicNote', { note: 'symbol · new in 15.0, 2026', usage: 'MusicNote[p, d] returns a music note with the specified pitch p and duration d.' }),
 ];
 
 /** Era-label schedule (top left). */
+const LB = (k: Section, o: number, title: string, sub: string) => ({ at: at(k, o), title, sub });
 export const LABELS: { at: number; title: string; sub: string }[] = [
-  { at: 12, title: 'Mathematica 1.0', sub: 'June 23, 1988 · Macintosh' },
-  { at: 16, title: 'Mathematica 1.0', sub: '1988 · NeXT' },
-  { at: 20, title: 'Mathematica 2.0', sub: 'January 1991 · Windows 3.1' },
-  { at: 22, title: 'Mathematica 3.0', sub: 'September 1996 · Windows 95' },
-  { at: 24, title: 'Mathematica 4.0', sub: 'May 1999 · Mac OS 9' },
-  { at: 26, title: 'Mathematica 5.1', sub: 'October 2004 · Windows XP' },
-  { at: 28, title: 'Mathematica 6.0', sub: 'May 2007 · Mac OS X' },
-  { at: 32, title: 'Mathematica 7', sub: 'November 2008' },
-  { at: 33, title: 'Mathematica 8', sub: 'November 2010' },
-  { at: 34, title: 'Mathematica 9', sub: 'November 2012' },
-  { at: 38.4, title: 'The Wolfram Language', sub: 'Named November 2013 · free on every Raspberry Pi' },
-  { at: 40.5, title: 'Version 10', sub: 'July 2014 · 1,022 new words' },
-  { at: 45, title: 'Version 11', sub: 'August 2016' },
-  { at: 46, title: 'Version 12', sub: 'April 2019' },
-  { at: 47, title: 'Version 13', sub: 'December 2021' },
-  { at: 48, title: 'Version 13.3', sub: 'June 2023 · chat notebooks' },
-  { at: 52, title: 'Version 14', sub: '2024 – 2025 · dark mode arrives in 14.3' },
-  { at: 54, title: 'Version 15', sub: 'June 16, 2026' },
+  LB('v1', 0, 'Mathematica 1.0', 'June 23, 1988 · Macintosh'),
+  LB('next', 0, 'Mathematica 1.0', '1988 · NeXT'),
+  LB('v2', 0, 'Mathematica 2.0', 'January 1991 · Windows 3.1'),
+  LB('v3', 0, 'Mathematica 3.0', 'September 1996 · Windows 95'),
+  LB('v4', 0, 'Mathematica 4', '1999 – 2002 · Mac OS 9'),
+  LB('v5', 0, 'Mathematica 5.1', 'October 2004 · Windows XP'),
+  LB('v6', 0, 'Mathematica 6.0', 'May 2007 · Mac OS X'),
+  LB('v7', 0, 'Mathematica 7', 'November 2008 · built-in parallel computing'),
+  LB('v8', 0, 'Mathematica 8', 'November 2010'),
+  LB('v9', 0, 'Mathematica 9', 'November 2012'),
+  LB('v10', 0.4, 'The Wolfram Language', 'Named Nov 2013 · free on every Raspberry Pi'),
+  LB('v10', 1, 'Version 10', 'July 2014 · 1,022 new words'),
+  LB('v11', 0, 'Version 11', 'August 2016'),
+  LB('repos', 0, 'The repositories', 'Data 2017 · Neural Nets 2018 · Functions 2019'),
+  LB('v12', 0, 'Version 12', 'April 2019'),
+  LB('v123', 0, 'Version 12.3', 'May 2021'),
+  LB('v132', 0, 'Version 13.2', 'December 2022 · astronomy'),
+  LB('v132', 1, 'Paclet Repository', 'March 2023 · whole frameworks'),
+  LB('llm', 0, 'Version 13.3', 'June 2023 · chat notebooks'),
+  LB('v14', 0, 'Version 14', '2024 – 2025 · dark mode arrives in 14.3'),
+  LB('v15', 0, 'Version 15', 'June 16, 2026'),
 ];
 
-export { text, clamp, inv, ease, mix, rgba };
+export { text, clamp, inv, ease, mix, rgba, F, font };
 export type { G };

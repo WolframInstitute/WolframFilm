@@ -1,3 +1,4 @@
+import { S } from '../core/time';
 // Persistent overlays: the word counter, the era label, the year ruler.
 import { F, font, text, clamp, inv, ease, mix, rgba, type G } from '../core/draw';
 import { wordCountAt, RELEASES } from '../core/lexicon';
@@ -7,9 +8,12 @@ import { kickPulse } from '../core/film';
 
 // bar -> calendar year (piecewise, snapping on release downbeats)
 const YEAR_KEYS: [number, number][] = [
-  [4, 1979.85], [8, 1981.45], [8.5, 1986.8], [12, 1988.47], [16, 1988.9], [20, 1991.04], [22, 1996.67], [24, 1999.38],
-  [26, 2004.8], [28, 2007.33], [32, 2008.88], [33, 2010.87], [34, 2012.9], [35.5, 2013.87], [37, 2014.52], [45, 2016.6],
-  [46, 2019.29], [47, 2021.95], [48, 2023.49], [52, 2024.03], [53, 2025.6], [54, 2026.46], [68, 2026.75],
+  [S.smp[0], 1979.85], [S.smp[1], 1981.45], [S.y1986[0] + 0.5, 1986.8], [S.v1[0], 1988.47], [S.next[0], 1988.9],
+  [S.v2[0], 1991.04], [S.v3[0], 1996.67], [S.v4[0], 1999.38], [S.v4[0] + 1, 2002.0], [S.v5[0], 2004.8], [S.v6[0], 2007.33],
+  [S.v7[0], 2008.88], [S.v8[0], 2010.87], [S.v9[0], 2012.9], [S.breakdown[0] + 0.5, 2013.87], [S.v10[0] + 0.5, 2014.52],
+  [S.v11[0], 2016.6], [S.repos[0], 2017.3], [S.repos[0] + 0.75, 2018.45], [S.repos[0] + 1.25, 2019.45], [S.v12[0], 2019.29],
+  [S.v123[0], 2021.38], [S.v132[0], 2022.95], [S.v132[0] + 1, 2023.2], [S.llm[0], 2023.49], [S.v14[0], 2024.03],
+  [S.v14[0] + 1, 2025.6], [S.v15[0], 2026.46], [S.agents[0], 2026.6], [S.outro[0], 2026.75],
 ];
 /** Year shown by the ruler marker: jumps to each key's year on its bar with an expo ease. */
 export function markerYear(bar: number) {
@@ -44,7 +48,7 @@ export function drawRuler(g: G, bar: number, alpha = 1) {
   g.strokeStyle = P.red; g.lineWidth = 3;
   g.beginPath(); g.moveTo(X(1979.85), y); g.lineTo(X(my), y); g.stroke();
   // release ticks
-  const releaseYears: [number, string][] = [[1988.47, '1.0'], [1991.04, '2'], [1996.67, '3'], [1999.38, '4'], [2003.45, '5'], [2007.33, '6'], [2008.88, '7'], [2010.87, '8'], [2012.9, '9'], [2014.52, '10'], [2016.6, '11'], [2019.29, '12'], [2021.95, '13'], [2023.49, ''], [2024.03, '14'], [2026.46, '15']];
+  const releaseYears: [number, string][] = [[1988.47, '1.0'], [1991.04, '2'], [1996.67, '3'], [1999.38, '4'], [2004.8, '5'], [2007.33, '6'], [2008.88, '7'], [2010.87, '8'], [2012.9, '9'], [2014.52, '10'], [2016.6, '11'], [2019.29, '12'], [2022.95, '13'], [2023.49, ''], [2024.03, '14'], [2026.46, '15']];
   for (const [yr, lab] of releaseYears) {
     if (yr > my + 0.01) continue;
     g.fillStyle = P.red;

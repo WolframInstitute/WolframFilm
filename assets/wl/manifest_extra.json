@@ -1,0 +1,29 @@
+{
+	"x_parallel":{
+		"code":"ParallelTable[julia[x + I y], {y, 0.95, -0.95, -0.0064}, {x, -1.6, 1.6, 0.0067}]",
+		"kernels":16,
+		"version":"7"
+	},
+	"x_graph":{
+		"code":"Graph[Flatten[Thread[#  WolframLanguageData[#, \"RelatedSymbols\"]] & \/@ seeds]]",
+		"vertices":15,
+		"edges":14,
+		"version":"8"
+	},
+	"x_tree":{
+		"code":"ExpressionTree[Hold[Manipulate[Plot[Sin[a x], {x, 0, 2 Pi}], {a, 1, 5}]]]",
+		"version":"12.3"
+	},
+	"x_compile":{
+		"code":"cf = FunctionCompile[Function[Typed[n, \"MachineInteger\"], Module[{s = 0.}, Do[s += Sin[i]^2, {i, n}]; s]]]",
+		"version":"12"
+	},
+	"x_quantum":{
+		"code":"QuantumCircuitOperator[{\"H\", \"CNOT\" -> {1, 2}, \"CNOT\" -> {2, 3}}][\"Diagram\"]",
+		"paclet":"Wolfram\/QuantumFramework"
+	},
+	"x_fireballs":{
+		"code":"GeoBubbleChart[ResourceData[\"Fireballs and Bolides\"][All, #NearestCity -> #RadiatedEnergy &]]",
+		"version":"11"
+	}
+}

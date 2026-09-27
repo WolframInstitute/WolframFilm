@@ -378,3 +378,227 @@ export const netIcon = (g: G, x: number, y: number) => {
   const cols = ['#E4B87D', '#9EC1E0', '#9EC1E0', '#B7D59B', '#E49B9B'];
   cols.forEach((c, i) => { g.fillStyle = c; g.fillRect(x + i * 6.5, y + 4 + (i % 2) * 3, 5, 26 - (i % 2) * 6); });
 };
+
+// ------------------------------------------------------------------ computed outputs (assets/wl)
+import { drawAsset, json } from '../core/assets';
+
+/** An output that is a picture computed by the Wolfram Language. Pops in on `at`. */
+export function imageCell(at: number, asset: string, w: number, h: number, n?: number): Cell {
+  return {
+    kind: 'custom', at, h: h + 6, n,
+    draw: (g, x, y, _w, bar) => {
+      const u = ease.outCubic(inv(at, at + 0.12, bar));
+      drawAsset(g, asset, x, y, w, h, u);
+    },
+  };
+}
+
+/** A flip-book output: frames `${prefix}00.png`… chosen by `frame(bar)` in [0,1]. */
+export function framesCell(at: number, prefix: string, count: number, w: number, h: number, frame: (bar: number) => number, n?: number): Cell {
+  return {
+    kind: 'custom', at, h: h + 6, n,
+    draw: (g, x, y, _w, bar) => {
+      const k = Math.max(0, Math.min(count - 1, Math.round(frame(bar) * (count - 1))));
+      drawAsset(g, `${prefix}${String(k).padStart(2, '0')}.png`, x, y, w, h, ease.outCubic(inv(at, at + 0.12, bar)));
+    },
+  };
+}
+
+/** ArrayPlot of a cellular automaton / Turing machine history, growing row by row over `grow` bars. */
+export function arrayGrowCell(at: number, name: string, grow: number, w: number, h: number, colors: string[], n?: number, crop?: { cols?: number; transpose?: boolean }): Cell {
+  return {
+    kind: 'custom', at, h: h + 6, n,
+    draw: (g, x, y, _w, bar) => {
+      const raw = json<any>(name);
+      let A: number[][] | undefined = Array.isArray(raw) ? raw : raw?.rows;
+      if (A && crop?.transpose) A = A[0]!.map((_, c) => A!.map((row) => row[c]!));
+      if (!A || !A.length) { drawAsset(g, name, x, y, w, h); return; }
+      const rows = A.length, cols0 = A[0]!.length;
+      const cols = Math.min(cols0, crop?.cols ?? cols0);
+      const c0 = Math.floor((cols0 - cols) / 2);
+      const cs = Math.min(w / cols, h / rows);
+      const prog = clamp((bar - at) / grow);
+      const shown = crop?.transpose ? rows : Math.floor(prog * rows);
+      const shownCols = crop?.transpose ? Math.floor(prog * cols) : cols;
+      const ox = x + (w - cols * cs) / 2;
+      g.save();
+      g.fillStyle = colors[0]!; g.fillRect(ox, y, cols * cs, rows * cs);
+      for (let r = 0; r < shown; r++) {
+        const row = A[r]!;
+        for (let c = 0; c < shownCols; c++) {
+          const v = row[c + c0]!;
+          if (!v) continue;
+          g.fillStyle = colors[v] ?? colors[1]!;
+          g.fillRect(ox + c * cs, y + r * cs, cs + 0.3, cs + 0.3);
+        }
+      }
+      // the growing edge glows
+      if (!crop?.transpose && shown > 0 && shown < rows) { g.fillStyle = 'rgba(221,17,0,0.5)'; g.fillRect(ox, y + shown * cs - cs, cols * cs, cs); }
+      if (crop?.transpose && shownCols > 0 && shownCols < cols) { g.fillStyle = 'rgba(221,17,0,0.5)'; g.fillRect(ox + (shownCols - 1) * cs, y, cs, rows * cs); }
+      g.restore();
+    },
+  };
+}
+
+/** A geo-positioned graph drawn edge by edge (e.g. European countries sharing a border). */
+export function graphGrowCell(at: number, name: string, grow: number, w: number, h: number, style: { vertex: string; edge: string; label: string }, n?: number): Cell {
+  return {
+    kind: 'custom', at, h: h + 6, n,
+    draw: (g, x, y, _w, bar) => {
+      const raw = json<any>(name);
+      if (!raw) { drawAsset(g, name.replace('.json', '.png'), x, y, w, h); return; }
+      const G0: { vertices: { name: string; x: number; y: number }[]; edges: [number, number][] } = {
+        vertices: raw.vertices.map((v: any) => ({ name: v.name, x: v.x ?? v.lon * Math.cos((50 * Math.PI) / 180), y: v.y ?? v.lat })),
+        edges: [] as [number, number][],
+      };
+      const idx = new Map<string, number>(raw.vertices.map((v: any, i: number) => [v.name, i]));
+      for (const e of raw.edges) {
+        const [a, b] = Array.isArray(e) ? e : [e.from, e.to];
+        const ia = typeof a === 'number' ? a : idx.get(a), ib = typeof b === 'number' ? b : idx.get(b);
+        if (ia !== undefined && ib !== undefined) G0.edges.push([ia, ib]);
+      }
+      const xs = G0.vertices.map((v) => v.x), ys = G0.vertices.map((v) => v.y);
+      const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+      const s = Math.min((w - 40) / (x1 - x0), (h - 30) / (y1 - y0));
+      const P = (i: number) => ({ px: x + 20 + (G0.vertices[i]!.x - x0) * s, py: y + 15 + (y1 - G0.vertices[i]!.y) * s });
+      const u = clamp((bar - at) / grow);
+      g.save();
+      g.strokeStyle = style.edge; g.lineWidth = 1.4;
+      const ne = Math.floor(u * G0.edges.length);
+      for (let k = 0; k < ne; k++) {
+        const [a, b] = G0.edges[k]!; const A = P(a), B = P(b);
+        g.beginPath(); g.moveTo(A.px, A.py); g.lineTo(B.px, B.py); g.stroke();
+      }
+      G0.vertices.forEach((v, i) => {
+        const vu = ease.outBack(clamp((u * G0.vertices.length - i) * 0.6), 2);
+        if (vu <= 0) return;
+        const { px, py } = P(i);
+        g.fillStyle = style.vertex; g.beginPath(); g.arc(px, py, 4.5 * vu, 0, 7); g.fill();
+        if (vu > 0.9 && v.name.length < 11) T(g, v.name, px + 6, py - 5, F.arimo, 10, 400, style.label);
+      });
+      g.restore();
+    },
+  };
+}
+
+/** ParallelTable output: the image, with the strip each kernel computed briefly lit (real $KernelID per row). */
+export function parallelCell(at: number, w: number, h: number, n?: number): Cell {
+  const K = ['#E6194B', '#3CB44B', '#4363D8', '#F58231', '#911EB4', '#42D4F4', '#F032E6', '#BFEF45', '#FABED4', '#469990', '#DCBEFF', '#9A6324', '#FFFAC8', '#800000', '#AAFFC3', '#808000'];
+  return {
+    kind: 'custom', at, h: h + 30, n,
+    draw: (g, x, y, _w, bar) => {
+      const ids = json<number[]>('x_parallel_kernels.json');
+      const u = clamp((bar - at) / 0.5);
+      if (!ids) { drawAsset(g, 'x_parallel.png', x, y, w, h); return; }
+      const rows = ids.length;
+      // rows arrive as kernels finish: reveal in kernel order
+      const kernels = [...new Set(ids)].sort((a, b) => a - b);
+      const shownK = Math.ceil(u * kernels.length);
+      g.save();
+      g.fillStyle = '#111'; g.fillRect(x, y, w, h);
+      const im = (globalThis as any).__noop;
+      void im;
+      for (let r = 0; r < rows; r++) {
+        const kIdx = kernels.indexOf(ids[r]!);
+        if (kIdx >= shownK) continue;
+        const ry = y + (r / rows) * h, rh = h / rows + 0.5;
+        g.save(); g.beginPath(); g.rect(x, ry, w, rh); g.clip();
+        drawAsset(g, 'x_parallel.png', x, y, w, h);
+        g.restore();
+        const heat = clamp(1 - (u * kernels.length - kIdx - 1) * 1.5);
+        if (heat > 0) { g.fillStyle = K[kIdx % K.length]!; g.globalAlpha = 0.45 * heat; g.fillRect(x, ry, w, rh); g.globalAlpha = 1; }
+      }
+      kernels.slice(0, shownK).forEach((k, i) => {
+        g.fillStyle = K[i % K.length]!; g.fillRect(x + i * 26, y + h + 8, 20, 12);
+      });
+      T(g, `${kernels.length} kernels`, x + kernels.length * 26 + 6, y + h + 19, F.sans, 13, 400, '#555');
+      g.restore();
+    },
+  };
+}
+
+/** Graph of the language's own words: symbols linked to their related symbols. */
+export function relGraphCell(at: number, grow: number, w: number, h: number, n?: number): Cell {
+  return {
+    kind: 'custom', at, h: h + 6, n,
+    draw: (g, x, y, _w, bar) => {
+      const G0 = json<{ vertices: { name: string; x: number; y: number; deg: number }[]; edges: [number, number][] }>('x_graph.json');
+      if (!G0) return;
+      const xs = G0.vertices.map((v) => v.x), ys = G0.vertices.map((v) => v.y);
+      const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+      const s = Math.min((w - 60) / (x1 - x0), (h - 30) / (y1 - y0));
+      const ox = x + (w - (x1 - x0) * s) / 2, oy = y + (h - (y1 - y0) * s) / 2;
+      const P = (i: number) => ({ px: ox + (G0.vertices[i]!.x - x0) * s, py: oy + (y1 - G0.vertices[i]!.y) * s });
+      const u = clamp((bar - at) / grow);
+      g.save();
+      g.strokeStyle = '#6D82C7'; g.lineWidth = 1; g.globalAlpha = 0.8;
+      const ne = Math.floor(ease.outCubic(u) * G0.edges.length);
+      for (let k = 0; k < ne; k++) {
+        const [a, b] = G0.edges[k]!; const A = P(a), B = P(b);
+        g.beginPath(); g.moveTo(A.px, A.py); g.lineTo(B.px, B.py); g.stroke();
+      }
+      g.globalAlpha = 1;
+      G0.vertices.forEach((v, i) => {
+        const vu = ease.outBack(clamp(u * 1.4 - (i / G0.vertices.length) * 0.4), 2);
+        if (vu <= 0) return;
+        const { px, py } = P(i);
+        const big = v.deg >= 5;
+        g.fillStyle = big ? '#DD1100' : '#E8B04B';
+        g.beginPath(); g.arc(px, py, (big ? 5 : 3) * vu, 0, 7); g.fill();
+        if (big && vu > 0.9) T(g, v.name, px + 7, py + 4, F.code, 11.5, 600, '#222');
+      });
+      g.restore();
+    },
+  };
+}
+
+/** SystemModelSimulate result of a double pendulum, animated from the simulated positions. */
+export function pendulumCell(at: number, dur: number, w: number, h: number, n?: number): Cell {
+  return {
+    kind: 'custom', at, h: h + 6, n,
+    draw: (g, x, y, _w, bar) => {
+      const S0 = json<{ t: number; a: number[]; b: number[]; c: number[] }[]>('v12_system.json');
+      if (!S0) { drawAsset(g, 'v12_system_00.png', x, y, w, h); return; }
+      const k = Math.min(S0.length - 1, Math.floor(clamp((bar - at) / dur) * (S0.length - 1)));
+      const sc = Math.min(w, h) * 0.42, cx = x + w / 2, cy = y + h * 0.3;
+      const P = (p: number[]) => ({ px: cx + p[0]! * sc, py: cy - p[1]! * sc });
+      g.save();
+      g.fillStyle = '#F7F7F7'; g.fillRect(x, y, w, h);
+      g.strokeStyle = 'rgba(221,17,0,0.55)'; g.lineWidth = 1.5;
+      g.beginPath();
+      for (let i = Math.max(0, k - 120); i <= k; i++) { const p = P(S0[i]!.c); i === Math.max(0, k - 120) ? g.moveTo(p.px, p.py) : g.lineTo(p.px, p.py); }
+      g.stroke();
+      const s = S0[k]!;
+      const A = P(s.a), B = P(s.b), C = P(s.c);
+      g.fillStyle = '#9A9A9A'; g.fillRect(A.px - 26, A.py - 12, 52, 12);
+      g.lineCap = 'round';
+      g.strokeStyle = '#3D7DC8'; g.lineWidth = 7; g.beginPath(); g.moveTo(A.px, A.py); g.lineTo(B.px, B.py); g.stroke();
+      g.strokeStyle = '#E0701A'; g.beginPath(); g.moveTo(B.px, B.py); g.lineTo(C.px, C.py); g.stroke();
+      g.fillStyle = '#333'; g.beginPath(); g.arc(A.px, A.py, 5, 0, 7); g.fill(); g.beginPath(); g.arc(B.px, B.py, 5, 0, 7); g.fill();
+      g.fillStyle = '#DD1100'; g.beginPath(); g.arc(C.px, C.py, 7, 0, 7); g.fill();
+      T(g, `t = ${s.t.toFixed(2)} s`, x + 10, y + h - 10, F.code, 12, 400, '#777');
+      g.restore();
+    },
+  };
+}
+
+/** Timing comparison: the same loop interpreted vs compiled (measured when the assets were made). */
+export function compileCell(at: number, w: number, n?: number): Cell {
+  return {
+    kind: 'custom', at, h: 70, n,
+    draw: (g, x, y, _w, bar) => {
+      const C = json<{ interpreted: number; compiled: number; speedup: number }>('x_compile.json');
+      if (!C) return;
+      const u = ease.outCubic(clamp((bar - at) / 0.3));
+      const maxW = w - 200;
+      const row = (yy: number, label: string, t: number, col: string) => {
+        T(g, label, x, yy + 14, F.sans, 15, 600, '#333');
+        g.fillStyle = col; g.fillRect(x + 110, yy + 2, Math.max(2, maxW * (t / C.interpreted) * u), 16);
+        T(g, `${t < 0.1 ? (t * 1000).toFixed(1) + ' ms' : t.toFixed(2) + ' s'}`, x + 118 + Math.max(2, maxW * (t / C.interpreted) * u), yy + 15, F.code, 13, 400, '#333');
+      };
+      row(y + 4, 'evaluated', C.interpreted, '#9AA5B1');
+      row(y + 30, 'compiled', C.compiled, '#DD1100');
+      if (u > 0.9) T(g, `${Math.round(C.speedup)}× faster`, x + 110, y + 66, F.sans, 14, 700, '#DD1100');
+    },
+  };
+}

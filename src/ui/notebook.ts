@@ -127,9 +127,14 @@ export function drawNotebook(g: G, rect: { x: number; y: number; w: number; h: n
   g.fillStyle = nb.bg; g.fillRect(rect.x, rect.y, rect.w, rect.h);
   const vis = cells.filter((c) => bar >= c.at);
   const hs = vis.map((c) => cellHeight(c, nb, rect.w, g));
-  const total = hs.reduce((a, b) => a + b + nb.gap, nb.gap);
-  // scroll: keep the bottom of content visible, eased
-  let scroll = Math.max(0, total - rect.h + nb.gap * 2);
+  // scroll: keep the bottom of content visible, gliding when a new cell arrives
+  const scrollFor = (n: number) => Math.max(0, hs.slice(0, n).reduce((a, b) => a + b + nb.gap, nb.gap) - rect.h + nb.gap * 2);
+  let scroll = scrollFor(vis.length);
+  const last = vis[vis.length - 1];
+  if (last && vis.length > 1) {
+    const u = ease.outCubic(inv(last.at, last.at + 0.15, bar));
+    scroll = scrollFor(vis.length - 1) + (scroll - scrollFor(vis.length - 1)) * u;
+  }
   if (scrollTo !== undefined) scroll = scrollTo;
   let y = rect.y + nb.gap - scroll;
   vis.forEach((c, i) => {

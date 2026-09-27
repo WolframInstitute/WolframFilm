@@ -1,5 +1,5 @@
 import { setScenes, setOverlays } from '../core/film';
-import { W, H } from '../core/time';
+import { W, H, S, BARS } from '../core/time';
 import { clamp, inv, ease, rgba, mix, type G } from '../core/draw';
 import { ground, darkness, P } from './palette';
 import { drawWall, drawFlight, wall } from './wall';
@@ -11,26 +11,28 @@ import { caption, entry, COL_X } from './narrator';
 import { CAPTIONS, ENTRIES, LABELS } from './story';
 import { RELEASES } from '../core/lexicon';
 import { grammarTree, breakdownText, wlTitle } from './scenes/beats';
+import { families, repoCards, agents } from './scenes/showcase';
 import { climax, outro, climaxEmph } from './scenes/finale';
 
-const narratorOn = (bar: number) => bar >= 12 && bar < 60;
+const inS = (bar: number, r: readonly [number, number]) => bar >= r[0] && bar < r[1];
+const narratorOn = (bar: number) => bar >= S.v1[0] && bar < S.agents[0] && !inS(bar, S.families);
 
 setScenes([
-  { id: 'ground', from: 0, to: 75, draw: (c) => { c.g.fillStyle = ground(c.bar); c.g.fillRect(0, 0, W, H); } },
+  { id: 'ground', from: 0, to: BARS, draw: (c) => { c.g.fillStyle = ground(c.bar); c.g.fillRect(0, 0, W, H); } },
   { id: 'cold', from: 0, to: 4, draw: coldOpen },
   { id: 'smp', from: 4, to: 8, draw: smp },
   { id: '1986', from: 8, to: 12, draw: y1986 },
   {
-    id: 'wall', from: 12, to: 70, draw: (c) => {
+    id: 'wall', from: S.v1[0], to: S.outro[0] + 2, draw: (c) => {
       const g = c.g;
-      if (c.bar >= 60 && c.bar < 68) {
+      if (inS(c.bar, S.climax)) {
         // start close on the most-used words, pull out to the whole lexicon
         const f = wallFocus();
-        const z = 1 + 3.2 * (1 - ease.inOutCubic(inv(60.0, 64.0, c.bar)));
+        const z = 1 + 3.2 * (1 - ease.inOutCubic(inv(S.climax[0], S.climax[0] + 4, c.bar)));
         g.translate(W / 2, H / 2); g.scale(z, z);
         g.translate(-(f.x + (W / 2 - f.x) * (1 - (z - 1) / 3.2)), -(f.y + (H / 2 - f.y) * (1 - (z - 1) / 3.2)));
       }
-      drawWall(g, c.bar, c.bar >= 60 ? clamp(inv(60, 60.5, c.bar)) : 0);
+      drawWall(g, c.bar, c.bar >= S.climax[0] ? clamp(inv(S.climax[0], S.climax[0] + 0.5, c.bar)) : 0);
       const { emph, emphU } = climaxEmph(c.bar);
       if (emph && emphU > 0) {
         g.save(); g.setTransform(1, 0, 0, 1, 0, 0);
@@ -41,7 +43,7 @@ setScenes([
     },
   },
   {
-    id: 'backdrop', from: 12, to: 60, draw: (c) => {
+    id: 'backdrop', from: S.v1[0], to: S.agents[0], draw: (c) => {
       // keep the narrator column legible over the wall
       const g = c.g, col = ground(c.bar);
       const grd = g.createLinearGradient(COL_X - 60, 0, COL_X + 40, 0);
@@ -52,13 +54,16 @@ setScenes([
       g.fillStyle = top; g.fillRect(0, 0, W, 170);
     },
   },
-  { id: 'flights', from: 12, to: 60, draw: (c) => { for (const r of RELEASES) if (c.bar >= r.bar - 0.4 && c.bar < r.bar + 1.8) drawFlight(c.g, c.bar, FLIGHT_FROM, r.key, 80); } },
-  { id: 'window', from: 12, to: 60.1, draw: (c) => drawWindow(c.g, c.bar) },
-  { id: 'grammar', from: 18, to: 20, draw: grammarTree },
-  { id: 'breakdown', from: 35, to: 37, draw: breakdownText },
-  { id: 'wltitle', from: 37, to: 39, draw: wlTitle },
-  { id: 'climax', from: 60, to: 68, draw: climax },
-  { id: 'outro', from: 68, to: 75, draw: outro },
+  { id: 'flights', from: S.v1[0], to: S.agents[0], draw: (c) => { for (const r of RELEASES) if (c.bar >= r.bar - 0.4 && c.bar < r.bar + 1.8) drawFlight(c.g, c.bar, FLIGHT_FROM, r.key, 80); } },
+  { id: 'window', from: S.v1[0], to: S.agents[0] + 0.1, draw: (c) => drawWindow(c.g, c.bar) },
+  { id: 'families', from: S.families[0], to: S.families[1], draw: families },
+  { id: 'repos', from: S.repos[0], to: S.repos[1] + 0.25, draw: repoCards },
+  { id: 'agents', from: S.agents[0] - 0.1, to: S.agents[1], draw: agents },
+  { id: 'grammar', from: S.grammar[0], to: S.grammar[1], draw: grammarTree },
+  { id: 'breakdown', from: S.breakdown[0], to: S.breakdown[1], draw: breakdownText },
+  { id: 'wltitle', from: S.v10[0], to: S.v10[0] + 1.5, draw: wlTitle },
+  { id: 'climax', from: S.climax[0], to: S.climax[1], draw: climax },
+  { id: 'outro', from: S.outro[0], to: S.outro[1], draw: outro },
 ]);
 
 setOverlays([
@@ -68,12 +73,12 @@ setOverlays([
     for (const e of ENTRIES) entry(g, bar, e.at, e.until, e.name, { note: e.note, usage: e.usage, y: 330 });
   },
   (g, bar) => {
-    if (bar < 12 || bar >= 60) return;
+    if (!narratorOn(bar)) return;
     const l = [...LABELS].reverse().find((l) => bar >= l.at);
     if (l) drawEraLabel(g, bar, l.title, l.sub, l.at, 1);
   },
-  (g, bar) => drawCounter(g, bar, clamp(inv(12, 12.3, bar)) * (1 - clamp(inv(68, 68.5, bar)))),
-  (g, bar) => drawRuler(g, bar, clamp(inv(4, 4.5, bar)) * (1 - clamp(inv(68, 68.5, bar)))),
+  (g, bar) => drawCounter(g, bar, clamp(inv(12, 12.3, bar)) * (1 - clamp(inv(S.outro[0], S.outro[0] + 0.5, bar)))),
+  (g, bar) => drawRuler(g, bar, clamp(inv(4, 4.5, bar)) * (1 - clamp(inv(S.outro[0], S.outro[0] + 0.5, bar)))),
 ]);
 export { ease, mix, darkness, P };
 export type { G };

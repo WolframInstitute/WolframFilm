@@ -1,3 +1,4 @@
+import { S } from '../core/time';
 import { clamp, inv, mix, smooth } from '../core/draw';
 
 export const P = {
@@ -14,10 +15,11 @@ export const P = {
 
 /** 0 = paper world, 1 = ink world. The flip happens across the breakdown into the WL drop, and back for the outro. */
 export function darkness(bar: number) {
-  if (bar < 35) return 0;
-  if (bar < 37) return smooth(inv(35.5, 37, bar)) * 0.85 + (bar >= 36.95 ? 0.15 : 0);
-  if (bar < 68) return 1;
-  return 1 - smooth(inv(68.5, 70, bar));
+  const [b0, b1] = S.breakdown, o = S.outro[0];
+  if (bar < b0) return 0;
+  if (bar < b1) return smooth(inv(b0 + 0.5, b1, bar)) * 0.85 + (bar >= b1 - 0.05 ? 0.15 : 0);
+  if (bar < o) return 1;
+  return 1 - smooth(inv(o + 0.5, o + 2, bar));
 }
 export const ground = (bar: number) => mix(P.paper, P.ink, darkness(bar));
 export const fg = (bar: number) => mix(P.ink, P.bone, darkness(bar));

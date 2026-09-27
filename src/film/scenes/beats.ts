@@ -2,7 +2,7 @@
 import type { Ctx } from '../../core/film';
 import { kickPulse } from '../../core/film';
 import { F, font, text, measure, clamp, inv, ease, mix, rgba } from '../../core/draw';
-import { W, H } from '../../core/time';
+import { W, H, S } from '../../core/time';
 import { P, darkness } from '../palette';
 import { COL_X } from '../narrator';
 
@@ -46,16 +46,17 @@ export function grammarTree(c: Ctx) {
 // ---------------------------------------------------------------- 35–37: breakdown lines
 export function breakdownText(c: Ctx) {
   const { g, bar } = c;
+  const B = S.breakdown[0];
   const col = mix(P.ink, P.bone, darkness(bar));
-  const a1 = ease.outExpo(inv(35.1, 35.4, bar)) * (1 - ease.inCubic(inv(35.85, 36, bar)));
-  const a2 = ease.outExpo(inv(36.0, 36.25, bar)) * (1 - ease.inExpo(inv(36.8, 36.97, bar)));
-  g.fillStyle = rgba(mix(P.paper, P.ink, darkness(bar)), 0.78 * ease.outCubic(inv(35.05, 35.3, bar)));
+  const a1 = ease.outExpo(inv(B + 0.1, B + 0.4, bar)) * (1 - ease.inCubic(inv(B + 0.85, B + 1, bar)));
+  const a2 = ease.outExpo(inv(B + 1, B + 1.25, bar)) * (1 - ease.inExpo(inv(B + 1.8, B + 1.97, bar)));
+  g.fillStyle = rgba(mix(P.paper, P.ink, darkness(bar)), 0.78 * ease.outCubic(inv(B + 0.05, B + 0.3, bar)));
   g.fillRect(0, 0, W, H);
   g.save();
   g.globalAlpha = a1;
   text(g, 'It isn’t only for math anymore.', W / 2, H / 2 + 20, { font: font(F.sans, 84, 700), color: col, align: 'center' });
   g.globalAlpha = a2;
-  const s = 1 + 0.08 * ease.inOutCubic(inv(36, 36.9, bar));
+  const s = 1 + 0.08 * ease.inOutCubic(inv(B + 1, B + 1.9, bar));
   g.translate(W / 2, H / 2); g.scale(s, s);
   text(g, 'It needs a name.', 0, 30, { font: font(F.sans, 110, 700), color: P.red, align: 'center' });
   g.restore();
@@ -64,10 +65,11 @@ export function breakdownText(c: Ctx) {
 // ---------------------------------------------------------------- 37–39: the name
 export function wlTitle(c: Ctx) {
   const { g, bar } = c;
-  if (bar >= 38.5) return;
+  const V = S.v10[0];
+  if (bar >= V + 1.5) return;
   const p = kickPulse(bar, 8);
-  const inU = ease.outExpo(inv(37, 37.18, bar));
-  const out = ease.inExpo(inv(38.25, 38.5, bar));
+  const inU = ease.outExpo(inv(V, V + 0.18, bar));
+  const out = ease.inExpo(inv(V + 1.25, V + 1.5, bar));
   g.save();
   g.fillStyle = P.ink; g.globalAlpha = 1 - out; g.fillRect(0, 0, W, H);
   g.translate(W / 2, H / 2);
@@ -81,13 +83,13 @@ export function wlTitle(c: Ctx) {
   g.font = f2;
   for (let i = 0; i < word.length; i++) {
     const ch = word[i]!;
-    const a = ease.outExpo(inv(37 + i / 64, 37 + i / 64 + 0.12, bar));
+    const a = ease.outExpo(inv(V + i / 64, V + i / 64 + 0.12, bar));
     g.globalAlpha = a * (1 - out);
     g.fillStyle = i < 7 ? P.red : P.bone;
     g.fillText(ch, x, 60 + (1 - a) * 30);
     x += g.measureText(ch).width - 3;
   }
-  g.globalAlpha = ease.outCubic(inv(37.6, 37.9, bar)) * (1 - out);
+  g.globalAlpha = ease.outCubic(inv(V + 0.6, V + 0.9, bar)) * (1 - out);
   text(g, 'November 13, 2013', 0, 170, { font: font(F.code, 34, 400), color: '#9A9CA3', align: 'center' });
   g.restore();
 }

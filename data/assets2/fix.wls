@@ -1,0 +1,12 @@
+dir = FileNameJoin[{DirectoryName[$InputFileName], "..", "..", "assets", "wl"}];
+Needs["Wolfram`QuantumFramework`"];
+qc = QuantumCircuitOperator[{"H", "CNOT" -> {1, 2}, "CNOT" -> {2, 3}}];
+d = qc["Diagram"];
+Print[Head[d], " ", ByteCount[d]];
+Print[Short[InputForm[d], 3]];
+Export[FileNameJoin[{dir, "x_quantum_circuit.png"}], Show[d, ImageSize -> 560, Background -> White], ImageResolution -> 144];
+st = qc[];
+Print[Head[st], " ", st["Probabilities"]];
+Export[FileNameJoin[{dir, "x_quantum_probs.png"}], Show[st["ProbabilityPlot"], ImageSize -> 420, Background -> White], ImageResolution -> 144];
+fb = ResourceData["Fireballs and Bolides"];
+Print[Head[fb], " ", Normal[fb[1]]];

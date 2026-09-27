@@ -1,0 +1,17 @@
+Get["/Users/swish/src/wolfram/WolframFilm/data/assets/common.wl"];
+Print["ver ", ver["GeodesicPolyhedron"], " ", ver["ExpressionTree"], " ", ver["WordCloud"]];
+gp = GeodesicPolyhedron["Icosahedron", 4];
+g = Graphics3D[{EdgeForm[{GrayLevel[0.2], AbsoluteThickness[0.6]}], gp}, Boxed -> False, Lighting -> "Neutral", ViewPoint -> {1.6, -2.4, 1.2}];
+g = Graphics3D[{EdgeForm[{White, AbsoluteThickness[0.8]}], MapIndexed[{ColorData["SunsetColors"][0.25 + 0.7 Rescale[Mean[#1[[1]]][[3]], {-1, 1}]], #1} &, MeshPrimitives[gp, 2]]}, Boxed -> False, Lighting -> "Neutral", ViewPoint -> {1.6, -2.4, 1.2}];
+save["v13_geodesic", g, {480, 360}, "GeodesicPolyhedron[\"Icosahedron\", 4]", "GeodesicPolyhedron", "coloured by height"];
+writeManifest[]; Exit[];
+lex = Import["/Users/swish/src/wolfram/WolframFilm/data/lexicon.json", "RawJSON"];
+w = Select[{#["Name"], Lookup[Replace[#["Frequencies"], Except[_Association] -> <||>], "All", 0]} & /@ lex, #[[2]] > 0 &];
+w = TakeLargest[Association[Rule @@@ w], 600];
+Print["words ", Length[w]];
+wc = WordCloud[w, ColorFunction -> (Blend[{GrayLevel[0.55], RGBColor["#DD1100"]}, #] &), FontFamily -> "Source Sans Pro", ImageSize -> {1600, 900}, WordOrientation -> {{0}}, ScalingFunctions -> (#^0.35 &), Background -> None];
+img = Rasterize[wc, ImageResolution -> 72, Background -> None];
+Export[$out <> "hero_wordcloud.png", img];
+$manifest["hero_wordcloud"] = <|"file" -> "hero_wordcloud.png", "code" -> "WordCloud[TakeLargest[WolframLanguageData[All, \"Frequencies\"], 600]]", "versionIntroduced" -> ToString[ver["WordCloud"]], "width" -> 1600, "height" -> 900, "notes" -> "top 600 symbols by usage frequency (All corpus), transparent background, exported at 1x"|>;
+Print[ImageDimensions[img]];
+writeManifest[];

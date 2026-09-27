@@ -2,7 +2,7 @@
 
 A short film about **the Wolfram Language (Mathematica) as a language**: a computational language that grows the way a natural language does, word by word, as the interface between people and machines. The focus is not mathematics. It covers vocabulary, grammar, meaning and knowledge of the world, and finally machines that speak it too.
 
-**Length** 2:30 (75 bars) · **Tempo** 120 BPM, so 1 bar = 2.000 s and 1 beat = 0.500 s · **Picture** 1920×1080, 60 fps · **Sound** a score composed in code, no narration
+**Length** 2:42 (81 bars) · **Tempo** 120 BPM, so 1 bar = 2.000 s and 1 beat = 0.500 s · **Picture** 1920×1080, 60 fps · **Sound** a score composed in code, no narration
 
 ## The idea
 
@@ -49,35 +49,37 @@ The HUD is a lexicon: a running **word count** (554 → 6,801) in the corner and
 - **Type**: Source Sans 3 for captions and dictionary headwords (with Source Serif 4 italic for the "pronunciation/part-of-speech" line), Source Code Pro for words-as-code, VT323 for the 1981 terminal.
 - **Motion**: holds and snaps. Words arrive on 16th notes, cuts and chrome flips land on downbeats, and the window never floats aimlessly.
 
-## Shot list (bar = 2 s)
+## Shot list (bar = 2 s) — v3 structure, 81 bars / 2:42
 
-| Bars | Time | Section | Music | Picture and on-screen text |
-|---|---|---|---|---|
-| 0–4 | 0:00 | **Cold open** | Rule 30 pluck melody alone | Black. A cursor blinks. Types: **"Every language starts with a few words."** |
-| 4–8 | 0:08 | **1979–81 · SMP** | + pad | Green-phosphor terminal (VT323). SMP-style session lines type in. *"1979. A 20-year-old physicist writes a language for talking to his computer: SMP."* |
-| 8–10 | 0:16 | **1986** | + soft kick | The terminal collapses to a point. White page, a lone cursor. *"1986. He starts again, with a language for everything."* |
-| 10–12 | 0:20 | **The name** | riser | The word `Mathematica` types itself, letter by letter. *"Steve Jobs suggests the name."* |
-| 12–16 | 0:24 | **June 23, 1988 · 1.0** | **DROP 1** | Mac System 6 window (1-bit, striped title bar). All **554** words burst out and settle into a lexicon grid, the most common word largest (`List`, `Rule`, `Times`, `Set`…). Counter **554**. *"Mathematica 1.0: 554 words."* |
-| 16–18 | 0:32 | **NeXT** | | Chrome flips to NeXTSTEP greys. *"Bundled with every NeXT computer."* |
-| 18–20 | 0:36 | **Grammar** | | `f[x]`: one form for everything. A string, a colour and a picture each unfold into `Head[args]` trees. *"One grammar for everything."* |
-| 20–22 | 0:40 | **2.0 · 1991** | groove | Windows 3.1 chrome. +263. Headword **Module**. *"It learns to keep things local, and to talk to other programs."* |
-| 22–24 | 0:44 | **3.0 · 1996** | | Windows 95 chrome. +543. The notebook turns inside out: its cells are `Cell[…]` expressions. *"The notebook itself is written in the language."* |
-| 24–26 | 0:48 | **4.0 · 1999** | hats in 16ths | Mac OS 9 Platinum. +186. **Import / Export**: file icons flow in and out. *"It learns to read and write the world's formats."* |
-| 26–28 | 0:52 | **5.1 · 2004** | | Aqua. `Red Blue Green Orange Yellow Gray…` drop in, each in its own colour. *"It learns the names of colours."* |
-| 28–32 | 0:56 | **6.0 · 2007** | filter follows the slider | The 2007 redesign. +611. `CountryData`, `CityData`, `WordData`, `FinancialData`. A `Manipulate` slider drives the **music's filter**. *"It learns about the world, and it starts to answer back."* |
-| 32–33 | 1:04 | **7 · 2008** | cuts every bar | +399. `Image`, `Speak`. *"It learns to see, and to speak."* |
-| 33–34 | 1:06 | **8 · 2010** | | +638. A free-form input line (plain English) turns into code. *"It learns to understand English."* |
-| 34–35 | 1:08 | **9 · 2012** | | +398. `Quantity[3.2, "Kilometers"]`, with the Suggestions Bar below. *"It learns units."* |
-| 35–37 | 1:10 | **Breakdown** | pad, arpeggio, riser | The ground darkens. *"It isn't just for math anymore. It needs a name."* |
-| 37–45 | 1:14 | **Wolfram Language · 2013–14** | **DROP 2** | Flip to ink. **The Wolfram Language.** Version 10 adds **1,022 words, the biggest release ever**, raining into a wall. Entity blobs: `Entity["Country", "France"]`. Headword **Entity**: *"a thing in the world, as an expression."* *"Free on every Raspberry Pi."* |
-| 45–46 | 1:30 | **11 · 2016** | | +518. `NetTrain`, `Audio`. *"It learns to learn."* |
-| 46–47 | 1:32 | **12 · 2019** | | +793. `SpeechRecognize`. *"It learns to listen."* |
-| 47–48 | 1:34 | **13 · 2021** | | +328 |
-| 48–52 | 1:36 | **13.3 · 2023** | a "voice" lead (formant synth) | A chat notebook. A human writes in English, and an LLM answers *in Wolfram Language*, which evaluates. `LLMFunction`, `ChatObject`. *"Now machines learn to speak it."* |
-| 52–54 | 1:44 | **14.x · 2024–25** | filter down | `SemanticSearch`, `Tabular`; **14.3's dark mode** flips the window. |
-| 54–60 | 1:48 | **15 · 2026** | melody spotlit | +108. **MusicNote**, `MusicChord`, `MusicScore`. The melody you hear appears as `MusicNote[…]` expressions and as a score. *"It learns music."* |
-| 60–68 | 2:00 | **Climax** | biggest section, key lift | All 6,801 words as one wall, sized by real usage frequency. A growth curve draws across it, 1988 → 2026, one version per beat. Stats snap in: *words got longer: 8.1 → 15.4 letters*; *219 words ask questions: …Q*; *634 carry a person's name*. |
-| 68–75 | 2:16 | **Outro** | final chord; Rule 30 melody returns | Back to a light, modern notebook. `In[1]:=` with a blinking cursor. *"6,801 words. Still growing."* Title: **The Wolfram Language · 1988–2026**. |
+Every window output below is **computed by the Wolfram Language** (local 15.0 kernel via `wolframscript`, scripts in `data/assets/`), not drawn to look like it.
+
+| Bars | Time | Section | Picture (window output · narrator) |
+|---|---|---|---|
+| 0–4 | 0:00 | Cold open | "Every language starts with a few words." |
+| 4–8 | 0:08 | SMP 1979–81 | green-phosphor session `#I[1]:: Ex[(a + b)^3]` |
+| 8–12 | 0:16 | 1986 · the name | "He starts again…" · `Mathematica` typed · Jobs suggested the name |
+| 12–16 | 0:24 | **1.0** Mac, 1-bit (DROP) | `Names["*"]` → the first 554 words · `Plot3D` dithered + `-SurfaceGraphics-` |
+| 16–20 | 0:32 | NeXT (4 greys) · grammar | `Characters["NeXT"]` · `FullForm[{x -> 1, f[y]}]` → tree |
+| 20–22 | 0:40 | **2.0** Windows 3.1 | `StringReverse` · pastel `ParametricPlot3D` |
+| 22–24 | 0:44 | **3.0** Windows 95 | text cell flips to `Cell[…]` · BasicInput palette |
+| 24–26 | 0:48 | **4 / 4.2** Mac OS 9 | `Import` · `CellularAutomaton[30]` grows row by row |
+| 26–28 | 0:52 | **5.1** Windows XP | named colours → `RGBColor[…]` · a colourful named-colour graphic |
+| 28–32 | 0:56 | **6.0** Mac OS X | `WordData` · Europe from `CountryData` · `TuringMachine` · `Manipulate[Plot3D…]` drives the music's filter |
+| 32–34 | 1:04 | **…Plot families** | 8 real plots, one per beat; every *Plot/*Chart word scrolls behind |
+| 34–37 | 1:08 | 7 · 8 · 9 | `Speak` · free-form English · units + Suggestions Bar |
+| 37–39 | 1:14 | Breakdown | "It isn't only for math anymore. It needs a name." |
+| 39–45 | 1:18 | **The Wolfram Language · 10** (DROP 2) | title card · `Interpreter` → Entity · night-side globe (`GeoGraphics`) · `WordTranslation` · entities |
+| 45–48 | 1:30 | **11** · repositories | `NetTrain` · `ResourceFunction["BirdSay"]` · cards: Demonstrations 2007, Community 2013, Data 2017, Neural Net 2018, Function 2019 · "Now anyone can add words." |
+| 48–49.5 | 1:36 | **12** | `MoleculePlot3D` · `SystemModel` |
+| 49.5–52 | 1:39 | **13.2** astronomy | `AstroGraphics` · "From the Earth to the stars." |
+| 52–56 | 1:44 | **13.3** chat | chat cell → LLM answers in code → evaluates (Alice word counts) |
+| 56–58 | 1:52 | **14.x** dark mode | `Tabular` of the language's own releases |
+| 58–64 | 1:56 | **15** | AI chatbar → `MusicScore` of the melody you hear |
+| 64–66 | 2:08 | **2026 · agents** | a terminal: an AI calling the language (the real calls used to make this film) |
+| 66–74 | 2:12 | Climax | the whole lexicon wall, growth curve, statements (most common word, longer words, …Q, eponyms) |
+| 74–81 | 2:28 | Outro | fresh notebook `In[1]:=` · "6,801 words. Still growing." |
+
+Additional verified facts for v3: CellularAutomaton 4.2 (2002); TuringMachine 6.0 (2007); Data Repository Apr 2017; Neural Net Repository Jun 2018; Function Repository Jun 2019 (ResourceFunction 12.0); Paclet Repository Mar 2023; Prompt Repository Jun 2023; Demonstrations May 2007; Community Jul 2013; SystemModel 11.3 (2018; 3D animation is a System Modeler product feature); GeoGraphics 10.0; AstroGraphics 13.2; FindSolarEclipse 15.0; Wolfram Foundation Tool (MCP) Feb 23, 2026.
 
 ## Port notes (for the later WolfAnim/WL version)
 

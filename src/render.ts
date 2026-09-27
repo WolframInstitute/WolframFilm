@@ -2,7 +2,9 @@
 //   bun src/render.ts video [--from s] [--to s] [--samples n] [--out out/film.mp4] [--crf 16]
 //   bun src/render.ts stills --at 12.5,30,61 [--scale 0.5]
 //   bun src/render.ts sheet [--from s] [--to s] [--n 24] [--cols 6] [--out out/sheet.png]
-import { createCanvas, GlobalFonts } from '@napi-rs/canvas';
+import { createCanvas, GlobalFonts, loadImage } from '@napi-rs/canvas';
+import { readFileSync } from 'fs';
+import { loadAssets, ASSETS } from './core/assets';
 import { readdirSync, mkdirSync, writeFileSync } from 'fs';
 import { spawn } from 'child_process';
 import { setCanvasFactory } from './core/draw';
@@ -12,6 +14,7 @@ import './film/index';
 
 for (const f of readdirSync('assets/fonts')) if (f.endsWith('.ttf')) GlobalFonts.registerFromPath(`assets/fonts/${f}`);
 setCanvasFactory((w, h) => createCanvas(w, h) as any);
+await loadAssets({ image: (p) => loadImage(p), json: async (p) => JSON.parse(readFileSync(p, 'utf8')) }, ASSETS);
 
 const args = process.argv.slice(2);
 const mode = args[0] ?? 'sheet';
@@ -63,7 +66,7 @@ if (mode === 'stills') {
     '-y', '-v', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgba', '-s', `${W}x${H}`, '-r', String(FPS), '-i', '-',
     '-ss', String(from), '-t', String(to - from), '-i', audio,
     '-map', '0:v', '-map', '1:a',
-    '-c:v', 'libx264', '-preset', 'slow', '-crf', crf, '-pix_fmt', 'yuv420p', '-tune', 'animation',
+    '-c:v', 'libx264', '-preset', opt('preset', 'slow')!, '-crf', crf, '-pix_fmt', 'yuv420p', '-tune', 'animation',
     '-c:a', 'aac', '-b:a', '320k', '-movflags', '+faststart', '-shortest', out,
   ], { stdio: ['pipe', 'inherit', 'inherit'] });
   const f0 = Math.round(from * FPS), f1 = Math.round(to * FPS);
