@@ -1,7 +1,8 @@
 // bun src/directors.ts > artifact/data.json — the director's-commentary data for the player page.
 // Everything except the commentary text is pulled from the film's own source.
+import { readFileSync } from 'node:fs';
 import { S, BAR, type Section } from './core/time';
-import { ERAS, CAPTIONS, ENTRIES, LABELS, PRINTS } from './film/story';
+import { CAPTIONS, ENTRIES, LABELS, PRINTS } from './film/story';
 import { WORDS } from './core/lexicon';
 import archive from '../assets/archive/manifest.json';
 
@@ -123,39 +124,15 @@ const NOTES: Partial<Record<Section, { title: string; notes: string[]; refs?: [s
 const inSec = (k: Section, bar: number) => bar >= S[k][0] && bar < S[k][1];
 const symbolsIn = (code: string) => [...new Set((code.match(/\$?[A-Z][A-Za-z0-9]*/g) ?? []).filter((w) => known.has(w)))];
 
-const EXTRA_SNIPPETS: { at: number; code: string; note: string }[] = [
-  { at: 4.1, code: 'Ex[(a + b)^3]', note: 'SMP' },
-  { at: 4.9, code: 'Graph[Sin[1/x],x,0.02,0.2]', note: 'SMP, from the Reference Manual §10.2' },
-  { at: S.v8[0], code: 'countries in europe', note: 'free-form input (plain English)' },
-  { at: S.llm[0], code: 'What are the ten most common words in Alice in Wonderland?', note: 'chat input' },
-  { at: S.v15[0] + 0.1, code: 'Write the melody we are hearing as a score', note: 'AI chatbar request' },
-  { at: S.families[0] + 0 / 4, code: "ContourPlot[Sin[x] Cos[y] + Cos[x y/2], {x, -4, 4}, {y, -4, 4}]", note: 'ContourPlot tile' },
-  { at: S.families[0] + 1 / 4, code: "DensityPlot[Sin[x^2 + y^2], {x, -4, 4}, {y, -4, 4}, ColorFunction -> \"Rainbow\"]", note: 'DensityPlot tile' },
-  { at: S.families[0] + 2 / 4, code: "StreamPlot[{y, -Sin[x] - y/5}, {x, -4, 4}, {y, -3, 3}]", note: 'StreamPlot tile' },
-  { at: S.families[0] + 3 / 4, code: "PolarPlot[{Sin[4 t] + Cos[3 t]/2, Cos[5 t]}, {t, 0, 2 Pi}]", note: 'PolarPlot tile' },
-  { at: S.families[0] + 4 / 4, code: "ParametricPlot3D[{Sin[u] + 2 Sin[2 u], Cos[u] - 2 Cos[2 u], -Sin[3 u]} + 0.45 {Cos[v] Cos[u], Cos[v] Sin[u], Sin[v]}, {u, 0, 2 Pi}, {v, 0, 2 Pi}]", note: 'ParametricPlot3D tile' },
-  { at: S.families[0] + 5 / 4, code: "SphericalPlot3D[1 + Sin[5 t] Sin[5 p]/3, {t, 0, Pi}, {p, 0, 2 Pi}]", note: 'SphericalPlot3D tile' },
-  { at: S.families[0] + 6 / 4, code: "RegionPlot3D[Sin[6 x] + Sin[6 y] + Sin[6 z] > 0 && x^2 + y^2 + z^2 < 1, ...]", note: 'RegionPlot3D tile' },
-  { at: S.families[0] + 7 / 4, code: "ComplexPlot3D[(z^3 - 1)/(z^2 + 1), {z, -2 - 2 I, 2 + 2 I}]", note: 'ComplexPlot3D tile' },
-  { at: S.v3[0] + 1.1, code: 'Sum[1/n^2, {n, 1, Infinity}]', note: 'typed as \u2211 1/n\u00b2 from the BasicInput palette' },
-  { at: S.v11[0], code: 'NetModel["Wolfram ImageIdentify Net V1"][mandrill]', note: 'In[1], with the image pasted inline' },
-  { at: S.agents[0] + 0.3, code: 'wolframscript -file data/lexicon.wls', note: 'terminal' },
-  { at: S.agents[0] + 0.6, code: 'wolframscript -file data/assets/a5.wls', note: 'terminal: the globe' },
-  { at: S.agents[0] + 0.9, code: 'wolframscript -file data/assets/a7.wls', note: 'terminal: Orion' },
-  { at: S.agents[0] + 1.2, code: 'wolframscript -file data/assets2/extra.wls', note: 'terminal: parallel, quantum, fireballs' },
-  { at: S.agents[0] + 1.5, code: 'bun src/render.ts video', note: 'terminal: the renderer' },
-  { at: S.outro[0] + 1.6, code: 'CopyFile["out/film.mp4", CloudObject["WolframFilm/In1.mp4", Permissions -> "Public"]]', note: 'deploys this film' },
-];
+// Only code that runs as-is in a fresh 15.0 kernel, in order (later cells reuse `versions`, `julia`, `cf`, `pq`).
+// Verified by evaluating every entry: no messages, no $Failed.
+const RUNNABLE: { sec: Section; at: number; label: string; code: string }[] = JSON.parse(readFileSync('data/runnable.json', 'utf8'));
 
 const sections = (Object.keys(S) as Section[]).map((k) => {
   const [b0, b1] = S[k];
   const n = NOTES[k] ?? { title: k, notes: [] };
   const snippets: { t: number; code: string; label: string }[] = [];
-  for (const e of ERAS) for (const c of e.cells) {
-    if (!inSec(k, c.at)) continue;
-    if (c.kind === 'input' && c.text) snippets.push({ t: T(c.at), code: c.text, label: `In[${c.n}]` });
-  }
-  for (const x of EXTRA_SNIPPETS) if (inSec(k, x.at)) snippets.push({ t: T(x.at), code: x.code, label: x.note });
+  for (const x of RUNNABLE) if (x.sec === k) snippets.push({ t: T(S[k][0] + x.at), code: x.code, label: x.label });
   snippets.sort((a, b) => a.t - b.t);
   const syms = new Set<string>();
   for (const s of snippets) for (const w of symbolsIn(s.code)) syms.add(w);

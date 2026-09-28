@@ -29,6 +29,10 @@
   .strip button.on { background: #3A1A14; }
   .strip button:focus-visible { outline: 2px solid var(--bone); outline-offset: -2px; }
   .strip .head { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--red); pointer-events: none; }
+  .mp4 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-size: 14.5px; }
+  .mp4 a { color: #4DA3FF; font: 600 14.5px var(--mono); text-decoration: underline; text-underline-offset: 3px; word-break: break-all; }
+  .mp4 a:hover, .mp4 a:focus-visible { color: #8CC4FF; }
+  .mp4 span { color: var(--muted); }
   .legend { color: var(--muted); font-size: 13px; }
   .player-note { color: var(--muted); font-size: 13px; }
   aside { max-height: calc(100vh - 36px); overflow-y: auto; border-left: 1px solid var(--line); padding-left: 18px; scroll-behavior: smooth; }
@@ -74,13 +78,14 @@
 <div class="wrap">
   <header class="top">
     <h1><b>In[1]:=</b> the life of a language</h1>
-    <p>Director’s cut · the Wolfram Language, 1988–2026 · 2:48 · every snippet, source and note, following the film</p>
+    <p>Director’s cut · the Wolfram Language, 1988–2026 · 2:48 · every snippet runs as-is in Wolfram Language 15.0</p>
   </header>
 
   <section class="stage" aria-label="Film">
     <video id="film" controls playsinline preload="auto" poster="video/poster.jpg"></video>
     <div class="now" aria-live="polite"><span class="t" id="nowT">0:00</span><span class="title" id="nowTitle"></span><span class="era" id="nowEra"></span></div>
     <div class="strip" id="strip" role="list" aria-label="Chapters"><div class="head" id="head"></div></div>
+    <div class="mp4"><span>Published MP4, deployed with <code>CopyFile[…, CloudObject[…, Permissions -> "Public"]]</code>:</span><a href="https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1.mp4" target="_blank" rel="noopener">https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1.mp4</a></div>
     <div class="legend">Chapters: click to jump. Snippets in the sidebar: <strong>Copy</strong> copies the code, the time button jumps the film there.</div>
     <div class="player-note" id="pnote" hidden></div>
   </section>
