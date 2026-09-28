@@ -7,7 +7,8 @@
     "preview": "vite",
     "sheet": "bun src/render.ts sheet",
     "video": "bun src/render.ts video",
-    "build": "bun src/music/render-audio.ts && bun src/build.ts"
+    "build": "bun src/music/render-audio.ts && bun src/build.ts --out out/film-master.mp4 && ffmpeg -v error -y -i out/film-master.mp4 -c:v libx264 -preset slow -crf 22 -tune animation -pix_fmt yuv420p -c:a aac -b:a 256k -movflags +faststart out/film.mp4",
+    "deploy": "wolframscript -file data/deploy.wls"
   },
   "devDependencies": {
     "@types/bun": "latest",
