@@ -750,3 +750,42 @@ export function typesetCell(at: number, kind: 'in' | 'out', n: number, nb: NbSty
     },
   };
 }
+
+/** CloudObject[url] as the front end shows it: tall thin brackets and a blue hyperlink; a pointer hovers to underline it. */
+export function cloudObjectCell(at: number, url: string, nb: NbStyle, n: number, hoverAt?: number): Cell {
+  return {
+    kind: 'custom', at, h: 34, n, lab: 'out',
+    draw: (g, x, y, _w, bar) => {
+      const u = ease.outCubic(inv(at, at + 0.1, bar));
+      g.save(); g.globalAlpha = u;
+      const st = nb.output, cy = y + 22;
+      const w0 = drawText(g, 'CloudObject', x, cy, st, nb.aa);
+      const bx = x + w0 + 3;
+      g.strokeStyle = '#B5B5B5'; g.lineWidth = 1.2;
+      const bracket = (bx: number, open: boolean) => {
+        g.beginPath(); g.moveTo(bx + (open ? 4 : -4), y + 3); g.lineTo(bx, y + 3); g.lineTo(bx, y + 29); g.lineTo(bx + (open ? 4 : -4), y + 29); g.stroke();
+      };
+      bracket(bx, true);
+      const link = '#2F5FB3';
+      const lw = drawText(g, url, bx + 7, cy, { ...st, color: link }, nb.aa);
+      bracket(bx + lw + 14, false);
+      if (hoverAt !== undefined && bar >= hoverAt) {
+        const hu = ease.outCubic(inv(hoverAt, hoverAt + 0.2, bar));
+        g.fillStyle = link; g.fillRect(bx + 7, cy + 3, lw * hu, 1.3);
+        pointer(g, bx + 7 + lw * 0.62, cy + 6);
+      }
+      g.restore();
+    },
+  };
+}
+/** The link-hover hand cursor. */
+export function pointer(g: G, x: number, y: number) {
+  g.save(); g.translate(x, y);
+  g.fillStyle = '#FFF'; g.strokeStyle = '#000'; g.lineWidth = 1.1;
+  g.beginPath();
+  g.moveTo(4, 0); g.lineTo(4, 9); g.lineTo(6, 9); g.lineTo(6, 6); g.lineTo(8.5, 6); g.lineTo(8.5, 9); g.lineTo(11, 9); g.lineTo(11, 7);
+  g.lineTo(13.5, 7); g.lineTo(13.5, 10); g.lineTo(15, 10); g.lineTo(15, 16); g.lineTo(13, 20); g.lineTo(5, 20); g.lineTo(0, 13); g.lineTo(0, 11);
+  g.lineTo(2.5, 11); g.lineTo(2, 11); g.lineTo(2, 1); g.quadraticCurveTo(3, -1, 4, 0);
+  g.closePath(); g.fill(); g.stroke();
+  g.restore();
+}

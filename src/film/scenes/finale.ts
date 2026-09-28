@@ -9,7 +9,8 @@ import { drawWall } from '../wall';
 import { RELEASES, TOTAL_WORDS, byName, WORDS } from '../../core/lexicon';
 import { renderScreen } from '../../ui/screen';
 import { chrome } from '../../ui/chrome';
-import { drawNotebook, NB } from '../../ui/notebook';
+import { drawNotebook, NB, type Cell } from '../../ui/notebook';
+import { cloudObjectCell } from '../../ui/widgets';
 import { drawSpikey } from '../spikey';
 
 const YEARS: Record<string, number> = {
@@ -173,9 +174,9 @@ export const DEPLOY = {
   mp4: 'https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1.mp4',
   page: 'https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1',
 };
-const DEPLOY_CELLS = [
+const DEPLOY_CELLS: Cell[] = [
   { kind: 'input' as const, at: O + 1.6, n: 1, type: 0.6, text: 'CopyFile["out/film.mp4", CloudObject["WolframFilm/In1.mp4", Permissions -> "Public"]]' },
-  { kind: 'output' as const, at: O + 2.4, n: 1, text: `CloudObject[${DEPLOY.mp4}]` },
+  cloudObjectCell(O + 2.4, DEPLOY.mp4, NB.v13, 1, O + 3.2),
 ];
 
 export function outro(c: Ctx) {
