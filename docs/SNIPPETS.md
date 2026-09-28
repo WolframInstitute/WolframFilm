@@ -338,7 +338,13 @@ Take[WordCounts[ExampleData[{"Text", "AliceInWonderland"}], IgnoreCase -> True],
 Tabular[versions]
 ```
 
-### 57. `bigsur@61#0` · 2:04.0 · v15 · Soundtrack.nb · In[1]
+### 57. `dark@59#2` · 1:59.9 · v14 · Untitled-1.nb · In[2]
+
+```wl
+TakeLargestBy[TransformColumns[versions, "words per month" -> Function[Round[#["new words"]/#["since previous"], 0.1]]], "words per month", 3]
+```
+
+### 58. `bigsur@61#0` · 2:04.0 · v15 · Soundtrack.nb · In[1]
 
 ```wl
 MusicScore[{MusicNote["A4", 3/8], MusicNote["C5", 1/8], MusicNote["E5", 1/4], MusicNote["D5", 1/4], MusicNote["C5", 3/8], MusicNote["A4", 1/8], …}]

@@ -18,3 +18,6 @@ Print[InputForm[ColumnTypes[t]]];
 Export[FileNameJoin[{dir, "x_tabular.png"}], Rasterize[t, ImageResolution -> 144]];
 Print[InputForm[ColumnTypes[t]]];
 Print[Table[WolframLanguageData[r[[4]], "VersionIntroduced"], {r, rel}]];
+t2 = TakeLargestBy[TransformColumns[t, "words per month" -> Function[Round[#["new words"]/#["since previous"], 0.1]]], "words per month", 3];
+Print[InputForm[Normal[t2[All, {"version", "words per month"}]]]];
+Export[FileNameJoin[{dir, "x_tabular2.png"}], Rasterize[t2[All, {"version", "released", "new words", "since previous", "words per month", "signature word"}], ImageResolution -> 144]];

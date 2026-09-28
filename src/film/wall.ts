@@ -72,38 +72,75 @@ export function wall(): Placed[] {
  * Draw the wall. `presence` 0..1 scales how visible the settled words are (a faint texture behind
  * the window, or the full wall at the climax). New words flash red, then settle.
  */
-export function drawWall(g: G, bar: number, presence: number, opts: { dimBefore?: number; emph?: (name: string) => boolean; emphU?: number; fade?: number; only?: boolean } = {}) {
-  const ws = wall();
-  const dk = darkness(bar);
+type WallOpts = { dimBefore?: number; emph?: (name: string) => boolean; emphU?: number; fade?: number; only?: boolean };
+
+function drawWord(g: G, p: Placed, age: number, presence: number, dk: number, opts: WallOpts, st: { font: string }) {
   const settled = mix('#B9B3A7', '#3A3D44', dk);
   const settledStrong = mix('#2A2825', '#D8D4CB', dk);
+  const pop = ease.outBack(inv(0, 0.18, age), 2.2);
+  const heat = Number.isFinite(age) ? Math.exp(-age * 1.6) : 0;
+  const baseA = 0.18 + 0.82 * presence;
+  let a = baseA * pop;
+  if (opts.dimBefore !== undefined && p.appear < opts.dimBefore) a *= 0.55;
+  let col = heat > 0.02 ? mix(presence > 0.5 ? settledStrong : settled, P.red, heat) : presence > 0.5 ? settledStrong : settled;
+  if (opts.emph && (opts.emphU ?? 0) > 0) {
+    const on = opts.emph(p.w.name);
+    const eu = opts.emphU!;
+    if (on) { col = mix(col, P.redHot, eu); a = a + (1 - a) * eu; }
+    else a *= 1 - 0.7 * eu;
+  }
+  if (opts.fade !== undefined) a *= opts.fade;
+  const s = p.size * (0.6 + 0.4 * pop) * (1 + 0.25 * heat);
+  const f = font(F.sans, Math.round(s * 4) / 4, 600);
+  if (f !== st.font) { g.font = f; st.font = f; }
+  g.globalAlpha = clamp(a + heat * 0.9);
+  g.fillStyle = col;
+  const dx = (p.width * (1 - s / p.size)) / 2;
+  g.fillText(p.w.name, p.x + dx, p.y);
+}
+
+// Settled words (arrived more than SETTLE bars ago) live in a bitmap, rebuilt at most every half bar.
+const SETTLE = 4;
+const layer: { key: string; c: any } = { key: '', c: null };
+
+/**
+ * Draw the wall. `presence` 0..1 scales how visible the settled words are (a faint texture behind
+ * the window, or the full wall at the climax). New words flash red, then settle.
+ */
+export function drawWall(g: G, bar: number, presence: number, opts: WallOpts = {}) {
+  const ws = wall();
+  const dk = darkness(bar);
+  const tr = g.getTransform();
+  const cacheable = !opts.only && !opts.emph && opts.fade === undefined && opts.dimBefore === undefined
+    && Math.abs(tr.a - 1) < 1e-6 && Math.abs(tr.d - 1) < 1e-6 && tr.b === 0 && tr.c === 0;
   g.save();
   g.textBaseline = 'alphabetic';
-  let lastFont = '';
-  for (const p of ws) {
-    if (bar < p.appear) continue;
-    if (opts.only && !opts.emph!(p.w.name)) continue;
-    const age = bar - p.appear; // bars
-    const pop = ease.outBack(inv(0, 0.18, age), 2.2);
-    const heat = Math.exp(-age * 1.6);
-    const baseA = 0.18 + 0.82 * presence;
-    let a = baseA * pop;
-    if (opts.dimBefore !== undefined && p.appear < opts.dimBefore) a *= 0.55;
-    let col = heat > 0.02 ? mix(presence > 0.5 ? settledStrong : settled, P.red, heat) : presence > 0.5 ? settledStrong : settled;
-    if (opts.emph && (opts.emphU ?? 0) > 0) {
-      const on = opts.emph(p.w.name);
-      const eu = opts.emphU!;
-      if (on) { col = mix(col, P.redHot, eu); a = a + (1 - a) * eu; }
-      else a *= 1 - 0.7 * eu;
+  const st = { font: '' };
+  if (!cacheable) {
+    for (const p of ws) {
+      if (bar < p.appear) continue;
+      if (opts.only && !opts.emph!(p.w.name)) continue;
+      drawWord(g, p, bar - p.appear, presence, dk, opts, st);
     }
-    if (opts.fade !== undefined) a *= opts.fade;
-    let s = p.size * (0.6 + 0.4 * pop) * (1 + 0.25 * heat);
-    const f = font(F.sans, Math.round(s * 4) / 4, 600);
-    if (f !== lastFont) { g.font = f; lastFont = f; }
-    g.globalAlpha = clamp(a + heat * 0.9);
-    g.fillStyle = col;
-    const dx = (p.width * (1 - s / p.size)) / 2;
-    g.fillText(p.w.name, p.x + dx, p.y);
+    g.restore();
+    return;
+  }
+  const cutoff = Math.floor((bar - SETTLE) * 2) / 2;
+  const key = `${cutoff}|${dk.toFixed(4)}|${presence.toFixed(4)}`;
+  if (layer.key !== key) {
+    layer.c ??= makeCanvas(W, H);
+    const lg = layer.c.getContext('2d') as G;
+    lg.setTransform(1, 0, 0, 1, 0, 0);
+    lg.clearRect(0, 0, W, H);
+    lg.textBaseline = 'alphabetic';
+    const lst = { font: '' };
+    for (const p of ws) if (p.appear <= cutoff) drawWord(lg, p, Infinity, presence, dk, {}, lst);
+    layer.key = key;
+  }
+  g.drawImage(layer.c, 0, 0);
+  for (const p of ws) {
+    if (p.appear <= cutoff || bar < p.appear) continue;
+    drawWord(g, p, bar - p.appear, presence, dk, opts, st);
   }
   g.restore();
 }

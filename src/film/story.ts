@@ -158,6 +158,8 @@ export const ERAS: Era[] = [
     cells: [
       inp(at('v14', 0.1), 1, 'Tabular[versions]', 0.15),
       imageCell(at('v14', 0.35), 'x_tabular.png', 640, 221, 1),
+      inp(at('v14', 0.95), 2, 'TakeLargestBy[TransformColumns[versions, "words per month" -> Function[Round[#["new words"]/#["since previous"], 0.1]]], "words per month", 3]', 0.25),
+      imageCell(at('v14', 1.3), 'x_tabular2.png', 600, 137, 2),
     ],
   },
   {
@@ -202,7 +204,8 @@ export const CAPTIONS: Line[] = [
   L('v132', 1.0, 1.9, 'Whole frameworks, one install away.'),
   L('llm', 0.25, 1.9, 'Now machines learn to speak it.', ['machines']),
   L('llm', 2.1, 3.85, 'Natural language for people. Computational language for both.'),
-  L('v14', 0.2, 1.85, 'It keeps a record of itself.'),
+  L('v14', 0.2, 0.9, 'It keeps a record of itself.'),
+  L('v14', 1.0, 1.85, 'Its fastest-growing stretch: 53.8 new words a month.', ['53.8']),
   L('v15', 0.25, 2.85, 'Version 15: it learns music.', ['music']),
   L('v15', 3.0, 5.7, 'The notes you are hearing, as expressions.'),
 ];

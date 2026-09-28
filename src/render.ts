@@ -55,6 +55,38 @@ if (mode === 'stills') {
   const p = opt('out', 'out/sheet.png')!;
   writeFileSync(p, sheet.toBuffer('image/png'));
   console.log(p);
+} else if (mode === 'hash' || mode === 'segment') {
+  // Used by src/build.ts: frames [f0, f1) either hashed (no encoding) or encoded video-only.
+  const f0 = Number(opt('f0')), f1 = Number(opt('f1'));
+  const samples = Number(opt('samples', '1')), shutter = Number(opt('shutter', '0.5'));
+  const acc = samples > 1 ? new Float32Array(W * H * 4) : null;
+  const buf = Buffer.alloc(W * H * 4);
+  const frame = (f: number) => {
+    if (!acc) { renderAt(f / FPS); buf.set(g.getImageData(0, 0, W, H).data as Uint8ClampedArray); return buf; }
+    acc.fill(0);
+    for (let s = 0; s < samples; s++) {
+      renderAt((f + ((s + 0.5) / samples - 0.5) * shutter) / FPS);
+      const d = g.getImageData(0, 0, W, H).data as Uint8ClampedArray;
+      for (let i = 0; i < d.length; i++) acc[i]! += d[i]!;
+    }
+    for (let i = 0; i < buf.length; i++) buf[i] = acc[i]! / samples;
+    return buf;
+  };
+  if (mode === 'hash') {
+    let h = 0n;
+    for (let f = f0; f < f1; f++) h = BigInt.asUintN(64, h * 1099511628211n ^ BigInt(Bun.hash(frame(f))));
+    console.log(JSON.stringify({ f0, f1, hash: h.toString(16) }));
+  } else {
+    const out = opt('out')!;
+    const ff = spawn('ffmpeg', [
+      '-y', '-v', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgba', '-s', `${W}x${H}`, '-r', String(FPS), '-i', '-',
+      '-c:v', 'libx264', '-preset', opt('preset', 'medium')!, '-crf', opt('crf', '16')!, '-pix_fmt', 'yuv420p', '-tune', 'animation', '-threads', opt('threads', '4')!, out,
+    ], { stdio: ['pipe', 'inherit', 'inherit'] });
+    const write = (b: Buffer) => new Promise<void>((res) => { if (ff.stdin.write(b)) res(); else ff.stdin.once('drain', () => res()); });
+    for (let f = f0; f < f1; f++) await write(frame(f));
+    ff.stdin.end();
+    await new Promise((r) => ff.on('close', r));
+  }
 } else if (mode === 'video') {
   const from = Number(opt('from', '0')), to = Number(opt('to', String(DURATION)));
   const samples = Number(opt('samples', '1'));

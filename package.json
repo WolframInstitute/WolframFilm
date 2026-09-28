@@ -6,8 +6,14 @@
     "music": "bun src/music/render-audio.ts",
     "preview": "vite",
     "sheet": "bun src/render.ts sheet",
-    "video": "bun src/render.ts video"
+    "video": "bun src/render.ts video",
+    "build": "bun src/music/render-audio.ts && bun src/build.ts"
   },
-  "devDependencies": { "@types/bun": "latest", "vite": "^7" },
-  "dependencies": { "@napi-rs/canvas": "^1.0.9" }
+  "devDependencies": {
+    "@types/bun": "latest",
+    "vite": "^7"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^1.0.9"
+  }
 }
