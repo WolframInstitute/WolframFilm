@@ -635,3 +635,50 @@ export function rotateCell(at: number, prefix: string, w: number, h: number, n?:
     },
   };
 }
+
+/** Keyboard chord badge, e.g. ⌘ ⇧ T. */
+export function keyChord(g: G, x: number, y: number, keys: string[], alpha = 1) {
+  g.save(); g.globalAlpha = alpha;
+  let cx = x;
+  for (const k of keys) {
+    g.font = font(F.sans, 18, 700);
+    const w = Math.max(34, g.measureText(k).width + 18);
+    g.fillStyle = '#FAFAFA'; g.strokeStyle = '#9A9A9A'; g.lineWidth = 1.2;
+    g.beginPath(); g.roundRect(cx, y, w, 34, 6); g.fill(); g.stroke();
+    g.fillStyle = '#E3E3E3'; g.fillRect(cx + 2, y + 28, w - 4, 4);
+    T(g, k, cx + w / 2, y + 23, F.sans, 18, 700, '#222', 'center');
+    cx += w + 6;
+  }
+  g.restore();
+}
+
+/**
+ * An output shown in StandardForm (a summary box), then selected and converted with
+ * Cmd+Shift+T (Cell ▸ Convert To ▸ TraditionalForm) into its traditional display.
+ */
+export function formSwitchCell(at: number, switchAt: number, head: string, std: string, stdW: number, stdH: number, trad: string, tradW: number, tradH: number, n?: number): Cell {
+  return {
+    kind: 'custom', at, h: tradH + 10, n,
+    draw: (g, x, y, w, bar) => {
+      const u = ease.outCubic(inv(at, at + 0.12, bar));
+      const sel = inv(switchAt - 0.22, switchAt - 0.18, bar) * (1 - inv(switchAt + 0.15, switchAt + 0.25, bar));
+      const flip = ease.inOutCubic(inv(switchAt, switchAt + 0.1, bar));
+      g.save();
+      g.globalAlpha = u;
+      // selection highlight on the cell bracket
+      if (sel > 0) { g.fillStyle = `rgba(80,130,220,${0.55 * sel})`; g.fillRect(x + w + 13, y - 2, 5, tradH + 12); }
+      const sy = Math.abs(Math.cos(flip * Math.PI));
+      g.translate(0, y + tradH / 2); g.scale(1, Math.max(0.02, sy)); g.translate(0, -(y + tradH / 2));
+      if (flip < 0.5) {
+        const cy = y + tradH / 2;
+        const hw = T(g, head + '[', x, cy + 6, F.code, 16.5, 400, '#000');
+        drawAsset(g, std, x + hw + 4, cy - stdH / 2, stdW, stdH);
+        T(g, ']', x + hw + stdW + 10, cy + 6, F.code, 16.5, 400, '#000');
+      } else drawAsset(g, trad, x, y, tradW, tradH);
+      g.restore();
+      // the chord
+      const ku = inv(switchAt - 0.2, switchAt - 0.12, bar) * (1 - inv(switchAt + 0.3, switchAt + 0.4, bar));
+      if (ku > 0) keyChord(g, x + w - 150, y + 6, ['⌘', '⇧', 'T'], ku);
+    },
+  };
+}

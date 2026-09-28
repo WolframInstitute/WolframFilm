@@ -98,6 +98,7 @@ export function spikeyFor(bar: number): { kind: 'v1' | 'v2' | 'modern'; style: S
 export function spikeyMascot(g: G, bar: number) {
   if (bar < S.v1[0] || bar >= S.climax[0]) return;
   if (bar >= S.families[0] && bar < S.families[1]) return;
+  if (bar >= S.agents[0] - 0.1) return; // it's on stage in the agent scene
   const { kind, style } = spikeyFor(bar);
   const intro = ease.outBack(inv(S.v1[0], S.v1[0] + 0.3, bar), 2);
   const r = 46 * intro;
@@ -105,3 +106,34 @@ export function spikeyMascot(g: G, bar: number) {
   drawSpikey(g, bar, 1790, 930, r, kind, style);
 }
 export { inv };
+
+/** Spikey with a face and limbs. `raise` (0..1) lifts the right hand for a high five. */
+export function cuteSpikey(g: G, bar: number, cx: number, cy: number, r: number, raise: number, blink = false) {
+  g.save();
+  // legs
+  g.strokeStyle = '#8A0A00'; g.lineWidth = r * 0.09; g.lineCap = 'round';
+  const step = Math.sin(bar * 4 * Math.PI) * r * 0.08;
+  g.beginPath(); g.moveTo(cx - r * 0.25, cy + r * 0.6); g.lineTo(cx - r * 0.3, cy + r * 1.05 + step); g.stroke();
+  g.beginPath(); g.moveTo(cx + r * 0.25, cy + r * 0.6); g.lineTo(cx + r * 0.3, cy + r * 1.05 - step); g.stroke();
+  // arms (left relaxed, right lifts for the high five)
+  g.beginPath(); g.moveTo(cx - r * 0.7, cy + r * 0.1); g.quadraticCurveTo(cx - r * 1.05, cy + r * 0.35, cx - r * 1.0, cy + r * 0.65); g.stroke();
+  const hx = cx + r * (0.95 + 0.25 * raise), hy = cy + r * (0.5 - 1.25 * raise);
+  g.beginPath(); g.moveTo(cx + r * 0.7, cy + r * 0.05); g.quadraticCurveTo(cx + r * 1.1, cy - r * 0.1 * raise, hx, hy); g.stroke();
+  g.fillStyle = '#8A0A00'; g.beginPath(); g.arc(hx, hy, r * 0.11, 0, 7); g.fill();
+  g.restore();
+  drawSpikey(g, bar, cx, cy, r, 'modern', 'red', 0.6);
+  // face
+  g.save();
+  const ey = cy - r * 0.08, ex = r * 0.28;
+  for (const s of [-1, 1]) {
+    g.fillStyle = '#FFFFFF'; g.beginPath();
+    if (blink) g.ellipse(cx + s * ex, ey, r * 0.2, r * 0.03, 0, 0, 7); else g.ellipse(cx + s * ex, ey, r * 0.2, r * 0.23, 0, 0, 7);
+    g.fill(); g.strokeStyle = '#3A0400'; g.lineWidth = r * 0.03; g.stroke();
+    if (!blink) { g.fillStyle = '#111'; g.beginPath(); g.arc(cx + s * ex + r * 0.06, ey + r * 0.03, r * 0.1, 0, 7); g.fill(); g.fillStyle = '#FFF'; g.beginPath(); g.arc(cx + s * ex + r * 0.1, ey - r * 0.02, r * 0.035, 0, 7); g.fill(); }
+  }
+  g.strokeStyle = '#3A0400'; g.lineWidth = r * 0.05; g.lineCap = 'round';
+  g.beginPath(); g.arc(cx, cy + r * 0.2, r * 0.2, 0.15 * Math.PI, 0.85 * Math.PI); g.stroke();
+  g.fillStyle = 'rgba(255,120,120,0.55)';
+  for (const s of [-1, 1]) { g.beginPath(); g.ellipse(cx + s * r * 0.5, cy + r * 0.2, r * 0.1, r * 0.06, 0, 0, 7); g.fill(); }
+  g.restore();
+}

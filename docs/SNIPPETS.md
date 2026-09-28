@@ -314,10 +314,10 @@ AstroGraphics[Point /@ orionStars, AstroCenter -> Entity["Star", "Alnilam"], Ast
 PacletInstall["Wolfram/QuantumFramework"]
 ```
 
-### 53. `bigsur@46#21` · 1:48.4 · v132 · Untitled-1.nb · In[10]
+### 53. `bigsur@46#21` · 1:48.2 · v132 · Untitled-1.nb · In[10]
 
 ```wl
-QuantumCircuitOperator[{"H", "CNOT" -> {1, 2}, "CNOT" -> {2, 3}}]["Diagram"]
+QuantumCircuitOperator[{"H", "CNOT" -> {1, 2}, "CNOT" -> {2, 3}}]
 ```
 
 ### 54. `bigsur@55#2` · 1:54.0 · llm · Chat.nb · In[1]
@@ -335,7 +335,7 @@ Take[WordCounts[ExampleData[{"Text", "AliceInWonderland"}], IgnoreCase -> True],
 ### 56. `dark@59#0` · 1:58.2 · v14 · Untitled-1.nb · In[1]
 
 ```wl
-Tabular[releases]
+Tabular[versions]
 ```
 
 ### 57. `bigsur@61#0` · 2:04.0 · v15 · Soundtrack.nb · In[1]

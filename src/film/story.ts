@@ -8,7 +8,7 @@ import type { OSKind } from '../ui/chrome';
 import {
   exprFlipCell, manipulateCell, freeformCell, suggestionsCell, entityCell, chatInputCell, chatResponseCell,
   tabularCell, musicScoreCell, summaryBoxCell, netIcon, dsIcon, imageCell, arrayGrowCell,
-  parallelCell, graphGrowCell, relGraphCell, pendulumCell, compileCell, rotateCell, drawRotating,
+  parallelCell, graphGrowCell, relGraphCell, pendulumCell, compileCell, rotateCell, drawRotating, formSwitchCell,
 } from '../ui/widgets';
 import { RELEASES } from '../core/lexicon';
 import { HOOK, slider, MANIP } from '../music/score';
@@ -139,8 +139,9 @@ export const ERAS: Era[] = [
       { ...summaryBoxCell(at('v123', 0.35), 'DataStructure', [['Type', 'PriorityQueue'], ['Length', '5']], dsIcon), n: 12 },
       inp(at('v123', 0.9), 7, CODE.x_tree, 0.25), imageCell(at('v123', 1.2), 'x_tree.png', 420, 280, 7),
       inp(at('v132'), 8, CODE.v13_astro, 0.25), imageCell(at('v132', 0.3), 'v13_astro.png', 520, 350, 8),
-      inp(at('v132', 1), 9, 'PacletInstall["Wolfram/QuantumFramework"]', 0.15),
-      inp(at('v132', 1.2), 10, CODE.x_quantum, 0.2), imageCell(at('v132', 1.45), 'x_quantum_circuit.png', 360, 210, 10),
+      inp(at('v132', 1), 9, 'PacletInstall["Wolfram/QuantumFramework"]', 0.1),
+      inp(at('v132', 1.12), 10, CODE.x_quantum, 0.15),
+      formSwitchCell(at('v132', 1.32), at('v132', 1.65), 'QuantumCircuitOperator', 'x_quantum_std.png', 170, 115, 'x_quantum_trad.png', 380, 210, 10),
     ],
   },
   {
@@ -155,8 +156,8 @@ export const ERAS: Era[] = [
   {
     from: at('v14'), to: S.v14[1], os: 'dark', title: 'Untitled-1.nb', nb: NB.dark,
     cells: [
-      inp(at('v14', 0.1), 1, 'Tabular[releases]', 0.2),
-      tabularCell(at('v14', 0.4), ['version', 'year', 'new words'], releaseRows.slice(0, 15), true),
+      inp(at('v14', 0.1), 1, 'Tabular[versions]', 0.15),
+      imageCell(at('v14', 0.35), 'x_tabular.png', 640, 221, 1),
     ],
   },
   {
@@ -247,7 +248,7 @@ export const PRINTS: Print[] = [
   A('v5', 1.0, 1.85, 'spikey-versions-1.png', '1988 – 2019', 'Spikey, version by version'),
   A('v10', 0.5, 1.35, 'wl2013-raspberry-pi-1.png', '2013', 'Free on every Raspberry Pi', { x: 1380, y: 740, w: 380, h: 170, tilt: 2 }),
   A('llm', 2.0, 3.85, 'chat-notebooks-2023-1.png', '2023', 'The 1988 notebook, and a 2023 chat notebook'),
-  A('v14', 0.1, 1.85, 'v14-functions-1.png', '2024', 'Built-in functions by version, 1 to 14', { tilt: -1 }),
+  A('v14', 0.1, 1.85, 'v14-functions-1.png', '2024', 'Built-in functions by version, 1 to 14', { tilt: -1, y: 200 }),
 ];
 
 /** Era-label schedule (top left). */

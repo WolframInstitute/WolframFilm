@@ -16,5 +16,5 @@ export const CODE = {
   x_fireballs: "GeoBubbleChart[ResourceData[\"Fireballs and Bolides\"][All, #Coordinates -> #TotalRadiatedEnergy &]]",
   x_compile: "cf = FunctionCompile[Function[Typed[n, \"MachineInteger\"], Module[{s = 0., i = 1}, While[i <= n, s += Sin[N[i]]^2; i++]; s]]]",
   x_tree: "ExpressionTree[Unevaluated[Manipulate[Plot[Sin[a x], {x, 0, 2 Pi}], {a, 1, 5}]]]",
-  x_quantum: "QuantumCircuitOperator[{\"H\", \"CNOT\" -> {1, 2}, \"CNOT\" -> {2, 3}}][\"Diagram\"]",
+  x_quantum: "QuantumCircuitOperator[{\"H\", \"CNOT\" -> {1, 2}, \"CNOT\" -> {2, 3}}]",
 };

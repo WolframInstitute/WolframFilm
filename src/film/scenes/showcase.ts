@@ -9,6 +9,7 @@ import { drawAsset, img } from '../../core/assets';
 import { drawRotating } from '../../ui/widgets';
 import { WORDS, byName } from '../../core/lexicon';
 import { COL_X, COL_W, wrap } from '../narrator';
+import { cuteSpikey } from '../spikey';
 
 // ---------------------------------------------------------------- 32–34: words come in families
 const FAMILY = WORDS.filter((w) => /(Plot|Plot3D|Chart|Chart3D)$/.test(w.name)).sort((a, b) => parseFloat(a.ver) - parseFloat(b.ver) || a.name.localeCompare(b.name));
@@ -114,7 +115,7 @@ const AGENT_LINES: { at: number; s: string; kind: 'prompt' | 'call' | 'result' }
   { at: A0 + 1.5, s: '● Bash(bun src/render.ts video)', kind: 'call' },
   { at: A0 + 1.65, s: '  └  9,960 frames · 1920×1080 · 60 fps', kind: 'result' },
 ];
-const THUMBS = ['v1_plot3d.png', 'v2_surface.png', 'v5_colors.png', 'v6_europe.png', 'x_parallel.png', 'v10_globe.png', 'v13_astro.png', 'v12_molecule.png', 'x_quantum_circuit.png', 'v15_eclipse.png', 'fam_complex.png', 'x_fireballs.png'];
+const THUMBS = ['v1_plot3d.png', 'v2_surface.png', 'v5_colors.png', 'v6_europe.png', 'x_parallel.png', 'v10_globe.png', 'v13_astro.png', 'v12_molecule.png', 'x_quantum_trad.png'];
 
 export function agents(c: Ctx) {
   const { g, bar } = c;
@@ -165,5 +166,67 @@ export function agents(c: Ctx) {
   const u2 = ease.outExpo(inv(A0 + 1, A0 + 1.25, bar));
   text(g, 'This film was made that way.', 96, 1010, { font: font(F.sans, 44, 400), color: P.redHot, alpha: u2 * (1 - out) });
   g.restore();
+  highFive(g, bar);
   void measure;
+}
+
+// ---------------------------------------------------------------- the high five
+const CLAUDE = '#D97757';
+/** The Claude Code mascot as pixel art (after the terminal banner). `raise` lifts its right arm. */
+function claudeMascot(g: G, cx: number, cy: number, px: number, raise: number, bar: number) {
+  const body = [
+    '..XXXXXXX..',
+    '..XOXXXOX..',
+    'AAXXXXXXXAA',
+    '..XXXXXXX..',
+    '..X.X.X.X..',
+  ];
+  const w = body[0]!.length * px, h = body.length * px;
+  const x0 = cx - w / 2, y0 = cy - h / 2;
+  const legStep = Math.floor(bar * 8) % 2;
+  body.forEach((row, r) => {
+    [...row].forEach((c, k) => {
+      if (c === '.') return;
+      let dy = 0, dx = 0;
+      if (r === 4 && (k === 2 || k === 6) && legStep) dy = -px * 0.25;
+      if (c === 'A' && k <= 1) { dy = -px * 2.4 * raise; dx = -px * 0.2 * raise; } // the arm facing Spikey goes up
+      g.fillStyle = c === 'O' ? '#1B1B1B' : CLAUDE;
+      g.fillRect(x0 + k * px + dx, y0 + r * px + dy, px + 0.5, px + 0.5);
+    });
+  });
+}
+function spark(g: G, x: number, y: number, u: number) {
+  if (u <= 0 || u >= 1) return;
+  g.save();
+  g.strokeStyle = `rgba(255,236,170,${1 - u})`; g.lineWidth = 5 * (1 - u); g.lineCap = 'round';
+  for (let i = 0; i < 12; i++) {
+    const a = (i / 12) * Math.PI * 2, r0 = 18 + 60 * u, r1 = 40 + 120 * u;
+    g.beginPath(); g.moveTo(x + Math.cos(a) * r0, y + Math.sin(a) * r0); g.lineTo(x + Math.cos(a) * r1, y + Math.sin(a) * r1); g.stroke();
+  }
+  g.fillStyle = `rgba(255,244,200,${0.95 * (1 - u)})`; g.beginPath(); g.arc(x, y, 30 * (1 - u) + 6, 0, 7); g.fill();
+  g.restore();
+}
+export function highFive(g: G, bar: number) {
+  const T0 = A0, HIT = A0 + 1.25;
+  if (bar < T0 + 0.15 || bar >= A0 + 2) return;
+  const out = ease.inCubic(inv(A0 + 1.8, A0 + 2, bar));
+  g.save(); g.globalAlpha = 1 - out;
+  // Spikey: hops from its corner to centre stage, sprouting a face
+  const su = ease.inOutCubic(inv(T0 + 0.15, T0 + 0.55, bar));
+  const hop = Math.sin(Math.PI * su) * 120 + Math.abs(Math.sin(Math.PI * (bar - T0) * 4)) * 14 * (su >= 1 ? 1 : 0);
+  const lean = ease.inOutCubic(inv(HIT - 0.25, HIT, bar)) * (1 - ease.inOutCubic(inv(HIT + 0.1, HIT + 0.35, bar)));
+  const sx = 1790 + (1420 - 1790) * su + 30 * lean, sy = 930 + (860 - 930) * su - hop;
+  const raise = ease.outBack(inv(HIT - 0.3, HIT - 0.05, bar), 1.5) * (1 - ease.inCubic(inv(HIT + 0.3, HIT + 0.5, bar)));
+  const sr = 50 + 10 * su;
+  cuteSpikey(g, bar, sx, sy, sr, raise, bar > HIT && bar < HIT + 0.06);
+  const sh = { x: sx + sr * (0.95 + 0.25 * raise), y: sy + sr * (0.5 - 1.25 * raise) };
+  // Claude: pops up from below
+  const cu = ease.outBack(inv(T0 + 0.5, T0 + 0.75, bar), 1.6);
+  const celebrate = bar > HIT + 0.1 ? Math.abs(Math.sin(Math.PI * (bar - HIT) * 8)) * 18 : 0;
+  const px = 17, ccx = 1740 - 30 * lean, ccy = 1180 - (1180 - 862) * cu - celebrate;
+  claudeMascot(g, ccx, ccy, px, raise, bar);
+  // the slap, where the hands meet
+  const ch = { x: ccx - 5.5 * px - 0.2 * px * raise + px * 0.5, y: ccy - 2.5 * px + 2 * px - 2.4 * px * raise };
+  spark(g, (sh.x + ch.x) / 2, (sh.y + ch.y) / 2, inv(HIT, HIT + 0.35, bar));
+  g.restore();
 }
