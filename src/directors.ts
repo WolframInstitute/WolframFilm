@@ -43,6 +43,7 @@ const NOTES: Partial<Record<Section, { title: string; notes: string[]; refs?: [s
     'The window is Mac System 6, rendered at half resolution and thresholded to one bit. Only pictures are dithered, so text stays crisp. The menus are the 1.0 menus: File, Edit, Cells, Search, Action, Styles, Windows.',
     'Labels sit above cells in italics, input is bold Courier, graphics print -SurfaceGraphics-: all 1988 conventions. Integrate’s answer is shown in 1.0’s two-dimensional character layout, because typeset output only arrived in 3.0.',
     'The counter starts at 554: the documented words introduced in 1.0, from WolframLanguageData. Every one of them flies onto the wall behind the window.',
+    'From here on, the strip beside Spikey is that Rule 30 column itself: the automaton turned on its side and running into Spikey. Each group of four centre cells (three pitch bits, and a dot for the gate bit) reaches Spikey exactly when its note sounds, and the note’s name lights up above it.',
   ], refs: [['We’ve Come a Long Way in 30 Years (2018)', `${SW}/2018/06/weve-come-a-long-way-in-30-years-but-you-havent-seen-anything-yet/`]] },
   next: { title: 'NeXT, 1988', notes: [
     'Mathematica shipped with every NeXT computer. The window uses NeXTSTEP’s four greys, the vertical menu and the scroller on the left.',

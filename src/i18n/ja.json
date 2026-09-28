@@ -205,5 +205,6 @@
  "10:23 AM": "午前10:23",
  "Mon 10:23 AM": "(月) 10:23",
  "+ Insert Cell...": "+ セルを挿入...",
- "MusicNote[p, d] returns a music note with the specified pitch p and duration d.": "MusicNote[p, d] 指定された音高 p と長さ d の音符を返す．"
+ "MusicNote[p, d] returns a music note with the specified pitch p and duration d.": "MusicNote[p, d] 指定された音高 p と長さ d の音符を返す．",
+ "RULE 30 · CENTRE COLUMN": "ルール30 · 中央の列"
 }

@@ -113,6 +113,9 @@ function rng(seed: number) {
   };
 }
 
+/** Where the Rule 30 pluck line plays: until the breakdown, 11.0 to the chat era, and the outro; never under the slider. */
+export const pluckOn = (b: number) => (b < S.breakdown[0] || anyR(b, [S.v11[0], S.llm[0]], [S.outro[0], BARS])) && !anyR(b, [MANIP, MANIP + 2]);
+
 export function buildScore(): Ev[] {
   const ev: Ev[] = [];
   const r = rng(30);
@@ -124,7 +127,6 @@ export function buildScore(): Ev[] {
   const HALF = [S.v15[0], S.v15[0] + 2] as const;
 
   // --- Rule 30 pluck melody: 8th notes, three bits pick a pentatonic degree, one bit gates
-  const pluckOn = (b: number) => (b < BD[0] || anyR(b, [S.v11[0], S.llm[0]], [END, BARS])) && !anyR(b, [MANIP, MANIP + 2]);
   for (let s = 0; s < BARS * 8; s++) {
     const bar = s / 8;
     if (!pluckOn(bar)) continue;

@@ -14,6 +14,7 @@ import { grammarTree, breakdownText, wlTitle } from './scenes/beats';
 import { families, repoCards, agents } from './scenes/showcase';
 import { climax, outro, climaxEmph } from './scenes/finale';
 import { spikeyMascot } from './spikey';
+import { drawTape } from './tape';
 
 const inS = (bar: number, r: readonly [number, number]) => bar >= r[0] && bar < r[1];
 const narratorOn = (bar: number) => bar >= S.v1[0] && bar < S.agents[0] && !inS(bar, S.families);
@@ -69,6 +70,7 @@ setScenes([
 
 setOverlays([
   (g, bar) => { for (const p of PRINTS) archive(g, bar, p.at, p.until, p.file, p.year, p.cap, p.box); },
+  (g, bar) => drawTape(g, bar), // the Rule 30 tape feeds into Spikey, so it draws first
   (g, bar) => spikeyMascot(g, bar),
   (g, bar) => {
     if (!narratorOn(bar)) return;
