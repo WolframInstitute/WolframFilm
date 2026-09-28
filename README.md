@@ -53,22 +53,23 @@ Code, outputs and symbol names are never translated. Menus follow the localized 
 to its own `In1[-ru|-ja].mp4` (`wolframscript -file data/deploy.wls ru`). The encode cache is keyed by pixel hash,
 so rebuilding a language after an edit only re-encodes the sections that changed.
 
-## Wolfram Language port (WolfAnim)
+## The notebook (Wolfram Language, WAnim)
 
-`notebook/Film.md` rebuilds the film in Wolfram Language on [WolfAnim](https://github.com/sw1sh/WolfAnim)
-(branch `reanimate`) as a computational essay; `notebook/Film.nb` is the evaluated notebook. So far it covers
-bars 0-16 (cold open, SMP, 1986, the name, Mathematica 1.0 on a 1-bit Mac), frame for frame against the
-TypeScript film. The film is a WolfAnim `Timeline` in bars; the scenes use WolfAnim's canvas kit; the era
-screen is a `CanvasScreen` at half resolution, thresholded to one bit; the soundtrack is WolfAnim `Track`s, and
-the Rule 30 melody Track that sounds is the same object the tape beside Spikey queries.
+`notebook/Film.md` is the film as a Wolfram Language computational essay, built with
+[WAnim](https://github.com/sw1sh/WolfAnim) (`WolframInstitute/WAnim`); `notebook/Film.nb` is the evaluated notebook.
+It is self-contained: nothing is read from disk. The vocabulary comes from `WolframLanguageData` plus the 15.0
+new-features guide, the notebook outputs are evaluated, the archive prints are imported from their public URLs,
+and every segment is one WAnim creation tool (`Typewriter`, `Terminal`, `Title`, `NotebookSession`, `WordWall`,
+`Caption`, `DictionaryCard`, `PhotoPrint`, `Counter`, `YearRuler`, `Spikey`, `AutomatonTape`) in a `Timeline`
+whose soundtrack is a `Track` -- the Rule 30 melody Track is also what the automaton tape reads. So far: bars 0-16.
 
 ```sh
 scripts/install-fonts.sh              # the Wolfram front end only sees installed fonts
-wolframscript -f notebook/build.wls   # Film.md -> Film.nb (needs MarkdownToNotebook next to this repo)
+wolframscript -f notebook/build.wls   # Film.md -> Film.nb (needs WAnim and MarkdownToNotebook next to this repo)
 ```
 
-In the notebook, `film["Dynamic"]` plays it live (the audio is the master clock) and `film["Video", file]`
-renders it (1080p60, frames on parallel subkernels: bars 0-16 take about two minutes on 16 kernels).
+In the notebook, `film["Dynamic"]` plays it live (the audio is the master clock) and `film["Video"]` renders it
+to a `Video`, frames in parallel.
 
 ## Layout
 
