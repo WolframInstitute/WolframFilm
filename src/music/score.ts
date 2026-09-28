@@ -73,7 +73,7 @@ export const MANIP = S.v6[0] + 2;
 export function slider(bar: number): number {
   const m = MANIP;
   const keys: [number, number][] = [
-    [m, 0.1], [m + 0.25, 0.1], [m + 0.625, 0.85], [m + 0.875, 0.85], [m + 1.125, 0.3], [m + 1.375, 0.3], [m + 1.625, 1], [m + 2, 1],
+    [m, 0.1], [m + 0.25, 0.1], [m + 0.5, 0.85], [m + 0.7, 0.85], [m + 0.9, 0.3], [m + 1.05, 0.3], [m + 1.25, 0.52], [m + 2, 0.52],
   ];
   if (bar <= keys[0]![0]) return keys[0]![1];
   for (let i = 1; i < keys.length; i++) {

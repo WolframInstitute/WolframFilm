@@ -8,7 +8,7 @@ import type { OSKind } from '../ui/chrome';
 import {
   exprFlipCell, manipulateCell, freeformCell, suggestionsCell, entityCell, chatInputCell, chatResponseCell,
   tabularCell, musicScoreCell, summaryBoxCell, netIcon, dsIcon, imageCell, arrayGrowCell,
-  parallelCell, graphGrowCell, relGraphCell, pendulumCell, compileCell, rotateCell,
+  parallelCell, graphGrowCell, relGraphCell, pendulumCell, compileCell, rotateCell, drawRotating,
 } from '../ui/widgets';
 import { RELEASES } from '../core/lexicon';
 import { HOOK, slider, MANIP } from '../music/score';
@@ -97,8 +97,10 @@ export const ERAS: Era[] = [
       inp(at('v6', 1.3), 3, CODE.v7_turing, 0.2),
       arrayGrowCell(at('v6', 1.5), 'v7_turing.json', 0.45, 520, 150, ['#FFFFFF', '#E0701A', '#2D4A8A'], 3, { transpose: true }),
       inp(MANIP - 0.15, 4, 'Manipulate[Plot3D[Sin[a x] Cos[y], {x, -3, 3}, {y, -3, 3}], {a, 0.5, 3}]', 0.15),
-      manipulateCell(MANIP, 290, slider, (g, x, y, w, h, v) => {
-        drawAsset(g, `v6_manip_${String(Math.round(v * 15)).padStart(2, '0')}.png`, x + 4, y + 4, w - 8, h - 8);
+      manipulateCell(MANIP, 290, slider, (g, x, y, w, h, v, bar) => {
+        // the slider sweeps a; once it settles at a = 1.8 the mouse grabs the surface and rotates it (6.0)
+        if (bar >= MANIP + 1.3) drawRotating(g, 'v6_manip_mid', x + 4, y + 4, w - 8, h - 8, (bar - MANIP - 1.3) * 1.4, true, 1, 1.5);
+        else drawAsset(g, `v6_manip_${String(Math.round(v * 15)).padStart(2, '0')}.png`, x + 4, y + 4, w - 8, h - 8);
       }, 'a'),
       // 7 · 2008: parallel computing
       inp(at('v7'), 5, CODE.x_parallel, 0.2), parallelCell(at('v7', 0.25), 460, 290, 5),

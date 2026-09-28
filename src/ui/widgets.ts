@@ -618,9 +618,11 @@ export function cursor(g: G, x: number, y: number, s = 1) {
   g.restore();
 }
 /** A 3D output being dragged with the mouse: frames rendered by the kernel from 24 viewpoints. */
-export function drawRotating(g: G, prefix: string, x: number, y: number, w: number, h: number, t: number, drag: boolean, alpha = 1) {
+export function drawRotating(g: G, prefix: string, x: number, y: number, w: number, h: number, t: number, drag: boolean, alpha = 1, zoom = 1) {
   const k = ((Math.floor(t * 24) % 24) + 24) % 24;
-  drawAsset(g, `rot/${prefix}_${String(k).padStart(2, '0')}.png`, x, y, w, h, alpha);
+  g.save(); g.beginPath(); g.rect(x, y, w, h); g.clip();
+  drawAsset(g, `rot/${prefix}_${String(k).padStart(2, '0')}.png`, x - (w * (zoom - 1)) / 2, y - (h * (zoom - 1)) / 2, w * zoom, h * zoom, alpha);
+  g.restore();
   if (drag) cursor(g, x + w / 2 + Math.sin((2 * Math.PI * k) / 24) * w * 0.22, y + h * 0.55 - Math.sin((4 * Math.PI * k) / 24) * h * 0.06);
 }
 export function rotateCell(at: number, prefix: string, w: number, h: number, n?: number, speed = 1.1): Cell {
