@@ -56,7 +56,7 @@ so rebuilding a language after an edit only re-encodes the sections that changed
 ## The notebook (Wolfram Language, WAnim)
 
 `notebook/Film.md` is the film as a Wolfram Language computational essay, built with
-[WAnim](https://github.com/sw1sh/WolfAnim) (`WolframInstitute/WAnim`); `notebook/Film.nb` is the evaluated notebook.
+[WAnim](https://github.com/sw1sh/WAnim) (`WolframInstitute/WAnim`); `notebook/Film.nb` is the evaluated notebook.
 It is self-contained: nothing is read from disk. The vocabulary comes from `WolframLanguageData` plus the 15.0
 new-features guide, the notebook outputs are evaluated, the archive prints are imported from their public URLs,
 and every segment is one WAnim creation tool (`Typewriter`, `Terminal`, `Title`, `NotebookSession`, `WordWall`,
