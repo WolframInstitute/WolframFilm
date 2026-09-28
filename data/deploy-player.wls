@@ -1,10 +1,11 @@
-(* Seekable player: HLS segments + playlist as public cloud objects, and a public player page. *)
+(* The player page, built symbolically with WebColumn / WebItem, deployed publicly. *)
 SetDirectory[FileNameJoin[{DirectoryName[$InputFileName], ".."}]];
-base = "WolframFilm/hls/";
-files = FileNames["*", "out/hls"];
-Do[Quiet@DeleteObject[CloudObject[base <> FileNameTake[f]]]; CopyFile[f, CloudObject[base <> FileNameTake[f], Permissions -> "Public"]], {f, files}];
-url[p_] := First[CloudObject[p]];
-html = StringReplace[Import["data/player.html", "Text"], {
-   "__M3U8__" -> url[base <> "film.m3u8"], "__MP4__" -> url["WolframFilm/In1.mp4"], "__POSTER__" -> url[base <> "poster.jpg"]}];
-page = CloudDeploy[ExportForm[html, "HTML"], "WolframFilm/Player", Permissions -> "Public"];
-Print[Length[files], " files · ", page];
+base = "https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/player/";
+page = WebColumn[{
+   WebItem[XMLElement["h2", {}, {"In[1]:= the life of a language"}]],
+   WebItem[XMLElement["video", {"id" -> "film", "controls" -> "controls", "playsinline" -> "playsinline",
+      "poster" -> base <> "poster.jpg", "style" -> "width:min(100%,1280px);aspect-ratio:16/9;background:#000"}, {}]],
+   WebItem[XMLElement["p", {}, {"The Wolfram Language, 1988\[Dash]2026 \[CenterDot] 2:48"}]],
+   WebItem[XMLElement["script", {}, {Import["data/player/main.js", "Text"]}]]
+   }];
+Print[CloudDeploy[page, "WolframFilm/Player", Permissions -> "Public"]];
