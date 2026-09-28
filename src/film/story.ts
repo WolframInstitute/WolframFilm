@@ -61,7 +61,7 @@ export const ERAS: Era[] = [
     from: at('v2'), to: S.v2[1], os: 'win31', title: 'Mathematica for Windows - [Untitled-1]', nb: NB.win31,
     cells: [
       inp(at('v2'), 1, 'Module[{word = "language"}, StringReverse[word]]', 0.4), out(at('v2', 0.5), 1, 'egaugnal'),
-      inp(at('v2', 0.75), 2, CODE.v2_surface, 0.3), imageCell(at('v2', 1.1), 'v2_surface.png', 250, 190),
+      inp(at('v2', 0.75), 2, CODE.v2_surface, 0.3), imageCell(at('v2', 1.1), 'v2_surface.png', 250, 190), out(at('v2', 1.2), 2, '-Graphics3D-'),
     ],
   },
   {
@@ -77,7 +77,7 @@ export const ERAS: Era[] = [
       inp(at('v4'), 1, 'words = Import["survey.csv"]', 0.2),
       out(at('v4', 0.3), 1, '{{"word", "language"}, {"hello", "English"}, {"bonjour", "French"}, ...}'),
       inp(at('v4', 0.6), 2, CODE.v4_rule30, 0.25),
-      arrayGrowCell(at('v4', 0.9), 'v4_rule30.json', 1.0, 420, 210, ['#FFFFFF', '#1A1A2E'], 2),
+      arrayGrowCell(at('v4', 0.9), 'v4_rule30.json', 1.0, 420, 210, ['#FFFFFF', '#1A1A2E']), out(at('v4', 1.0), 2, '-Graphics-'),
     ],
   },
   {
@@ -85,7 +85,7 @@ export const ERAS: Era[] = [
     cells: [
       inp(at('v5'), 1, '{Red, Green, Blue, Orange, Purple}', 0.25),
       out(at('v5', 0.35), 1, '{RGBColor[1, 0, 0], RGBColor[0, 1, 0], RGBColor[0, 0, 1], RGBColor[1, 0.5, 0], RGBColor[0.5, 0, 0.5]}'),
-      inp(at('v5', 0.75), 2, CODE.v5_colors, 0.3), imageCell(at('v5', 1.1), 'v5_colors.png', 250, 250, 2),
+      inp(at('v5', 0.75), 2, CODE.v5_colors, 0.3), imageCell(at('v5', 1.1), 'v5_colors.png', 250, 250), out(at('v5', 1.2), 2, '-Graphics-'),
     ],
   },
   {

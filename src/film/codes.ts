@@ -1,7 +1,7 @@
 // On-screen inputs for the outputs computed in assets/wl (synced from assets/wl/manifest*.json and data/assets*).
 export const CODE = {
   v2_surface: "ParametricPlot3D[{u Cos[u] (4 + Cos[v + u]), u Sin[u] (4 + Cos[v + u]), u Sin[v + u]}, {u, 0, 4 Pi}, {v, 0, 2 Pi}]",
-  v5_colors: "Graphics[Table[{colors[[Mod[k, 10] + 1]], EdgeForm[White], Disk[(1 + k/24) {Cos[k Pi/5.2], Sin[k Pi/5.2]}, 0.25 + k/60]}, {k, 60, 0, -1}]]",
+  v5_colors: "Show[Graphics[Table[{colors[[Mod[k, 10] + 1]], EdgeForm[White], Disk[(1 + k/24) {Cos[k Pi/5.2], Sin[k Pi/5.2]}, 0.25 + k/60]}, {k, 60, 0, -1}]]]",
   v6_europe: "Graphics[{ColorData[\"SunsetColors\"][1 - Rescale[Log[CountryData[#, \"Population\"]], {11, 18.5}]], CountryData[#, \"Polygon\"]} & /@ CountryData[\"Europe\"], PlotRange -> {{-25, 45}, {34, 72}}]",
   v7_turing: "ArrayPlot[TuringMachine[{596440, 2, 3}, {1, {{}, 0}}, 240][[All, 2]]]",
   v10_globe: "GeoGraphics[{NightHemisphere[DateObject[{2014, 7, 9, 12}]], GeoPath[{champaign, #}, \"GreatCircle\"] & /@ cities}, GeoProjection -> \"Orthographic\"]",
