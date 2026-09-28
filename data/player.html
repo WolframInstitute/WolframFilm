@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>In[1]:= — the life of a language</title>
+<style>
+  html,body{margin:0;height:100%;background:#0E0F11;color:#EDE9E0;font:15px/1.4 -apple-system,"Source Sans 3",system-ui,sans-serif}
+  main{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px;box-sizing:border-box}
+  video{width:min(100%,1280px);aspect-ratio:16/9;background:#000;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  h1{margin:0;font-weight:700;font-size:22px} h1 b{color:#DD1100} p{margin:0;color:#8A8C93;font-size:13px} a{color:#7FA7FF}
+</style></head>
+<body><main>
+  <h1><b>In[1]:=</b> the life of a language</h1>
+  <video id="v" controls playsinline preload="metadata" poster="__POSTER__"></video>
+  <p>The Wolfram Language, 1988 – 2026 · 2:48 · <a href="__MP4__">download MP4</a></p>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"></script>
+<script>
+  const v = document.getElementById('v'), src = '__M3U8__';
+  if (window.Hls && Hls.isSupported()) { const h = new Hls({ maxBufferLength: 30 }); h.loadSource(src); h.attachMedia(v); }
+  else v.src = src; // Safari plays HLS natively
+</script>
+</body></html>
