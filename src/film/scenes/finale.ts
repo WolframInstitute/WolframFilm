@@ -169,6 +169,15 @@ export function climax(c: Ctx) {
 const EPONYMS = new Set([...byName.values()].filter((w) => w.eponym).map((w) => w.name));
 
 // ---------------------------------------------------------------- outro
+export const DEPLOY = {
+  mp4: 'https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1.mp4',
+  page: 'https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1',
+};
+const DEPLOY_CELLS = [
+  { kind: 'input' as const, at: O + 1.6, n: 1, type: 0.6, text: 'CopyFile["out/film.mp4", CloudObject["WolframFilm/In1.mp4", Permissions -> "Public"]]' },
+  { kind: 'output' as const, at: O + 2.4, n: 1, text: `CloudObject[${DEPLOY.mp4}]` },
+];
+
 export function outro(c: Ctx) {
   const { g, bar } = c;
   // the wall falls away
@@ -182,8 +191,8 @@ export function outro(c: Ctx) {
   // a fresh notebook
   const u = ease.outBack(inv(O + 1.4, O + 1.75, bar), 1.3);
   if (u > 0) {
-    const w = 1240, h = 360;
-    const R = { x: (W - w) / 2, y: 190, w, h };
+    const w = 1400, h = 470;
+    const R = { x: (W - w) / 2, y: 110, w, h };
     g.save();
     const s = 0.9 + 0.1 * u;
     g.translate(W / 2, R.y + h / 2); g.scale(s, s); g.translate(-W / 2, -(R.y + h / 2));
@@ -191,28 +200,27 @@ export function outro(c: Ctx) {
     g.shadowColor = 'rgba(0,0,0,0.25)'; g.shadowBlur = 40; g.shadowOffsetY = 16;
     g.fillStyle = '#FFF'; g.beginPath(); g.roundRect(R.x, R.y, R.w, R.h, 11); g.fill();
     g.shadowBlur = 0; g.shadowOffsetY = 0; g.shadowColor = 'transparent';
-    renderScreen(g, R, 1.6, 'full', (sg, lw, lh) => {
+    renderScreen(g, R, 1.45, 'full', (sg, lw, lh) => {
       sg.fillStyle = '#FFF'; sg.fillRect(0, 0, lw, lh);
       const tb = 28;
       sg.fillStyle = '#F6F6F6'; sg.fillRect(0, 0, lw, tb); sg.fillStyle = '#E2E2E2'; sg.fillRect(0, tb, lw, 1);
       ['#FF6159', '#FFBD2E', '#28C941'].forEach((cl, i) => { sg.fillStyle = cl; sg.beginPath(); sg.arc(20 + i * 20, tb / 2, 6.5, 0, 7); sg.fill(); });
-      text(sg, 'Untitled-2.nb', lw / 2, 19, { font: font(F.arimo, 13, 700), color: '#333', align: 'center' });
-      drawNotebook(sg, { x: 0, y: tb + 1, w: lw, h: lh - tb - 1 }, NB.v13, [{ kind: 'input', at: O + 1.6, n: 1, text: '', type: 0 }], bar);
-      // blinking caret
-      if (Math.floor(bar * 4) % 2 === 0) { sg.fillStyle = '#000'; sg.fillRect(NB.v13.left + 2, tb + 20, 2, 20); }
+      text(sg, 'Deploy.nb', lw / 2, 19, { font: font(F.arimo, 13, 700), color: '#333', align: 'center' });
+      // the film deploys itself to the Wolfram Cloud (these are the calls that published it)
+      drawNotebook(sg, { x: 0, y: tb + 1, w: lw, h: lh - tb - 1 }, NB.v13, DEPLOY_CELLS, bar);
     });
     g.restore();
   }
   // lines
   const col = mix(P.ink, P.bone, darkness(bar));
-  const a1 = ease.outExpo(inv(O + 2.25, O + 2.5, bar));
-  text(g, `${TOTAL_WORDS.toLocaleString('en-US')} words.`, W / 2, 700, { font: font(F.sans, 76, 800), color: col, align: 'center', alpha: a1 * (1 - inv(O + 6.3, O + 6.9, bar)) });
-  const a2 = ease.outExpo(inv(O + 3, O + 3.25, bar));
-  text(g, 'Still growing.', W / 2, 790, { font: font(F.sans, 76, 300), color: P.red, align: 'center', alpha: a2 * (1 - inv(O + 6.3, O + 6.9, bar)) });
-  const a3 = ease.outCubic(inv(O + 4.25, O + 4.75, bar));
+  const a1 = ease.outExpo(inv(O + 3.75, O + 4, bar));
+  text(g, `${TOTAL_WORDS.toLocaleString('en-US')} words.`, W / 2, 720, { font: font(F.sans, 76, 800), color: col, align: 'center', alpha: a1 * (1 - inv(O + 6.3, O + 6.9, bar)) });
+  const a2 = ease.outExpo(inv(O + 4.25, O + 4.5, bar));
+  text(g, 'Still growing.', W / 2, 810, { font: font(F.sans, 76, 300), color: P.red, align: 'center', alpha: a2 * (1 - inv(O + 6.3, O + 6.9, bar)) });
+  const a3 = ease.outCubic(inv(O + 5, O + 5.5, bar));
   text(g, 'THE WOLFRAM LANGUAGE  ·  1988 – 2026', W / 2, 930, { font: font(F.sans, 26, 600), color: '#8B877F', align: 'center', tracking: 6, alpha: a3 * (1 - inv(O + 6.3, O + 6.9, bar)) });
   // Spikey takes a bow
-  const su = ease.outBack(inv(O + 2.6, O + 3, bar), 2);
+  const su = ease.outBack(inv(O + 4.5, O + 4.9, bar), 2);
   if (su > 0) drawSpikey(g, bar, W / 2, 1010 - 30, 42 * su, 'modern', 'red', 1 - inv(O + 6, O + 6.8, bar));
   // fade to black
   const f = inv(O + 6.4, O + 7, bar);

@@ -71,22 +71,22 @@ List[Rule[x, 1], f[y]]
 ### 12. `win31@20#0` · 0:40.0 · v2 · Mathematica for Windows - [Untitled-1] · In[1]
 
 ```wl
-Module[{word = "language"}, StringReverse[word]]
+Play[Sin[1000 t (1 + t)] Sin[2 Pi t], {t, 0, 1.5}]
 ```
 
-### 13. `win31@20#1` · 0:41.0 · v2 · Mathematica for Windows - [Untitled-1] · Out[1]
+### 13. `win31@20#2` · 0:40.9 · v2 · Mathematica for Windows - [Untitled-1] · Out[1]
 
 ```wl
-egaugnal
+-Sound-
 ```
 
-### 14. `win31@20#2` · 0:41.5 · v2 · Mathematica for Windows - [Untitled-1] · In[2]
+### 14. `win31@20#3` · 0:42.0 · v2 · Mathematica for Windows - [Untitled-1] · In[2]
 
 ```wl
 ParametricPlot3D[{u Cos[u] (4 + Cos[v + u]), u Sin[u] (4 + Cos[v + u]), u Sin[v + u]}, {u, 0, 4 Pi}, {v, 0, 2 Pi}]
 ```
 
-### 15. `win31@20#4` · 0:42.4 · v2 · Mathematica for Windows - [Untitled-1] · Out[2]
+### 15. `win31@20#5` · 0:42.8 · v2 · Mathematica for Windows - [Untitled-1] · Out[2]
 
 ```wl
 -Graphics3D-

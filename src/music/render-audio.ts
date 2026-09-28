@@ -1,9 +1,11 @@
 // bun src/music/render-audio.ts  ->  out/music.wav, out/score.json
-import { mkdirSync, writeFileSync } from 'fs';
+import { mkdirSync, writeFileSync, readFileSync } from 'fs';
 import { SR, Stereo, SVF, freeverb, pingpong, mixInto, limit, writeWav } from './dsp';
 import { render, type Buses } from './instruments';
 import { SCORE, musicCutoff, type Ev } from './score';
 import { ERAS } from '../film/story';
+import { S as SEC } from '../core/time';
+const DEPLOY_TYPING = [{ at: SEC.outro[0] + 1.6, type: 0.6, text: 'CopyFile["out/film.mp4", CloudObject["WolframFilm/In1.mp4", Permissions -> "Public"]]' }];
 import { BAR, BEAT, DURATION } from '../core/time';
 
 const t0 = performance.now();
@@ -23,11 +25,31 @@ const typing = (at: number, dur: number, chars: number) => {
 typing(0.5, 2.1, 39); // cold open
 for (const [a, n] of [[4.1, 22], [4.9, 42]] as const) typing(a, 0.4, n); // SMP
 typing(6.5, 0.3, 23); typing(6.8, 0.45, 41); typing(7.2, 0.35, 33);
+for (const c of DEPLOY_TYPING) { typing(c.at, c.type, c.text.length); foley.push({ bar: c.at + c.type + 1 / 16, dur: 0.01, inst: 'tick', vel: 1 }); }
 for (const e of ERAS) for (const c of e.cells) {
   if (c.kind === 'input' && c.type && c.text) { typing(c.at, c.type, c.text.length); foley.push({ bar: c.at + c.type + 1 / 16, dur: 0.01, inst: 'tick', vel: 1 }); }
   if (c.kind === 'output' || (c.kind === 'custom' && c.n !== undefined)) foley.push({ bar: c.at, dur: 0.05, inst: 'blip', vel: 1, note: 91 });
 }
 for (const e of [...SCORE, ...foley]) render(e, B);
+// the 2.0 cell's Play[Sin[1000 t (1 + t)] Sin[2 Pi t], {t, 0, 1.5}]: the kernel's own samples, heard when the cell evaluates
+{
+  const wav = readFileSync('assets/wl/x_play.wav');
+  let off = 12, fmt: any = null, data: Buffer | null = null;
+  while (off + 8 <= wav.length) {
+    const id = wav.toString('ascii', off, off + 4), size = wav.readUInt32LE(off + 4);
+    if (id === 'fmt ') fmt = { ch: wav.readUInt16LE(off + 10), rate: wav.readUInt32LE(off + 12), bits: wav.readUInt16LE(off + 22) };
+    if (id === 'data') data = wav.subarray(off + 8, off + 8 + size);
+    off += 8 + size + (size & 1);
+  }
+  if (fmt && data && fmt.bits === 16) {
+    const n = data.length / 2 / fmt.ch, i0 = Math.round((SEC.v2[0] + 0.45) * BAR * SR);
+    for (let i = 0; i < n; i++) {
+      const v = (data.readInt16LE(i * 2 * fmt.ch) / 32768) * 0.14 * Math.min(1, i / 400, (n - i) / 2000);
+      const j = i0 + Math.round((i * SR) / fmt.rate);
+      if (j < N) { B.music.L[j]! += v; B.music.R[j]! += v; }
+    }
+  } else console.warn('x_play.wav: unexpected format', fmt);
+}
 console.log(`notes: ${SCORE.length}  (${((performance.now() - t0) / 1000).toFixed(1)} s)`);
 
 // sidechain envelope from the kicks

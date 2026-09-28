@@ -8,7 +8,7 @@ import type { OSKind } from '../ui/chrome';
 import {
   exprFlipCell, manipulateCell, freeformCell, suggestionsCell, entityCell, chatInputCell, chatResponseCell,
   tabularCell, musicScoreCell, summaryBoxCell, netIcon, dsIcon, imageCell, arrayGrowCell,
-  parallelCell, graphGrowCell, relGraphCell, pendulumCell, compileCell, rotateCell, drawRotating, formSwitchCell,
+  parallelCell, graphGrowCell, relGraphCell, pendulumCell, compileCell, rotateCell, drawRotating, formSwitchCell, playCell,
 } from '../ui/widgets';
 import { RELEASES } from '../core/lexicon';
 import { HOOK, slider, MANIP } from '../music/score';
@@ -60,8 +60,8 @@ export const ERAS: Era[] = [
   {
     from: at('v2'), to: S.v2[1], os: 'win31', title: 'Mathematica for Windows - [Untitled-1]', nb: NB.win31,
     cells: [
-      inp(at('v2'), 1, 'Module[{word = "language"}, StringReverse[word]]', 0.4), out(at('v2', 0.5), 1, 'egaugnal'),
-      inp(at('v2', 0.75), 2, CODE.v2_surface, 0.3), imageCell(at('v2', 1.1), 'v2_surface.png', 250, 190), out(at('v2', 1.2), 2, '-Graphics3D-'),
+      inp(at('v2'), 1, 'Play[Sin[1000 t (1 + t)] Sin[2 Pi t], {t, 0, 1.5}]', 0.3), playCell(at('v2', 0.4), 300, 70, 0.75), out(at('v2', 0.45), 1, '-Sound-'),
+      inp(at('v2', 1.0), 2, CODE.v2_surface, 0.2), imageCell(at('v2', 1.3), 'v2_surface.png', 250, 190), out(at('v2', 1.4), 2, '-Graphics3D-'),
     ],
   },
   {
@@ -179,7 +179,7 @@ export const CAPTIONS: Line[] = [
   L('v1', 2.1, 3.85, 'Words for pictures, too.'),
   L('next', 0.25, 1.8, 'Bundled with every NeXT computer.'),
   L('grammar', 0.2, 1.85, 'One grammar for everything.', ['grammar']),
-  L('v2', 0.2, 1.85, 'It learns to play with words, and to draw in colour.'),
+  L('v2', 0.2, 1.85, 'It learns to make sound, and to draw in colour.', ['sound']),
   L('v3', 0.3, 1.85, 'The notebook itself is written in the language.'),
   L('v4', 0.15, 1.85, 'It learns to read other formats, and to grow patterns.'),
   L('v5', 0.2, 1.85, 'It learns the names of colours.', ['colours']),
@@ -213,7 +213,7 @@ export interface Entry { at: number; until: number; name: string; note?: string;
 const E = (k: Section, a: number, u: number, name: string, extra: Partial<Entry> = {}): Entry => ({ at: at(k, a), until: at(k, u), name, ...extra });
 export const ENTRIES: Entry[] = [
   E('v1', 0.3, 1.85, 'Names', { note: 'symbol · since 1.0, 1988' }),
-  E('v2', 0.2, 0.95, 'StringReverse'),
+  E('v2', 0.2, 0.95, 'Play'),
   E('v3', 0.2, 0.95, 'Cell'),
   E('v4', 0.1, 1.85, 'CellularAutomaton'),
   E('v5', 0.2, 0.95, 'Red'),

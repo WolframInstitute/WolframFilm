@@ -682,3 +682,27 @@ export function formSwitchCell(at: number, switchAt: number, head: string, std: 
     },
   };
 }
+
+/** 2.x Play[...] output: the sampled waveform, drawn from the kernel's own samples, revealed as it plays. */
+export function playCell(at: number, w: number, h: number, dur: number, n?: number): Cell {
+  return {
+    kind: 'custom', at, h: h + 6, n,
+    draw: (g, x, y, _w, bar) => {
+      const P0 = json<{ env: [number, number][] }>('x_play.json');
+      if (!P0) return;
+      const u = clamp((bar - at) / dur);
+      g.save();
+      g.strokeStyle = '#000'; g.lineWidth = 1; g.strokeRect(x + 0.5, y + 0.5, w, h);
+      g.fillStyle = '#000';
+      const n0 = P0.env.length, shown = Math.floor(u * n0);
+      for (let i = 0; i < n0; i++) {
+        const [lo, hi] = P0.env[i]!;
+        const px = x + 2 + (i / n0) * (w - 4);
+        const y0 = y + h / 2 - hi * (h / 2 - 3), y1 = y + h / 2 - lo * (h / 2 - 3);
+        g.fillStyle = i < shown ? '#000080' : '#9A9A9A';
+        g.fillRect(px, y0, Math.max(1, (w - 4) / n0), Math.max(1, y1 - y0));
+      }
+      g.restore();
+    },
+  };
+}
