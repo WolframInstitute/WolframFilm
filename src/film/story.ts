@@ -46,8 +46,10 @@ export const ERAS: Era[] = [
     from: at('v1'), to: S.v1[1], os: 'mac1', title: 'Untitled-1', nb: NB.mac1,
     cells: [
       inp(at('v1'), 1, 'Names["*"]', 0.2), out(at('v1', 0.5), 1, v1List),
-      inp(at('v1', 2), 2, 'Plot3D[Sin[x y], {x, 0, 3}, {y, 0, 3}]', 0.3),
-      imageCell(at('v1', 2.45), 'v1_plot3d.png', 250, 200, undefined, { dither: true }), out(at('v1', 2.6), 2, '-SurfaceGraphics-'),
+      inp(at('v1', 1.3), 2, 'Integrate[1/(x^3 - 1), x]', 0.2),
+      out(at('v1', 1.6), 2, '         1 + 2 x\n  ArcTan[-------]                              2\n         Sqrt[3]     Log[1 - x]   Log[1 + x + x ]\n-(---------------) + ---------- - ---------------\n      Sqrt[3]            3               6'),
+      inp(at('v1', 2.05), 3, 'Plot3D[Sin[x y], {x, 0, 3}, {y, 0, 3}]', 0.3),
+      imageCell(at('v1', 2.45), 'v1_plot3d.png', 250, 200, undefined, { dither: true }), out(at('v1', 2.6), 3, '-SurfaceGraphics-'),
     ],
   },
   {
@@ -217,7 +219,8 @@ export const CAPTIONS: Line[] = [
 export interface Entry { at: number; until: number; name: string; note?: string; usage?: string }
 const E = (k: Section, a: number, u: number, name: string, extra: Partial<Entry> = {}): Entry => ({ at: at(k, a), until: at(k, u), name, ...extra });
 export const ENTRIES: Entry[] = [
-  E('v1', 0.3, 1.85, 'Names', { note: 'symbol · since 1.0, 1988' }),
+  E('v1', 0.3, 1.25, 'Names', { note: 'symbol · since 1.0, 1988' }),
+  E('v1', 1.3, 1.95, 'Integrate', { note: 'symbol · since 1.0, 1988' }),
   E('v2', 0.2, 0.95, 'Play'),
   E('v3', 0.2, 0.95, 'Cell'),
   E('v4', 0.1, 1.85, 'CellularAutomaton'),
