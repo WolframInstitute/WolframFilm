@@ -299,7 +299,7 @@ pq = CreateDataStructure["PriorityQueue"]; Scan[pq["Push", #] &, {3, 1, 4, 1, 5}
 ### 50. `bigsur@46#16` · 1:43.8 · v123 · Untitled-1.nb · In[7]
 
 ```wl
-ExpressionTree[Hold[Manipulate[Plot[Sin[a x], {x, 0, 2 Pi}], {a, 1, 5}]]]
+ExpressionTree[Unevaluated[Manipulate[Plot[Sin[a x], {x, 0, 2 Pi}], {a, 1, 5}]]]
 ```
 
 ### 51. `bigsur@46#18` · 1:46.0 · v132 · Untitled-1.nb · In[8]
