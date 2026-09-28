@@ -5,6 +5,7 @@ import { F, font, text, measure, clamp, inv, ease, mix, rgba } from '../../core/
 import { W, H, S } from '../../core/time';
 import { P, darkness } from '../palette';
 import { COL_X } from '../narrator';
+import { tr } from '../../core/i18n';
 
 // ---------------------------------------------------------------- 18–20: f[x] as a tree
 export function grammarTree(c: Ctx) {
@@ -54,11 +55,11 @@ export function breakdownText(c: Ctx) {
   g.fillRect(0, 0, W, H);
   g.save();
   g.globalAlpha = a1;
-  text(g, 'It isn’t only for math anymore.', W / 2, H / 2 + 20, { font: font(F.sans, 84, 700), color: col, align: 'center' });
+  text(g, tr('It isn’t only for math anymore.'), W / 2, H / 2 + 20, { font: font(F.sans, 84, 700), color: col, align: 'center' });
   g.globalAlpha = a2;
   const s = 1 + 0.08 * ease.inOutCubic(inv(B + 1, B + 1.9, bar));
   g.translate(W / 2, H / 2); g.scale(s, s);
-  text(g, 'It needs a name.', 0, 30, { font: font(F.sans, 110, 700), color: P.red, align: 'center' });
+  text(g, tr('It needs a name.'), 0, 30, { font: font(F.sans, 110, 700), color: P.red, align: 'center' });
   g.restore();
 }
 
@@ -76,8 +77,8 @@ export function wlTitle(c: Ctx) {
   const s = (0.86 + 0.14 * inU) * (1 + 0.012 * p) * (1 + 0.4 * out);
   g.scale(s, s);
   const f1 = font(F.sans, 58, 300), f2 = font(F.sans, 168, 800);
-  text(g, 'The', 0, -120, { font: f1, color: P.bone, align: 'center', tracking: 12, alpha: inU });
-  const word = 'Wolfram Language';
+  text(g, tr('The'), 0, -120, { font: f1, color: P.bone, align: 'center', tracking: 12, alpha: inU });
+  const word = tr('Wolfram Language'), red0 = word.indexOf('Wolfram');
   const full = measure(g, word, f2, -3);
   let x = -full / 2;
   g.font = f2;
@@ -85,12 +86,12 @@ export function wlTitle(c: Ctx) {
     const ch = word[i]!;
     const a = ease.outExpo(inv(V + i / 64, V + i / 64 + 0.12, bar));
     g.globalAlpha = a * (1 - out);
-    g.fillStyle = i < 7 ? P.red : P.bone;
+    g.fillStyle = i >= red0 && i < red0 + 7 ? P.red : P.bone;
     g.fillText(ch, x, 60 + (1 - a) * 30);
     x += g.measureText(ch).width - 3;
   }
   g.globalAlpha = ease.outCubic(inv(V + 0.6, V + 0.9, bar)) * (1 - out);
-  text(g, 'November 13, 2013', 0, 170, { font: font(F.code, 34, 400), color: '#9A9CA3', align: 'center' });
+  text(g, tr('November 13, 2013'), 0, 170, { font: font(F.code, 34, 400), color: '#9A9CA3', align: 'center' });
   g.restore();
 }
 export { clamp, measure };

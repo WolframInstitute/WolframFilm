@@ -1,13 +1,23 @@
-// bun src/directors.ts > artifact/data.json — the director's-commentary data for the player page.
+// FILM_LANG=en|ru|ja bun src/directors.ts — one language's director's-commentary data (artifact/build.sh inlines all three).
 // Everything except the commentary text is pulled from the film's own source.
 import { readFileSync } from 'node:fs';
 import { S, BAR, type Section } from './core/time';
 import { CAPTIONS, ENTRIES, LABELS, PRINTS } from './film/story';
 import { WORDS } from './core/lexicon';
 import archive from '../assets/archive/manifest.json';
+import { LANG } from './core/i18n';
+import { DEPLOY } from './film/scenes/finale';
+import dRu from './i18n/directors-ru.json';
+import dJa from './i18n/directors-ja.json';
+
+// FILM_LANG=ru|ja: film strings come through tr() already; the commentary has its own dictionary.
+const DD: Record<string, string> = LANG === 'ru' ? dRu : LANG === 'ja' ? dJa : {};
+const KEYS = new Set<string>(), MISSING: string[] = [];
+const td = (s: string) => { KEYS.add(s); if (LANG === 'en') return s; const r = DD[s]; if (r === undefined) MISSING.push(s); return r ?? s; };
 
 const T = (bar: number) => +(bar * BAR).toFixed(2);
-const DOC = (s: string) => `https://reference.wolfram.com/language/ref/${s.replace('$', '$')}.html`;
+// Japanese has its own documentation (…/X.html.ja); Russian links the English pages
+const DOC = (s: string) => `https://reference.wolfram.com/language/ref/${s.replace('$', '$')}.html${LANG === 'ja' ? '.ja' : ''}`;
 const SW = 'https://writings.stephenwolfram.com';
 const known = new Set(WORDS.map((w) => w.name));
 
@@ -120,6 +130,9 @@ const NOTES: Partial<Record<Section, { title: string; notes: string[]; refs?: [s
   ] },
 };
 
+/** Only in the Russian and Japanese cuts: what was translated and what deliberately was not. */
+const LOCAL_NOTE = 'This cut is translated: captions, cards, menus, chat prompts and this commentary. The code, its outputs and the symbol names stay exactly as they are, because the language’s own words are the same in every human language; the dictionary-entry usage lines come from the documentation in that language where it exists.';
+
 // ------------------------------------------------------------------ extraction
 const inSec = (k: Section, bar: number) => bar >= S[k][0] && bar < S[k][1];
 const symbolsIn = (code: string) => [...new Set((code.match(/\$?[A-Z][A-Za-z0-9]*/g) ?? []).filter((w) => known.has(w)))];
@@ -132,27 +145,29 @@ const sections = (Object.keys(S) as Section[]).map((k) => {
   const [b0, b1] = S[k];
   const n = NOTES[k] ?? { title: k, notes: [] };
   const snippets: { t: number; code: string; label: string }[] = [];
-  for (const x of RUNNABLE) if (x.sec === k) snippets.push({ t: T(S[k][0] + x.at), code: x.code, label: x.label });
+  for (const x of RUNNABLE) if (x.sec === k) snippets.push({ t: T(S[k][0] + x.at), code: x.code, label: td(x.label) });
   snippets.sort((a, b) => a.t - b.t);
   const syms = new Set<string>();
   for (const s of snippets) for (const w of symbolsIn(s.code)) syms.add(w);
   for (const e of ENTRIES) if (inSec(k, e.at)) syms.add(e.name);
   const label = [...LABELS].reverse().find((l) => l.at >= b0 && l.at < b1);
   return {
-    key: k, title: n.title, t0: T(b0), t1: T(b1),
+    key: k, title: td(n.title), t0: T(b0), t1: T(b1),
     era: label ? `${label.title} · ${label.sub}` : '',
     captions: CAPTIONS.filter((c) => inSec(k, c.at)).map((c) => c.text),
-    notes: n.notes,
+    notes: [...n.notes, ...(LANG !== 'en' && k === 'cold' ? [LOCAL_NOTE] : [])].map(td),
     snippets,
     docs: [...syms].sort().map((s) => ({ name: s, url: DOC(s) })),
     sources: [
-      ...(n.refs ?? []).map(([label, url]) => ({ label, url })),
+      ...(n.refs ?? []).map(([label, url]) => ({ label: td(label), url })),
       ...PRINTS.filter((p) => inSec(k, p.at)).map((p) => {
         const f = p.file.replace('../archive/', '');
         const m = (archive as any[]).find((a) => a.file === f);
-        return { label: `Archive: ${p.cap} (${p.year})`, url: m?.source ?? '' };
+        return { label: td('Archive: {0} ({1})').replace('{0}', p.cap).replace('{1}', p.year), url: m?.source ?? '' };
       }),
     ],
   };
 });
-console.log(JSON.stringify({ duration: T(S.outro[1]), sections }));
+if (process.argv.includes('--keys')) { console.log(JSON.stringify([...KEYS], null, 1)); process.exit(0); }
+if (MISSING.length) console.error(`directors-${LANG}: ${MISSING.length} untranslated:\n  ` + MISSING.join('\n  '));
+console.log(JSON.stringify({ lang: LANG, duration: T(S.outro[1]), mp4: DEPLOY.mp4, sections }));

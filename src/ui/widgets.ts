@@ -195,14 +195,13 @@ export function chatResponseCell(at: number, prose: string, link: string, code: 
       g.beginPath(); g.roundRect(x, y, w - 8, h - 8, 3); g.fill(); g.stroke();
       T(g, '⋮', x + w - 22, y + 20, F.arimo, 14, 700, '#888');
       // prose, revealed word by word ("streaming")
-      const words = prose.split(' ');
-      const n = Math.floor(clamp((bar - at) / 0.45) * words.length);
+      const ws = words(prose);
+      const n = Math.floor(clamp((bar - at) / 0.45) * ws.length);
       let cx = x + 16;
       const py = y + 28;
       for (let i = 0; i < n; i++) {
-        const wd = words[i]!;
-        const isLink = wd.replace(/[.,:]/g, '') === link;
-        cx += T(g, wd + ' ', cx, py, F.sans, 17.5, 400, isLink ? '#35569C' : '#111');
+        const wd = ws[i]!;
+        cx += T(g, wd, cx, py, F.sans, 17.5, 400, bare(wd) === link ? '#35569C' : '#111');
       }
       // code block
       const c = clamp((bar - at - 0.45) / 0.35);
@@ -296,8 +295,8 @@ export function musicScoreCell(at: number, notes: [number, number, number][], to
       g.fillStyle = '#333'; g.fillRect(px, ry - 4, 1.2, rh + 8);
       // footer
       g.fillStyle = '#F5F5F5'; g.beginPath(); g.roundRect(x + 1, y + H - 58, pw - 2, 47, [0, 0, 6, 6]); g.fill();
-      T(g, `Duration: ${measures} measures`, x + 16, y + H - 38, F.sans, 14, 400, '#6B6B6B');
-      T(g, 'Time Signature: 4/4', x + 16, y + H - 19, F.sans, 14, 400, '#6B6B6B');
+      T(g, tr('Duration: {0} measures', measures), x + 16, y + H - 38, F.sans, 14, 400, '#6B6B6B');
+      T(g, tr('Time Signature: 4/4'), x + 16, y + H - 19, F.sans, 14, 400, '#6B6B6B');
       g.restore();
     },
   };
@@ -310,7 +309,7 @@ export function chatbar(g: G, x: number, y: number, w: number, textShown: string
   g.beginPath(); g.roundRect(x, y, w - 40, 40, 10); g.fill(); g.stroke();
   g.strokeStyle = '#3F9BD5'; g.lineWidth = 1.3;
   g.beginPath(); g.roundRect(x + 12, y + 12, 18, 13, 3); g.moveTo(x + 16, y + 25); g.lineTo(x + 16, y + 30); g.lineTo(x + 21, y + 25); g.stroke();
-  T(g, placeholder ? 'What would you like to do?' : textShown, x + 40, y + 26, F.sans, 16, 400, placeholder ? '#9A9A9A' : '#111');
+  T(g, placeholder ? tr('What would you like to do?') : textShown, x + 40, y + 26, F.sans, 16, 400, placeholder ? '#9A9A9A' : '#111');
   if (!placeholder && Math.floor(bar * 8) % 2 === 0) {
     g.font = font(F.sans, 16, 400); g.fillStyle = '#111';
     g.fillRect(x + 41 + g.measureText(textShown).width, y + 11, 1.4, 18);
@@ -382,6 +381,7 @@ export const netIcon = (g: G, x: number, y: number) => {
 // ------------------------------------------------------------------ computed outputs (assets/wl)
 import { drawAsset, json, img } from '../core/assets';
 import { dithered } from './screen';
+import { tr, words, bare } from '../core/i18n';
 
 /** An output that is a picture computed by the Wolfram Language. Pops in on `at`. */
 export function imageCell(at: number, asset: string, w: number, h: number, n?: number, opts: { dither?: boolean } = {}): Cell {
@@ -514,7 +514,7 @@ export function parallelCell(at: number, w: number, h: number, n?: number): Cell
       kernels.slice(0, shownK).forEach((k, i) => {
         g.fillStyle = K[i % K.length]!; g.fillRect(x + i * 26, y + h + 8, 20, 12);
       });
-      T(g, `${kernels.length} kernels`, x + kernels.length * 26 + 6, y + h + 19, F.sans, 13, 400, '#555');
+      T(g, tr('{0} kernels', kernels.length), x + kernels.length * 26 + 6, y + h + 19, F.sans, 13, 400, '#555');
       g.restore();
     },
   };
@@ -598,11 +598,11 @@ export function compileCell(at: number, w: number, n?: number): Cell {
       const row = (yy: number, label: string, t: number, col: string) => {
         T(g, label, x, yy + 14, F.sans, 15, 600, '#333');
         g.fillStyle = col; g.fillRect(x + 110, yy + 2, Math.max(2, maxW * (t / C.interpreted) * u), 16);
-        T(g, `${t < 0.1 ? (t * 1000).toFixed(1) + ' ms' : t.toFixed(2) + ' s'}`, x + 118 + Math.max(2, maxW * (t / C.interpreted) * u), yy + 15, F.code, 13, 400, '#333');
+        T(g, t < 0.1 ? tr('{0} ms', (t * 1000).toFixed(1)) : tr('{0} s', t.toFixed(2)), x + 118 + Math.max(2, maxW * (t / C.interpreted) * u), yy + 15, F.code, 13, 400, '#333');
       };
-      row(y + 4, 'evaluated', C.interpreted, '#9AA5B1');
-      row(y + 30, 'compiled', C.compiled, '#DD1100');
-      if (u > 0.9) T(g, `${Math.round(C.speedup)}× faster`, x + 110, y + 66, F.sans, 14, 700, '#DD1100');
+      row(y + 4, tr('evaluated'), C.interpreted, '#9AA5B1');
+      row(y + 30, tr('compiled'), C.compiled, '#DD1100');
+      if (u > 0.9) T(g, tr('{0}× faster', Math.round(C.speedup)), x + 110, y + 66, F.sans, 14, 700, '#DD1100');
     },
   };
 }

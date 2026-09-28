@@ -4,8 +4,10 @@ import { SR, Stereo, SVF, freeverb, pingpong, mixInto, limit, writeWav } from '.
 import { render, type Buses } from './instruments';
 import { SCORE, musicCutoff, type Ev } from './score';
 import { ERAS } from '../film/story';
+import { DEPLOY } from '../film/scenes/finale';
+import { LANG } from '../core/i18n';
 import { S as SEC } from '../core/time';
-const DEPLOY_TYPING = [{ at: SEC.outro[0] + 1.6, type: 0.6, text: 'CopyFile["out/film.mp4", CloudObject["WolframFilm/In1.mp4", Permissions -> "Public"]]' }];
+const DEPLOY_TYPING = [{ at: SEC.outro[0] + 1.6, type: 0.6, text: DEPLOY.code }];
 import { BAR, BEAT, DURATION } from '../core/time';
 
 const t0 = performance.now();
@@ -117,6 +119,7 @@ mixInto(mix, verb, 0.9);
 }
 
 mkdirSync('out', { recursive: true });
-writeWav('out/music.wav', mix);
+// the typing foley follows the on-screen text, so each language has its own mix
+writeWav(LANG === 'en' ? 'out/music.wav' : `out/music-${LANG}.wav`, mix);
 writeFileSync('out/score.json', JSON.stringify(SCORE));
 console.log(`done in ${((performance.now() - t0) / 1000).toFixed(1)} s`);

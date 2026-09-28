@@ -2,6 +2,22 @@
 // Generic shapes and colours of each era only: no vendor logos, no Spikey.
 import { F, font, makeCanvas, type G } from '../core/draw';
 import type { Depth, Rect } from './screen';
+import { LANG, tr } from '../core/i18n';
+
+/** Menu titles as a localized system showed them; Japanese Windows appends the access key, as in ファイル(F). */
+const JA_MENU = LANG === 'ja';
+const winMenu = (m: string) => (LANG === 'ja' ? `${tr(m)}(${m[0]})` : tr(m));
+/** Draw a Windows menu title with its access key underlined. */
+function winMenuTitle(g: G, m: string, x: number, y: number, size: number, weight: number, underline = true) {
+  const s = winMenu(m);
+  const w = T(g, s, x, y, F.arimo, size, weight, '#000');
+  if (underline) {
+    const k = LANG === 'ja' ? s.length - 2 : 0;
+    g.font = font(F.arimo, size, weight);
+    g.fillStyle = '#000'; g.fillRect(x + g.measureText(s.slice(0, k)).width, y + 1.5, g.measureText(s[k]!).width, 1);
+  }
+  return w;
+}
 
 export type OSKind = 'mac1' | 'next' | 'win31' | 'win95' | 'mac9' | 'xp' | 'osx' | 'yosemite' | 'bigsur' | 'dark';
 export const OS_SPEC: Record<OSKind, { pixel: number; depth: Depth }> = {
@@ -20,7 +36,7 @@ export const OS_SPEC: Record<OSKind, { pixel: number; depth: Depth }> = {
 export interface ChromeOpts { title: string; bar: number; menus?: string[]; zoom?: string; status?: string; noDesk?: boolean }
 
 const T = (g: G, s: string, x: number, y: number, fam: string, size: number, weight: number | string, color: string, align: CanvasTextAlign = 'left', italic = false) => {
-  g.font = font(fam, size, weight, italic); g.fillStyle = color; g.textAlign = align; g.textBaseline = 'alphabetic';
+  g.font = font(fam, size, weight, italic && !(LANG === 'ja' && /[\u3000-\u9fff]/.test(s))); g.fillStyle = color; g.textAlign = align; g.textBaseline = 'alphabetic';
   g.fillText(s, x, y);
   const w = g.measureText(s).width; g.textAlign = 'left'; return w;
 };
@@ -65,7 +81,7 @@ function mac1(g: G, lw: number, lh: number, o: ChromeOpts): Rect {
   // menu bar
   box(g, 0, 0, lw, 19, '#FFF'); box(g, 0, 19, lw, 1, '#000');
   let x = 14;
-  for (const m of o.menus ?? ['File', 'Edit', 'Cells', 'Search', 'Action', 'Styles', 'Windows']) x += T(g, m, x, 14, F.arimo, 12, 700, '#000') + 14;
+  for (const m of o.menus ?? ['File', 'Edit', 'Cells', 'Search', 'Action', 'Styles', 'Windows']) x += T(g, tr(m), x, 14, F.arimo, 12, 700, '#000') + 14;
   // window
   const wx = 12, wy = 30, ww = lw - 26, wh = lh - 40;
   box(g, wx + 1, wy + 1, ww, wh, '#000');
@@ -105,7 +121,7 @@ function next(g: G, lw: number, lh: number, o: ChromeOpts): Rect {
   box(g, 0, 0, lw, lh, '#686868');
   // vertical menu
   const mx = 6, my = 6, mw = 104;
-  const items = ['Info', 'Notebook', 'Edit', 'Format', 'Cell', 'Graph', 'Action', 'Windows', 'Print', 'Services', 'Hide', 'Quit'];
+  const items = ['Info', 'Notebook', 'Edit', 'Format', 'Cell', 'Graph', 'Action', 'Windows', 'Print', 'Services', 'Hide', 'Quit'].map((m) => tr(m));
   box(g, mx, my, mw, 17, '#000');
   T(g, 'Mathematica', mx + mw / 2, my + 13, F.arimo, 11, 700, '#FFF', 'center');
   items.forEach((it, i) => {
@@ -167,11 +183,7 @@ function win31(g: G, lw: number, lh: number, o: ChromeOpts): Rect {
   const my = ty + 18;
   box(g, tx, my, tw, 18, '#FFF'); box(g, tx, my + 18, tw, 1, '#000');
   let x = tx + 8;
-  for (const m of o.menus ?? ['File', 'Edit', 'Cell', 'Graph', 'Action', 'Style', 'Options', 'Window', 'Help']) {
-    const w = T(g, m, x, my + 13, F.arimo, 11, 700, '#000');
-    g.fillStyle = '#000'; g.fillRect(x, my + 14.5, g.measureText(m[0]!).width, 1);
-    x += w + 13;
-  }
+  for (const m of o.menus ?? ['File', 'Edit', 'Cell', 'Graph', 'Action', 'Style', 'Options', 'Window', 'Help']) x += winMenuTitle(g, m, x, my + 13, JA_MENU ? 10 : 11, 700) + (JA_MENU ? 6 : 13);
   // ruler
   const ry = my + 19;
   box(g, tx, ry, tw, 13, '#FFF'); box(g, tx, ry + 13, tw, 1, '#000');
@@ -219,11 +231,11 @@ function win95(g: G, lw: number, lh: number, o: ChromeOpts): Rect {
   const tb = lh - 26;
   box(g, 0, tb, lw, 26, '#C0C0C0'); box(g, 0, tb, lw, 1, '#DFDFDF'); box(g, 0, tb + 1, lw, 1, '#FFF');
   bevel(g, 3, tb + 4, 56, 19, '#C0C0C0');
-  T(g, 'Start', 31, tb + 18, F.arimo, 11, 700, '#000', 'center');
+  T(g, tr('Start'), 31, tb + 18, F.arimo, 11, 700, '#000', 'center');
   bevel(g, 64, tb + 4, 150, 19, '#C0C0C0', true, false);
   T(g, 'Mathematica', 72, tb + 18, F.arimo, 11, 700, '#000');
   bevel(g, lw - 66, tb + 4, 63, 19, '#C0C0C0', true, false);
-  T(g, '10:23 AM', lw - 34, tb + 17.5, F.arimo, 10, 400, '#000', 'center');
+  T(g, tr('10:23 AM'), lw - 34, tb + 17.5, F.arimo, 10, 400, '#000', 'center');
   // window
   const wx = 6, wy = 6, ww = lw - 12 - 0, wh = tb - 12;
   bevel(g, wx, wy, ww, wh, '#C0C0C0');
@@ -242,11 +254,7 @@ function win95(g: G, lw: number, lh: number, o: ChromeOpts): Rect {
   // menu bar
   let x = wx + 10;
   const my = wy + 22;
-  for (const m of o.menus ?? ['File', 'Edit', 'Cell', 'Format', 'Input', 'Kernel', 'Find', 'Window', 'Help']) {
-    const w = T(g, m, x, my + 13, F.arimo, 11, 400, '#000');
-    g.fillStyle = '#000'; g.fillRect(x, my + 14.5, g.measureText(m[0]!).width, 1);
-    x += w + 14;
-  }
+  for (const m of o.menus ?? ['File', 'Edit', 'Cell', 'Format', 'Input', 'Kernel', 'Find', 'Window', 'Help']) x += winMenuTitle(g, m, x, my + 13, JA_MENU ? 10 : 11, 400) + (JA_MENU ? 7 : 14);
   // client area (sunken)
   const cx = wx + 4, cy = my + 19, cw = ww - 8, ch = wh - (cy - wy) - 4;
   bevel(g, cx, cy, cw, ch, '#FFF', true, true);
@@ -287,8 +295,8 @@ function mac9(g: G, lw: number, lh: number, o: ChromeOpts): Rect {
   mg.addColorStop(0, '#F2F2F2'); mg.addColorStop(1, '#D6D6D6');
   g.fillStyle = mg; g.fillRect(0, 0, lw, 20); box(g, 0, 20, lw, 1, '#777');
   let x = 16;
-  for (const m of o.menus ?? ['File', 'Edit', 'Cell', 'Format', 'Input', 'Kernel', 'Find', 'Window', 'Help']) x += T(g, m, x, 14.5, F.arimo, 12, 700, '#000') + 16;
-  T(g, '10:23 AM', lw - 12, 14.5, F.arimo, 12, 700, '#000', 'right');
+  for (const m of o.menus ?? ['File', 'Edit', 'Cell', 'Format', 'Input', 'Kernel', 'Find', 'Window', 'Help']) x += T(g, tr(m), x, 14.5, F.arimo, 12, 700, '#000') + 16;
+  T(g, tr('10:23 AM'), lw - 12, 14.5, F.arimo, 12, 700, '#000', 'right');
   // window
   const wx = 14, wy = 32, ww = lw - 30, wh = lh - 44;
   box(g, wx + 3, wy + 3, ww, wh, 'rgba(0,0,0,0.35)');
@@ -338,9 +346,9 @@ function xp(g: G, lw: number, lh: number, o: ChromeOpts): Rect {
   const sg = g.createLinearGradient(0, tb, 0, lh);
   sg.addColorStop(0, '#5EB55A'); sg.addColorStop(1, '#2E8B2A');
   g.fillStyle = sg; g.beginPath(); g.moveTo(0, tb); g.lineTo(88, tb); g.quadraticCurveTo(100, tb, 100, tb + 14); g.quadraticCurveTo(100, lh, 88, lh); g.lineTo(0, lh); g.fill();
-  T(g, 'start', 30, tb + 19.5, F.arimo, 16, 700, '#FFF', 'left', true);
+  T(g, tr('start'), 30, tb + 19.5, F.arimo, 16, 700, '#FFF', 'left', true);
   box(g, lw - 80, tb, 80, 28, '#0F8CE8');
-  T(g, '10:23 AM', lw - 40, tb + 18, F.arimo, 11, 400, '#FFF', 'center');
+  T(g, tr('10:23 AM'), lw - 40, tb + 18, F.arimo, 11, 400, '#FFF', 'center');
   // window
   const wx = 10, wy = 8, ww = lw - 20, wh = tb - 16;
   const tbh = 26;
@@ -366,7 +374,7 @@ function xp(g: G, lw: number, lh: number, o: ChromeOpts): Rect {
   const my = wy + tbh;
   box(g, wx + 4, my, ww - 8, 20, '#ECE9D8');
   let x = wx + 12;
-  for (const m of o.menus ?? ['File', 'Edit', 'Cell', 'Format', 'Input', 'Kernel', 'Find', 'Window', 'Help']) x += T(g, m, x, my + 14, F.arimo, 11.5, 400, '#000') + 14;
+  for (const m of o.menus ?? ['File', 'Edit', 'Cell', 'Format', 'Input', 'Kernel', 'Find', 'Window', 'Help']) x += winMenuTitle(g, m, x, my + 14, 11.5, 400, false) + 14;
   const cx = wx + 4, cy = my + 20, cw = ww - 8, ch = wh - tbh - 24;
   box(g, cx, cy, cw, ch, '#FFF', '#7F9DB9');
   // scrollbar
@@ -404,8 +412,9 @@ function macMenubar(g: G, lw: number, menus: string[], dark = false, h = 22) {
   g.fillStyle = dark ? 'rgba(30,30,32,0.85)' : 'rgba(250,250,250,0.92)'; g.fillRect(0, 0, lw, h);
   g.fillStyle = dark ? '#000' : 'rgba(0,0,0,0.18)'; g.fillRect(0, h, lw, 1);
   let x = 20;
-  menus.forEach((m, i) => { x += T(g, m, x, h * 0.7, F.arimo, 13, i === 0 ? 700 : 400, dark ? '#EEE' : '#111') + 19; });
-  T(g, 'Mon 10:23 AM', lw - 16, h * 0.7, F.arimo, 13, 400, dark ? '#EEE' : '#111', 'right');
+  const gap = LANG === 'ru' ? 12 : 19; // Russian titles are longer; keep Help clear of the clock
+  menus.forEach((m, i) => { x += T(g, tr(m), x, h * 0.7, F.arimo, 13, i === 0 ? 700 : 400, dark ? '#EEE' : '#111') + gap; });
+  T(g, tr('Mon 10:23 AM'), lw - 16, h * 0.7, F.arimo, 13, 400, dark ? '#EEE' : '#111', 'right');
 }
 function osx(g: G, lw: number, lh: number, o: ChromeOpts, style: 'osx' | 'yosemite' | 'bigsur' | 'dark'): Rect {
   const dark = style === 'dark';
@@ -451,9 +460,9 @@ function osx(g: G, lw: number, lh: number, o: ChromeOpts, style: 'osx' | 'yosemi
     const groups = ['Evaluation', 'Assistance', 'Cell Style', 'Cells', 'Code', 'Insert', 'Notebook'];
     let gx = wx + 14;
     groups.forEach((gname, i) => {
-      T(g, gname, gx, cy + 12, F.arimo, 9, 400, '#9A9A9A');
+      T(g, tr(gname), gx, cy + 12, F.arimo, 9, 400, '#9A9A9A');
       const n = gname === 'Cell Style' ? 0 : i === 0 ? 3 : 3;
-      if (gname === 'Cell Style') { g.fillStyle = '#383838'; g.beginPath(); g.roundRect(gx, cy + 16, 96, 17, 3); g.fill(); T(g, '+ Insert Cell...', gx + 6, cy + 28.5, F.arimo, 10, 400, '#DDD'); gx += 110; return; }
+      if (gname === 'Cell Style') { g.fillStyle = '#383838'; g.beginPath(); g.roundRect(gx, cy + 16, 96, 17, 3); g.fill(); T(g, tr('+ Insert Cell...'), gx + 6, cy + 28.5, F.arimo, 10, 400, '#DDD'); gx += 110; return; }
       for (let k = 0; k < n; k++) {
         g.fillStyle = i === 0 && k === 0 ? '#E0482F' : '#9C9C9C';
         g.beginPath(); g.roundRect(gx + k * 22, cy + 18, 14, 13, 2); i === 0 && k === 0 ? g.fill() : (g.strokeStyle = '#9C9C9C', g.lineWidth = 1.2, g.stroke());

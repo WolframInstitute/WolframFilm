@@ -12,6 +12,7 @@ import { chrome } from '../../ui/chrome';
 import { drawNotebook, NB, type Cell } from '../../ui/notebook';
 import { cloudObjectCell } from '../../ui/widgets';
 import { drawSpikey } from '../spikey';
+import { LANG, tr, num, words, isRed } from '../../core/i18n';
 
 const YEARS: Record<string, number> = {
   v1: 1988.47, v2: 1991.04, v3: 1996.67, v4: 1999.38, v5: 2003.45, v6: 2007.33, v7: 2008.88, v8: 2010.87, v9: 2012.9,
@@ -42,10 +43,10 @@ function statement(g: G, bar: number, at: number, until: number, big: string, sm
   // big line, with one red token
   let cx = x;
   g.font = fb;
-  for (const wd of big.split(' ')) {
-    g.fillStyle = red && wd.replace(/[.,:]/g, '') === red ? P.redHot : P.bone;
+  for (const wd of words(big)) {
+    g.fillStyle = red && isRed(wd, [red]) ? P.redHot : P.bone;
     g.fillText(wd, cx, y - (1 - u) * 20);
-    cx += g.measureText(wd + ' ').width;
+    cx += g.measureText(wd).width;
   }
   if (small) text(g, small, x + 2, y + 70 - (1 - u) * 20, { font: fs, color: '#B9BBC2' });
   g.restore();
@@ -82,7 +83,7 @@ function card(g: G, bar: number, at: number, until: number, title: string, body:
 
 function specimens(g: G, bar: number) {
   // most common words: share of all symbol uses (WolframLanguageData "Frequencies")
-  card(g, bar, C + 2, C + 4, 'Most used words', (x, y) => {
+  card(g, bar, C + 2, C + 4, tr('Most used words'), (x, y) => {
     const top = BY_FREQ.slice(0, 12), max = top[0]!.freq;
     top.forEach((w, i) => {
       const k = ease.outCubic(inv(C + 2.15 + i / 32, C + 2.45 + i / 32, bar));
@@ -94,14 +95,14 @@ function specimens(g: G, bar: number) {
     });
   });
   // longer words: the longest names, and the average new word per release
-  card(g, bar, C + 4, C + 6, 'Longest words', (x, y) => {
+  card(g, bar, C + 4, C + 6, tr('Longest words'), (x, y) => {
     LONGEST.forEach((w, i) => {
       const k = ease.outCubic(inv(C + 4.15 + i / 16, C + 4.4 + i / 16, bar));
       text(g, w.name, x, y + 16 + i * 44, { font: font(F.code, 17, 600), color: P.bone, alpha: k });
       text(g, String(w.name.length), x + 510, y + 16 + i * 44, { font: font(F.code, 17, 400), color: P.red, align: 'right', alpha: k });
     });
     const cy = y + 330, ch = 250, cw = 510;
-    text(g, 'AVERAGE LETTERS PER NEW WORD, BY VERSION', x, cy - 12, { font: font(F.sans, 15, 600), color: '#A9ABB2', tracking: 2 });
+    text(g, tr('AVERAGE LETTERS PER NEW WORD, BY VERSION'), x, cy - 12, { font: font(F.sans, 15, 600), color: '#A9ABB2', tracking: 2 });
     const bw = cw / AVG_LEN.length;
     AVG_LEN.forEach((a, i) => {
       const k = ease.outCubic(inv(C + 4.5 + i / 24, C + 4.8 + i / 24, bar));
@@ -121,8 +122,8 @@ function specimens(g: G, bar: number) {
       text(g, n, x + (i % 2) * 290, y + 20 + Math.floor(i / 2) * 64, { font: font(F.code, 22, 600), color: P.bone, alpha: k });
     });
   };
-  card(g, bar, C + 6, C + 7, 'Words that ask', columns(QS, C + 6.1));
-  card(g, bar, C + 7, C + 8, 'Words named after people', columns(EPS, C + 7.1));
+  card(g, bar, C + 6, C + 7, tr('Words that ask'), columns(QS, C + 6.1));
+  card(g, bar, C + 7, C + 8, tr('Words named after people'), columns(EPS, C + 7.1));
 }
 
 export function climax(c: Ctx) {
@@ -160,22 +161,24 @@ export function climax(c: Ctx) {
   g.restore();
   specimens(g, bar);
   // statements
-  statement(g, bar, C + 0.05, C + 1.95, `${TOTAL_WORDS.toLocaleString('en-US')} words.`, 'There were 554 in 1988.', undefined);
-  statement(g, bar, C + 2, C + 3.95, 'Its most common word: List.', 'In English it’s “the”.', 'List');
-  statement(g, bar, C + 4, C + 5.95, 'Its words grew longer.', 'An average new word: 8.1 letters in 1988, 15.4 in 2026.');
-  statement(g, bar, C + 6, C + 6.97, '219 words ask a question.', 'EvenQ, PrimeQ, StringQ… the Q makes it a question.', '219');
-  statement(g, bar, C + 7, C + 8, '634 carry a person’s name.', 'Fourier, Bessel, Gauss, Euler…', '634');
+  statement(g, bar, C + 0.05, C + 1.95, tr('{0} words.', num(TOTAL_WORDS)), tr('There were 554 in 1988.'), undefined);
+  statement(g, bar, C + 2, C + 3.95, tr('Its most common word: List.'), tr('In English it’s “the”.'), 'List');
+  statement(g, bar, C + 4, C + 5.95, tr('Its words grew longer.'), tr('An average new word: 8.1 letters in 1988, 15.4 in 2026.'));
+  statement(g, bar, C + 6, C + 6.97, tr('219 words ask a question.'), tr('EvenQ, PrimeQ, StringQ… the Q makes it a question.'), '219');
+  statement(g, bar, C + 7, C + 8, tr('634 carry a person’s name.'), tr('Fourier, Bessel, Gauss, Euler…'), '634');
 }
 
 const EPONYMS = new Set([...byName.values()].filter((w) => w.eponym).map((w) => w.name));
 
 // ---------------------------------------------------------------- outro
+// each language deploys its own file: In1.mp4, In1-ru.mp4, In1-ja.mp4
+const SUFFIX = LANG === 'en' ? '' : `-${LANG}`;
 export const DEPLOY = {
-  mp4: 'https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1.mp4',
-  page: 'https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1',
+  mp4: `https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1${SUFFIX}.mp4`,
+  code: `CopyFile["out/film${SUFFIX}.mp4", CloudObject["WolframFilm/In1${SUFFIX}.mp4", Permissions -> "Public"]]`,
 };
 const DEPLOY_CELLS: Cell[] = [
-  { kind: 'input' as const, at: O + 1.6, n: 1, type: 0.6, text: 'CopyFile["out/film.mp4", CloudObject["WolframFilm/In1.mp4", Permissions -> "Public"]]' },
+  { kind: 'input' as const, at: O + 1.6, n: 1, type: 0.6, text: DEPLOY.code },
   cloudObjectCell(O + 2.4, DEPLOY.mp4, NB.v13, 1, O + 3.2),
 ];
 
@@ -215,11 +218,11 @@ export function outro(c: Ctx) {
   // lines
   const col = mix(P.ink, P.bone, darkness(bar));
   const a1 = ease.outExpo(inv(O + 3.75, O + 4, bar));
-  text(g, `${TOTAL_WORDS.toLocaleString('en-US')} words.`, W / 2, 720, { font: font(F.sans, 76, 800), color: col, align: 'center', alpha: a1 * (1 - inv(O + 6.3, O + 6.9, bar)) });
+  text(g, tr('{0} words.', num(TOTAL_WORDS)), W / 2, 720, { font: font(F.sans, 76, 800), color: col, align: 'center', alpha: a1 * (1 - inv(O + 6.3, O + 6.9, bar)) });
   const a2 = ease.outExpo(inv(O + 4.25, O + 4.5, bar));
-  text(g, 'Still growing.', W / 2, 810, { font: font(F.sans, 76, 300), color: P.red, align: 'center', alpha: a2 * (1 - inv(O + 6.3, O + 6.9, bar)) });
+  text(g, tr('Still growing.'), W / 2, 810, { font: font(F.sans, 76, 300), color: P.red, align: 'center', alpha: a2 * (1 - inv(O + 6.3, O + 6.9, bar)) });
   const a3 = ease.outCubic(inv(O + 5, O + 5.5, bar));
-  text(g, 'THE WOLFRAM LANGUAGE  ·  1988 – 2026', W / 2, 930, { font: font(F.sans, 26, 600), color: '#8B877F', align: 'center', tracking: 6, alpha: a3 * (1 - inv(O + 6.3, O + 6.9, bar)) });
+  text(g, tr('THE WOLFRAM LANGUAGE  ·  1988 – 2026'), W / 2, 930, { font: font(F.sans, 26, 600), color: '#8B877F', align: 'center', tracking: 6, alpha: a3 * (1 - inv(O + 6.3, O + 6.9, bar)) });
   // Spikey takes a bow
   const su = ease.outBack(inv(O + 4.5, O + 4.9, bar), 2);
   if (su > 0) drawSpikey(g, bar, W / 2, 1010 - 30, 42 * su, 'modern', 'red', 1 - inv(O + 6, O + 6.8, bar));

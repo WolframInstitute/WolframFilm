@@ -8,6 +8,10 @@ import { existsSync, mkdirSync, writeFileSync, statSync, readdirSync, readFileSy
 import { cpus } from 'os';
 import { S, FPS, BARS, BAR } from './core/time';
 
+// FILM_LANG=ru|ja builds that language; unchanged sections (same pixels) come straight from the shared cache
+const LANG = process.env.FILM_LANG === 'ru' || process.env.FILM_LANG === 'ja' ? process.env.FILM_LANG : 'en';
+const MUSIC = LANG === 'en' ? 'out/music.wav' : `out/music-${LANG}.wav`;
+
 const args = process.argv.slice(2);
 const opt = (k: string, d?: string) => { const i = args.indexOf(`--${k}`); return i >= 0 ? args[i + 1]! : d; };
 const OUT = opt('out', 'out/film.mp4')!;
@@ -40,13 +44,13 @@ function fingerprint() {
   const files: string[] = [];
   const walk = (d: string) => { for (const f of readdirSync(d, { withFileTypes: true })) { const p = `${d}/${f.name}`; f.isDirectory() ? walk(p) : files.push(p); } };
   for (const d of ['src', 'assets']) walk(d);
-  files.push('out/music.wav');
+  files.push(MUSIC);
   const h = new Bun.CryptoHasher('sha256');
   for (const f of files.sort()) { const st = statSync(f); h.update(`${f}:${st.size}:${st.mtimeMs}\n`); }
-  h.update(`${SAMPLES}|${PRESET}|${CRF}`);
+  h.update(`${SAMPLES}|${PRESET}|${CRF}|${LANG}`);
   return h.digest('hex');
 }
-const FP = fingerprint(), FP_FILE = `${CACHE}/last.json`;
+const FP = fingerprint(), FP_FILE = `${CACHE}/last${LANG === 'en' ? '' : '-' + LANG}.json`;
 if (!args.includes('--force') && existsSync(FP_FILE)) {
   const last = JSON.parse(readFileSync(FP_FILE, 'utf8'));
   if (last.fp === FP && existsSync(last.out)) {
@@ -73,9 +77,9 @@ await pool(todo, ENC_JOBS, async (s) => {
   console.log(`  encoded ${s.name} (${((s.f1 - s.f0) / FPS).toFixed(1)} s) at ${secs()}`);
 });
 // 3. stitch + soundtrack
-const list = `${CACHE}/concat.txt`;
+const list = `${CACHE}/concat${LANG === 'en' ? '' : '-' + LANG}.txt`;
 writeFileSync(list, segs.map((s) => `file '${file(s).replace(`${CACHE}/`, '')}'`).join('\n') + '\n');
-await run(['ffmpeg', '-y', '-v', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-i', 'out/music.wav', '-map', '0:v', '-map', '1:a',
+await run(['ffmpeg', '-y', '-v', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-i', MUSIC, '-map', '0:v', '-map', '1:a',
   '-c:v', 'copy', '-c:a', 'aac', '-b:a', '320k', '-movflags', '+faststart', '-shortest', OUT]);
 writeFileSync(FP_FILE, JSON.stringify({ fp: FP, out: OUT }));
 console.log(`wrote ${OUT} in ${secs()}`);

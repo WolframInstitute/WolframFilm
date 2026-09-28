@@ -2,25 +2,28 @@
 import { F, font, text, measure, clamp, inv, ease, mix, type G } from '../core/draw';
 import { byName } from '../core/lexicon';
 import usage from '../data/usage.json';
+import usageRu from '../i18n/usage-ru.json';
+import usageJa from '../i18n/usage-ja.json';
+import { LANG, tr, words, isRed } from '../core/i18n';
 import { img } from '../core/assets';
 import { P, darkness } from './palette';
 
-const USAGE = usage as Record<string, string>;
+// usage lines: the documentation's own (Japanese from reference.wolfram.com/…/X.html.ja; Russian translated)
+const USAGE = { ...(usage as Record<string, string>), ...(LANG === 'ru' ? usageRu : LANG === 'ja' ? usageJa : {}) } as Record<string, string>;
 
 export const COL_X = 1250;
 export const COL_W = 590;
 
 /** Wrap text to a width; returns lines. */
 export function wrap(g: G, s: string, f: string, w: number): string[] {
-  const words = s.split(/\s+/);
   const lines: string[] = [];
   let cur = '';
   g.save(); g.font = f;
-  for (const wd of words) {
-    const t = cur ? cur + ' ' + wd : wd;
-    if (g.measureText(t).width > w && cur) { lines.push(cur); cur = wd; } else cur = t;
+  for (const wd of words(s.replace(/\s+/g, ' ').trim())) {
+    const t = cur + wd;
+    if (g.measureText(t.trimEnd()).width > w && cur) { lines.push(cur.trimEnd()); cur = wd; } else cur = t;
   }
-  if (cur) lines.push(cur);
+  if (cur) lines.push(cur.trimEnd());
   g.restore();
   return lines;
 }
@@ -43,13 +46,12 @@ export function caption(g: G, bar: number, at: number, until: number, s: string,
   g.font = f;
   lines.forEach((ln, li) => {
     let cx = x;
-    for (const wd of ln.split(' ')) {
+    for (const wd of words(ln)) {
       const a = ease.outExpo(inv(at + k * stagger, at + k * stagger + 0.2, bar));
-      const red = o.redWords?.some((r) => wd.replace(/[.,:!?]/g, '') === r);
       g.globalAlpha = a * (1 - leave);
-      g.fillStyle = red ? P.red : col;
+      g.fillStyle = isRed(wd, o.redWords) ? P.red : col;
       g.fillText(wd, cx, y + li * size * 1.12 + (1 - a) * 22 - leave * 16);
-      cx += g.measureText(wd + ' ').width;
+      cx += g.measureText(wd).width; // words carry their own trailing space
       k++;
     }
   });
@@ -84,7 +86,7 @@ export function entry(g: G, bar: number, at: number, until: number, name: string
   // pos line
   const ver = word ? (word.ver.includes('.') ? word.ver : `${word.ver}.0`) : '';
   const year = word?.date.slice(0, 4) ?? '';
-  const pos = o.note ?? `symbol · since ${ver}, ${year}`;
+  const pos = o.note ?? tr('symbol · since {0}, {1}', ver, year);
   text(g, pos, x + 2, y + 46 + dy, { font: font(F.serif, 30, 400, true), color: soft });
   // definition (real usage text, first sentence)
   let def = o.usage ?? USAGE[name] ?? '';
@@ -118,7 +120,7 @@ export function archive(g: G, bar: number, at: number, until: number, file: stri
   g.fillStyle = '#FBFAF6'; g.fillRect(-w / 2 - 12, -h / 2 - 12, w + 24, h + 58);
   g.shadowBlur = 0; g.shadowOffsetY = 0; g.shadowColor = 'transparent';
   g.drawImage(im, -w / 2, -h / 2, w, h);
-  text(g, `FROM THE ARCHIVE · ${year}`, -w / 2, h / 2 + 22, { font: font(F.sans, 13, 700), color: P.red, tracking: 2 });
+  text(g, tr('FROM THE ARCHIVE · {0}', year), -w / 2, h / 2 + 22, { font: font(F.sans, 13, 700), color: P.red, tracking: 2 });
   text(g, cap, -w / 2, h / 2 + 40, { font: font(F.serif, 16, 400, true), color: '#3A3833' });
   g.restore();
   void dk;

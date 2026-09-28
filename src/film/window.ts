@@ -8,6 +8,7 @@ import { drawNotebook } from '../ui/notebook';
 import { chatbar } from '../ui/widgets';
 import { ERAS, type Era } from './story';
 import { P, darkness } from './palette';
+import { tr } from '../core/i18n';
 
 export const SCREEN: Rect = { x: 88, y: 176, w: 1100, h: 780 };
 
@@ -28,7 +29,7 @@ function drawEra(g: G, e: Era, bar: number, R: Rect) {
     drawNotebook(sg, content, e.nb, e.cells, localBar);
     if (e.extras === 'palette95') palette95(sg, lw - 118, 60, localBar);
     if (e.extras === 'chatbar15') {
-      const req = 'Write the melody we are hearing as a score';
+      const req = tr('Write the melody we are hearing as a score');
       const u = clamp(inv(S.v15[0] + 0.1, S.v15[0] + 0.85, localBar));
       const sent = localBar >= S.v15[0] + 1;
       sg.fillStyle = '#FFF'; sg.fillRect(c.x, c.y + c.h - 64, c.w, 64);

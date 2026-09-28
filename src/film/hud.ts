@@ -5,6 +5,7 @@ import { wordCountAt, RELEASES } from '../core/lexicon';
 import { W, H } from '../core/time';
 import { P, darkness } from './palette';
 import { kickPulse } from '../core/film';
+import { tr, num } from '../core/i18n';
 
 // bar -> calendar year (piecewise, snapping on release downbeats)
 const YEAR_KEYS: [number, number][] = [
@@ -73,8 +74,8 @@ export function drawCounter(g: G, bar: number, alpha = 1) {
   g.save();
   g.globalAlpha = alpha;
   const x = W - 96, y = 118;
-  text(g, n.toLocaleString('en-US'), x, y, { font: font(F.sans, 88, 700), color: moving ? mix(col, P.red, 0.85) : col, align: 'right' });
-  text(g, 'WORDS IN THE LANGUAGE', x, y + 34, { font: font(F.sans, 17, 600), color: soft, align: 'right', tracking: 3 });
+  text(g, num(n), x, y, { font: font(F.sans, 88, 700), color: moving ? mix(col, P.red, 0.85) : col, align: 'right' });
+  text(g, tr('WORDS IN THE LANGUAGE'), x, y + 34, { font: font(F.sans, 17, 600), color: soft, align: 'right', tracking: 3 });
   g.restore();
 }
 

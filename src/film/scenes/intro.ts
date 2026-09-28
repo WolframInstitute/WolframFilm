@@ -4,6 +4,7 @@ import { kickPulse } from '../../core/film';
 import { F, font, text, measure, clamp, inv, ease, typed, rgba, mix, hash01, type G } from '../../core/draw';
 import { W, H } from '../../core/time';
 import { P } from '../palette';
+import { LANG, tr } from '../../core/i18n';
 
 const cursorOn = (bar: number) => Math.floor(bar * 4) % 2 === 0; // blink on 8ths
 
@@ -11,7 +12,8 @@ const cursorOn = (bar: number) => Math.floor(bar * 4) % 2 === 0; // blink on 8th
 export function coldOpen(c: Ctx) {
   const { g, bar } = c;
   g.fillStyle = '#050506'; g.fillRect(0, 0, W, H);
-  const line = 'Every language starts with a few words.';
+  const line = tr('Every language starts with a few words.');
+  const hot = tr('words'), hotAt = Math.max(0, line.lastIndexOf(hot));
   const u = inv(0.5, 2.6, bar);
   const shown = typed(line, u);
   const f = font(F.code, 64, 400);
@@ -26,9 +28,9 @@ export function coldOpen(c: Ctx) {
   const w = text(g, shown, x, y, { font: f, color: '#E9E6DF' });
   // the last word lights up
   if (bar > 2.8) {
-    const wx = x + measure(g, 'Every language starts with a few ', f);
+    const wx = x + measure(g, line.slice(0, hotAt), f);
     const a = ease.outCubic(inv(2.8, 3.1, bar));
-    text(g, 'words', wx, y, { font: f, color: mix('#E9E6DF', P.redHot, a) });
+    text(g, hot, wx, y, { font: f, color: mix('#E9E6DF', P.redHot, a) });
   }
   g.restore();
   // cursor
@@ -120,13 +122,18 @@ export function smp(c: Ctx) {
   });
   if (bar >= 5.3) y += ASCII_PLOT.length * 21 + 20;
   // caption, typed like program output
-  const cap1 = 'NOVEMBER 1979. CALTECH.';
-  const cap2 = 'A 20-YEAR-OLD PHYSICIST WRITES A LANGUAGE';
-  const cap3 = 'FOR TALKING TO HIS COMPUTER: SMP.';
+  const cap1 = tr('NOVEMBER 1979. CALTECH.');
+  const cap2 = tr('A 20-YEAR-OLD PHYSICIST WRITES A LANGUAGE');
+  const cap3 = tr('FOR TALKING TO HIS COMPUTER: SMP.');
   const cy = sy + sh - 150;
-  text(g, typed(cap1, inv(6.5, 6.8, bar)), x0, cy, { font: font(F.term, 44), color: '#B8FFC8' });
-  text(g, typed(cap2, inv(6.8, 7.25, bar)), x0, cy + 52, { font: font(F.term, 58), color: '#E6FFEC' });
-  text(g, typed(cap3, inv(7.2, 7.55, bar)), x0, cy + 110, { font: font(F.term, 58), color: '#E6FFEC' });
+  // translated captions are set entirely in DotGothic16 (it has Cyrillic and kana, VT323 doesn't),
+  // shrunk to fit the screen and given a little more leading for its taller glyphs
+  const capFam = LANG === 'en' ? F.term : '"DotGothic16"', lead = LANG === 'en' ? 1 : 1.12;
+  const fit = (s: string, size: number) => { const w = measure(g, s, font(capFam, size)); return w > sw - 180 ? size * (sw - 180) / w : size; };
+  const s2 = Math.min(fit(cap2, 58), fit(cap3, 58)) * (LANG === 'en' ? 1 : 0.86), s1 = LANG === 'en' ? 44 : Math.min(44, s2 * 0.8);
+  text(g, typed(cap1, inv(6.5, 6.8, bar)), x0, cy, { font: font(capFam, s1), color: '#B8FFC8' });
+  text(g, typed(cap2, inv(6.8, 7.25, bar)), x0, cy + 52 * lead, { font: font(capFam, s2), color: '#E6FFEC' });
+  text(g, typed(cap3, inv(7.2, 7.55, bar)), x0, cy + 110 * lead, { font: font(capFam, s2), color: '#E6FFEC' });
   g.shadowBlur = 0; g.shadowOffsetY = 0; g.shadowColor = 'transparent';
   // cursor
   if (cursorOn(bar) && bar < 6.45) { g.fillStyle = phosphor; g.fillRect(x0, y - 40, 26, 46); }
@@ -164,8 +171,8 @@ export function y1986(c: Ctx) {
     g.save();
     g.globalAlpha = yu * (1 - out);
     text(g, '1986', 160, 470 - (1 - yu) * 40, { font: font(F.sans, 220, 700), color: P.red });
-    text(g, typed('He starts again, from nothing.', inv(8.35, 8.9, bar)), 170, 580, { font: font(F.sans, 60, 600), color: col });
-    text(g, typed('A language for everything.', inv(8.95, 9.45, bar)), 170, 660, { font: font(F.sans, 60, 300), color: col });
+    text(g, typed(tr('He starts again, from nothing.'), inv(8.35, 8.9, bar)), 170, 580, { font: font(F.sans, 60, 600), color: col });
+    text(g, typed(tr('A language for everything.'), inv(8.95, 9.45, bar)), 170, 660, { font: font(F.sans, 60, 300), color: col });
     g.restore();
   }
   if (bar >= 9.9) nameScene(g, bar);
@@ -201,6 +208,6 @@ function nameScene(g: G, bar: number) {
   // attribution line
   const a = ease.outCubic(inv(10.9, 11.2, bar));
   g.globalAlpha = a;
-  text(g, 'The name? Steve Jobs suggested it.', W / 2, y + 110, { font: font(F.sans, 48, 400, true), color: '#55524C', align: 'center' });
+  text(g, tr('The name? Steve Jobs suggested it.'), W / 2, y + 110, { font: font(F.sans, 48, 400, true), color: '#55524C', align: 'center' });
   g.restore();
 }

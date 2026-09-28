@@ -10,6 +10,7 @@ import { drawRotating } from '../../ui/widgets';
 import { WORDS, byName } from '../../core/lexicon';
 import { COL_X, COL_W, wrap } from '../narrator';
 import { cuteSpikey } from '../spikey';
+import { tr, num } from '../../core/i18n';
 
 // ---------------------------------------------------------------- 32–34: words come in families
 const FAMILY = WORDS.filter((w) => /(Plot|Plot3D|Chart|Chart3D)$/.test(w.name)).sort((a, b) => parseFloat(a.ver) - parseFloat(b.ver) || a.name.localeCompare(b.name));
@@ -42,9 +43,9 @@ export function families(c: Ctx) {
   g.globalAlpha = tu;
   const f = font(F.sans, 64, 800);
   const x = 96, y = 150;
-  const w1 = text(g, 'Words come in families: ', x, y, { font: f, color: col });
+  const w1 = text(g, tr('Words come in families: '), x, y, { font: f, color: col });
   text(g, '…Plot', x + w1, y, { font: f, color: P.red });
-  text(g, `${FAMILY.length} words in the …Plot and …Chart families.`, x + 2, y + 52, { font: font(F.sans, 30, 400), color: mix('#6B675F', '#9A9CA3', darkness(bar)) });
+  text(g, tr('{0} words in the …Plot and …Chart families.', FAMILY.length), x + 2, y + 52, { font: font(F.sans, 30, 400), color: mix('#6B675F', '#9A9CA3', darkness(bar)) });
   g.restore();
   // tiles: one per beat
   const tw = 400, th = 330, gx = 96, gy = 250, gap = 36;
@@ -71,13 +72,13 @@ export function families(c: Ctx) {
 }
 
 // ---------------------------------------------------------------- 46–48: the repositories
-const REPOS: [string, string, string][] = [
+const REPOS: [string, string, string][] = ([
   ['Demonstrations Project', '2007', 'interactive ideas, built with Manipulate'],
   ['Wolfram Community', '2013', 'where users share what they make'],
   ['Data Repository', '2017', 'data that computes'],
   ['Neural Net Repository', '2018', 'trained nets, one NetModel call away'],
   ['Function Repository', '2019', 'anyone can add a function'],
-];
+] as [string, string, string][]).map(([n, y, l]) => [tr(n), y, tr(l)]);
 export function repoCards(c: Ctx) {
   const { g, bar } = c;
   if (bar < R0 || bar >= R0 + 2.2) return;
@@ -103,9 +104,9 @@ export function repoCards(c: Ctx) {
 
 // ---------------------------------------------------------------- 64–66: made by an agent
 const AGENT_LINES: { at: number; s: string; kind: 'prompt' | 'call' | 'result' }[] = [
-  { at: A0 + 0.05, s: '> make a short film about the Wolfram Language', kind: 'prompt' },
+  { at: A0 + 0.05, s: tr('> make a short film about the Wolfram Language'), kind: 'prompt' },
   { at: A0 + 0.3, s: '● Bash(wolframscript -file data/lexicon.wls)', kind: 'call' },
-  { at: A0 + 0.45, s: '  └  6,693 symbols · names, versions, usage, frequencies', kind: 'result' },
+  { at: A0 + 0.45, s: tr('  └  {0} symbols · names, versions, usage, frequencies', num(6693)), kind: 'result' },
   { at: A0 + 0.6, s: '● Bash(wolframscript -file data/assets/a5.wls)', kind: 'call' },
   { at: A0 + 0.75, s: '  └  assets/wl/v10_globe.png', kind: 'result' },
   { at: A0 + 0.9, s: '● Bash(wolframscript -file data/assets/a7.wls)', kind: 'call' },
@@ -113,7 +114,7 @@ const AGENT_LINES: { at: number; s: string; kind: 'prompt' | 'call' | 'result' }
   { at: A0 + 1.2, s: '● Bash(wolframscript -file data/assets2/extra.wls)', kind: 'call' },
   { at: A0 + 1.35, s: '  └  x_parallel.png · x_quantum_circuit.png · x_fireballs.png', kind: 'result' },
   { at: A0 + 1.5, s: '● Bash(bun src/render.ts video)', kind: 'call' },
-  { at: A0 + 1.65, s: '  └  9,960 frames · 1920×1080 · 60 fps', kind: 'result' },
+  { at: A0 + 1.65, s: tr('  └  {0} frames · 1920×1080 · 60 fps', num(9960)), kind: 'result' },
 ];
 const THUMBS = ['v1_plot3d.png', 'v2_surface.png', 'v5_colors.png', 'v6_europe.png', 'x_parallel.png', 'v10_globe.png', 'v13_astro.png', 'v12_molecule.png', 'x_quantum_trad.png'];
 
@@ -159,12 +160,12 @@ export function agents(c: Ctx) {
   g.restore();
   // captions
   const cu = ease.outExpo(inv(A0 + 0.2, A0 + 0.45, bar));
-  text(g, 'WOLFRAM AS A TOOL FOR AI · FEBRUARY 2026', 96, 110, { font: font(F.sans, 20, 600), color: P.red, tracking: 3, alpha: cu * (1 - out) });
+  text(g, tr('WOLFRAM AS A TOOL FOR AI · FEBRUARY 2026'), 96, 110, { font: font(F.sans, 20, 600), color: P.red, tracking: 3, alpha: cu * (1 - out) });
   const f = font(F.sans, 60, 800);
-  const lines1 = wrap(g, 'AIs now call the language as a tool.', f, 1700);
+  const lines1 = wrap(g, tr('AIs now call the language as a tool.'), f, 1700);
   lines1.forEach((ln, i) => text(g, ln, 96, 930 + i * 64, { font: f, color: P.bone, alpha: cu * (1 - out) }));
   const u2 = ease.outExpo(inv(A0 + 1, A0 + 1.25, bar));
-  text(g, 'This film was made that way.', 96, 1010, { font: font(F.sans, 44, 400), color: P.redHot, alpha: u2 * (1 - out) });
+  text(g, tr('This film was made that way.'), 96, 1010, { font: font(F.sans, 44, 400), color: P.redHot, alpha: u2 * (1 - out) });
   g.restore();
   highFive(g, bar);
   void measure;

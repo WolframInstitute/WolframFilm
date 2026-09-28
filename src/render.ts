@@ -11,8 +11,11 @@ import { setCanvasFactory } from './core/draw';
 import { drawFrame } from './core/film';
 import { DURATION, FPS, W, H } from './core/time';
 import './film/index';
+import { LANG } from './core/i18n';
 
 for (const f of readdirSync('assets/fonts')) if (f.endsWith('.ttf')) GlobalFonts.registerFromPath(`assets/fonts/${f}`);
+// Cyrillic and Japanese fallbacks (scripts/fetch-fonts.sh); the English film never touches them
+if (LANG !== 'en') for (const f of readdirSync('assets/fonts/intl')) if (/\.(ttf|otf)$/.test(f)) GlobalFonts.registerFromPath(`assets/fonts/intl/${f}`);
 setCanvasFactory((w, h) => createCanvas(w, h) as any);
 await loadAssets({ image: (p) => loadImage(p), json: async (p) => JSON.parse(readFileSync(p, 'utf8')) }, ASSETS);
 
@@ -33,7 +36,7 @@ if (mode === 'stills') {
     renderAt(t);
     const out = createCanvas(Math.round(W * scale), Math.round(H * scale));
     out.getContext('2d').drawImage(canvas, 0, 0, out.width, out.height);
-    const p = `out/still-${t.toFixed(2)}.png`;
+    const p = `out/still-${LANG === 'en' ? '' : LANG + '-'}${t.toFixed(2)}.png`;
     writeFileSync(p, out.toBuffer('image/png'));
     console.log(p);
   }

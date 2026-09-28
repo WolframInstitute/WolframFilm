@@ -3,3 +3,4 @@ out/
 *.log
 .DS_Store
 refs/ui/
+assets/fonts/intl/

@@ -1,4 +1,5 @@
 // Drawing kit shared by every scene. Works on both browser and @napi-rs/canvas contexts.
+import { LANG } from './i18n';
 export type G = CanvasRenderingContext2D;
 
 // ------------------------------------------------------------------ platform
@@ -51,15 +52,20 @@ export function hash01(x: string | number) {
 }
 
 // ------------------------------------------------------------------ fonts
+// Each family falls back per glyph: Cyrillic is covered by the families themselves except the
+// terminal and Courier faces; Japanese falls back to Noto CJK (Klee One for handwriting, DotGothic16
+// for the green-phosphor terminal, which also covers Cyrillic).
+const JA = LANG === 'ja';
+const fb = (base: string, ja: string, ru = '') => base + (JA ? `, "${ja}"` : ru && LANG === 'ru' ? `, "${ru}"` : '');
 export const F = {
-  sans: '"Source Sans 3"',
-  code: '"Source Code Pro"',
-  serif: '"Source Serif 4"',
-  hand: '"Caveat"',
-  term: '"VT323"',
-  courier: '"Courier Prime"',
-  arimo: '"Arimo"',
-  tinos: '"Tinos"',
+  sans: fb('"Source Sans 3"', 'Noto Sans CJK JP'),
+  code: fb('"Source Code Pro"', 'Noto Sans Mono CJK JP'),
+  serif: fb('"Source Serif 4"', 'Noto Serif CJK JP'),
+  hand: fb('"Caveat"', 'Klee One'),
+  term: fb('"VT323"', 'DotGothic16', 'DotGothic16'),
+  courier: fb('"Courier Prime"', 'Noto Sans Mono CJK JP', 'Cousine'),
+  arimo: fb('"Arimo"', 'Noto Sans CJK JP'),
+  tinos: fb('"Tinos"', 'Noto Serif CJK JP'),
 };
 export const font = (family: string, size: number, weight: number | string = 400, italic = false) =>
   `${italic ? 'italic ' : ''}${weight} ${size}px ${family}`;
@@ -80,7 +86,8 @@ export interface TextOpts { font: string; color?: string; align?: CanvasTextAlig
 /** Text with optional tracking (px between glyphs). Returns the advance width. */
 export function text(g: G, s: string, x: number, y: number, o: TextOpts): number {
   g.save();
-  g.font = o.font;
+  // Japanese has no italics; a synthesized slant only looks broken, so CJK text is set upright
+  g.font = JA && /[\u3000-\u9fff\uff00-\uffef]/.test(s) ? o.font.replace(/^italic /, '') : o.font;
   g.fillStyle = o.color ?? '#000';
   g.textBaseline = o.base ?? 'alphabetic';
   if (o.alpha !== undefined) g.globalAlpha *= o.alpha;

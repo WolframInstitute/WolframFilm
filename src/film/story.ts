@@ -14,6 +14,7 @@ import { RELEASES } from '../core/lexicon';
 import { HOOK, slider, MANIP } from '../music/score';
 import { drawAsset } from '../core/assets';
 import { CODE } from './codes';
+import { tr } from '../core/i18n';
 
 export interface Era {
   from: number; to: number;
@@ -71,8 +72,8 @@ export const ERAS: Era[] = [
   {
     from: at('v3'), to: S.v3[1], os: 'win95', title: 'Mathematica - [Untitled-1]', nb: NB.v3, extras: 'palette95',
     cells: [
-      { kind: 'title', at: at('v3'), text: 'Notes on Language' },
-      exprFlipCell(at('v3', 0.1), at('v3', 0.8), 'Every language starts with a few words.', NB.v3),
+      { kind: 'title', at: at('v3'), text: tr('Notes on Language') },
+      exprFlipCell(at('v3', 0.1), at('v3', 0.8), tr('Every language starts with a few words.'), NB.v3),
       typesetCell(at('v3', 1.1), 'in', 1, NB.v3), typesetCell(at('v3', 1.45), 'out', 1, NB.v3),
     ],
   },
@@ -115,7 +116,7 @@ export const ERAS: Era[] = [
       inp(at('v8', 1), 7, CODE.v8_graph, 0.2), graphGrowCell(at('v8', 1.25), 'v8_europe_graph.json', 0.6, 520, 330, { vertex: '#DD1100', edge: '#6D82C7', label: '#333' }, 7),
       // 9 · 2012: units, and the Suggestions Bar
       inp(at('v9'), 8, 'UnitConvert[Quantity[5., "Kilometers"], "Miles"]', 0.25), out(at('v9', 0.35), 8, '3.10686 mi'),
-      suggestionsCell(at('v9', 0.5), ['convert to feet', 'exact form', 'more...']),
+      suggestionsCell(at('v9', 0.5), [tr('convert to feet'), tr('exact form'), tr('more...')]),
     ],
   },
   {
@@ -153,8 +154,8 @@ export const ERAS: Era[] = [
   {
     from: at('llm'), to: S.llm[1], os: 'bigsur', title: 'Chat.nb', nb: NB.v13,
     cells: [
-      chatInputCell(at('llm'), 'What are the ten most common words in Alice in Wonderland?', 0.55),
-      chatResponseCell(at('llm', 0.75), 'You can count them with WordCounts:', 'WordCounts', ['Take[WordCounts[ExampleData[{"Text", "AliceInWonderland"}],', '  IgnoreCase -> True], 10]'], NB.v13),
+      chatInputCell(at('llm'), tr('What are the ten most common words in Alice in Wonderland?'), 0.55),
+      chatResponseCell(at('llm', 0.75), tr('You can count them with WordCounts:'), 'WordCounts', ['Take[WordCounts[ExampleData[{"Text", "AliceInWonderland"}],', '  IgnoreCase -> True], 10]'], NB.v13),
       inp(at('llm', 2), 1, 'Take[WordCounts[ExampleData[{"Text", "AliceInWonderland"}], IgnoreCase -> True], 10]', 0.3),
       out(at('llm', 2.4), 1, '<|the -> 630, and -> 338, a -> 277, to -> 249, she -> 239, of -> 198, it -> 171, was -> 167, in -> 162, alice -> 161|>'),
     ],
@@ -179,7 +180,7 @@ export const ERAS: Era[] = [
 
 // ---------------------------------------------------------------- narration (right column)
 export interface Line { at: number; until: number; text: string; red?: string[]; size?: number; y?: number }
-const L = (k: Section, a: number, u: number, text: string, red?: string[]): Line => ({ at: at(k, a), until: at(k, u), text, red });
+const L = (k: Section, a: number, u: number, text: string, red?: string[]): Line => ({ at: at(k, a), until: at(k, u), text: tr(text), red: red?.map((r) => (/[a-z]/i.test(r) ? tr(r) : r)) });
 export const CAPTIONS: Line[] = [
   L('v1', 0.25, 1.85, 'Its first vocabulary: 554 words.', ['554']),
   L('v1', 2.1, 3.85, 'Words for pictures, too.'),
@@ -217,7 +218,10 @@ export const CAPTIONS: Line[] = [
   L('v15', 3.0, 5.7, 'The notes you are hearing, as expressions.'),
 ];
 export interface Entry { at: number; until: number; name: string; note?: string; usage?: string }
-const E = (k: Section, a: number, u: number, name: string, extra: Partial<Entry> = {}): Entry => ({ at: at(k, a), until: at(k, u), name, ...extra });
+const E = (k: Section, a: number, u: number, name: string, extra: Partial<Entry> = {}): Entry => ({
+  at: at(k, a), until: at(k, u), name, ...extra,
+  note: extra.note && tr(extra.note), usage: extra.usage && tr(extra.usage),
+});
 export const ENTRIES: Entry[] = [
   E('v1', 0.3, 1.25, 'Names', { note: 'symbol · since 1.0, 1988' }),
   E('v1', 1.3, 1.95, 'Integrate', { note: 'symbol · since 1.0, 1988' }),
@@ -247,7 +251,7 @@ export const ENTRIES: Entry[] = [
 
 /** Archive prints (photos and scans from Stephen Wolfram's scrapbook and writings; one Wikimedia photo, credited). */
 export interface Print { at: number; until: number; file: string; year: string; cap: string; box?: { x?: number; y?: number; w?: number; h?: number; tilt?: number } }
-const A = (k: Section, a: number, u: number, file: string, year: string, cap: string, box?: Print['box']): Print => ({ at: at(k, a), until: at(k, u), file: `../archive/${file}`, year, cap, box });
+const A = (k: Section, a: number, u: number, file: string, year: string, cap: string, box?: Print['box']): Print => ({ at: at(k, a), until: at(k, u), file: `../archive/${file}`, year, cap: tr(cap), box });
 export const PRINTS: Print[] = [
   A('smp', 2.0, 3.7, 'smp-manual-1.jpg', '1981', 'The SMP manual, Caltech, July 1981', { x: 1330, y: 120, w: 380, h: 480, tilt: 3 }),
   A('y1986', 0.3, 1.8, 'first-code-1986-1.jpg', '1986', 'The first Mathematica code: the evaluator, Nov 27, 1986', { x: 1080, y: 170, w: 720, h: 560, tilt: -2 }),
@@ -264,7 +268,7 @@ export const PRINTS: Print[] = [
 ];
 
 /** Era-label schedule (top left). */
-const LB = (k: Section, o: number, title: string, sub: string) => ({ at: at(k, o), title, sub });
+const LB = (k: Section, o: number, title: string, sub: string) => ({ at: at(k, o), title: tr(title), sub: tr(sub) });
 export const LABELS: { at: number; title: string; sub: string }[] = [
   LB('v1', 0, 'Mathematica 1.0', 'June 23, 1988 · Macintosh'),
   LB('next', 0, 'Mathematica 1.0', '1988 · NeXT'),

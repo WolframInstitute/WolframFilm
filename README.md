@@ -21,7 +21,25 @@ bun run preview                       # http://localhost:5173  (space, ←/→, 
 bun src/render.ts sheet --n 24        # contact sheet -> out/sheet.png
 bun src/render.ts stills --at 26,50   # stills at seconds
 bun src/render.ts video --out out/film.mp4 [--from s --to s] [--samples 4]
+bun run build                         # incremental: out/film.mp4 + out/player/ (fMP4 segments)
 ```
+
+## Languages
+
+English, Russian and Japanese cuts: `FILM_LANG=ru|ja` in front of any command above (`bun run build:ru`, `build:ja`,
+`build:all`; stills land in `out/still-ru-*.png`). Run `scripts/fetch-fonts.sh` once for the Noto CJK, DotGothic16,
+Klee One and Cousine fallbacks.
+
+- `src/core/i18n.ts` — `tr()` (dictionary keyed by the English text, Russian plurals as `{p:слово|слова|слов}`),
+  `words()` (Japanese word units via `Intl.Segmenter`, with punctuation kept on the right side), locale numbers
+- `src/i18n/{ru,ja}.json` — every on-screen string; `bun src/i18n-check.ts` lists what is missing
+- `src/i18n/usage-{ru,ja}.json` — dictionary-entry usage lines: Japanese quoted from reference.wolfram.com (`.html.ja`), Russian translated
+- `src/i18n/directors-{ru,ja}.json` — the director's commentary; `artifact/build.sh` inlines all three languages into the page
+
+Code, outputs and symbol names are never translated. Menus follow the localized systems (Japanese Windows shows
+`ファイル(F)`), the climax says the most common Russian word is «и» and the Japanese one の, and each cut deploys itself
+to its own `In1[-ru|-ja].mp4` (`wolframscript -file data/deploy.wls ru`). The encode cache is keyed by pixel hash,
+so rebuilding a language after an edit only re-encodes the sections that changed.
 
 ## Layout
 
