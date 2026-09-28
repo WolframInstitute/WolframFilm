@@ -8,7 +8,7 @@ import type { OSKind } from '../ui/chrome';
 import {
   exprFlipCell, manipulateCell, freeformCell, suggestionsCell, entityCell, chatInputCell, chatResponseCell,
   tabularCell, musicScoreCell, summaryBoxCell, netIcon, dsIcon, imageCell, arrayGrowCell,
-  parallelCell, graphGrowCell, relGraphCell, pendulumCell, compileCell, rotateCell, drawRotating, formSwitchCell, playCell,
+  parallelCell, graphGrowCell, relGraphCell, pendulumCell, compileCell, rotateCell, drawRotating, formSwitchCell, playCell, inlineImageInput, typesetCell,
 } from '../ui/widgets';
 import { RELEASES } from '../core/lexicon';
 import { HOOK, slider, MANIP } from '../music/score';
@@ -53,7 +53,9 @@ export const ERAS: Era[] = [
   {
     from: at('next'), to: S.grammar[1], os: 'next', title: 'Untitled-1.ma  —', nb: NB.next,
     cells: [
-      inp(at('next'), 2, 'Characters["NeXT"]', 0.25), out(at('next', 0.5), 2, '{N, e, X, T}'),
+      inp(at('next'), 1, '<<Polyhedra.m', 0.12),
+      inp(at('next', 0.25), 2, 'Show[Graphics3D[Stellate[Icosahedron[]]]]', 0.25),
+      imageCell(at('next', 0.6), 'x_stellate.png', 190, 190), out(at('next', 0.7), 2, '-Graphics3D-'),
       inp(at('grammar'), 3, 'FullForm[{x -> 1, f[y]}]', 0.4), out(at('grammar', 0.6), 3, 'List[Rule[x, 1], f[y]]'),
     ],
   },
@@ -68,14 +70,15 @@ export const ERAS: Era[] = [
     from: at('v3'), to: S.v3[1], os: 'win95', title: 'Mathematica - [Untitled-1]', nb: NB.v3, extras: 'palette95',
     cells: [
       { kind: 'title', at: at('v3'), text: 'Notes on Language' },
-      exprFlipCell(at('v3', 0.1), at('v3', 1), 'Every language starts with a few words.', NB.v3),
+      exprFlipCell(at('v3', 0.1), at('v3', 0.8), 'Every language starts with a few words.', NB.v3),
+      typesetCell(at('v3', 1.1), 'in', 1, NB.v3), typesetCell(at('v3', 1.45), 'out', 1, NB.v3),
     ],
   },
   {
     from: at('v4'), to: S.v4[1], os: 'mac9', title: 'Untitled-1', nb: NB.v4,
     cells: [
-      inp(at('v4'), 1, 'words = Import["survey.csv"]', 0.2),
-      out(at('v4', 0.3), 1, '{{"word", "language"}, {"hello", "English"}, {"bonjour", "French"}, ...}'),
+      inp(at('v4'), 1, 'Show[Import["mandrill.gif"]]', 0.15),
+      imageCell(at('v4', 0.25), 'x_mandrill.png', 150, 150), out(at('v4', 0.35), 1, '-Graphics-'),
       inp(at('v4', 0.6), 2, CODE.v4_rule30, 0.25),
       arrayGrowCell(at('v4', 0.9), 'v4_rule30.json', 1.0, 420, 210, ['#FFFFFF', '#1A1A2E']), out(at('v4', 1.0), 2, '-Graphics-'),
     ],
@@ -83,8 +86,8 @@ export const ERAS: Era[] = [
   {
     from: at('v5'), to: S.v5[1], os: 'xp', title: 'Mathematica 5.1 - [Untitled-1]', nb: NB.v4,
     cells: [
-      inp(at('v5'), 1, '{Red, Green, Blue, Orange, Purple}', 0.25),
-      out(at('v5', 0.35), 1, '{RGBColor[1, 0, 0], RGBColor[0, 1, 0], RGBColor[0, 0, 1], RGBColor[1, 0.5, 0], RGBColor[0.5, 0, 0.5]}'),
+      inp(at('v5'), 1, 'StringCases["Every language starts with a few words.", WordCharacter..]', 0.25),
+      out(at('v5', 0.35), 1, '{Every, language, starts, with, a, few, words}'),
       inp(at('v5', 0.75), 2, CODE.v5_colors, 0.3), imageCell(at('v5', 1.1), 'v5_colors.png', 250, 250), out(at('v5', 1.2), 2, '-Graphics-'),
     ],
   },
@@ -119,7 +122,7 @@ export const ERAS: Era[] = [
       inp(at('v10', 0.5), 1, 'Interpreter["Country"]["france"]', 0.25),
       entityCell(at('v10', 0.85), [['France', 'country']]),
       inp(at('v10', 1.2), 2, CODE.v10_globe, 0.3), imageCell(at('v10', 1.55), 'v10_globe.png', 400, 400, 2),
-      inp(at('v10', 3), 3, 'WordTranslation["language", "French"]', 0.2), out(at('v10', 3.25), 3, '{langue, langage}'),
+      inp(at('v10', 3), 3, 'Pluralize["mouse"]', 0.15), out(at('v10', 3.2), 3, 'mice'),
       inp(at('v10', 3.6), 4, CODE.v10_stars, 0.25), imageCell(at('v10', 3.9), 'v10_stars.png', 460, 300, 4),
       inp(at('v10', 4.85), 5, CODE.x_graph, 0.2), relGraphCell(at('v10', 5.1), 0.7, 620, 380, 5),
     ],
@@ -127,7 +130,8 @@ export const ERAS: Era[] = [
   {
     from: at('v11'), to: S.llm[0], os: 'bigsur', title: 'Untitled-1.nb', nb: NB.v13,
     cells: [
-      inp(at('v11'), 1, 'NetTrain[net, examples]', 0.15), { ...summaryBoxCell(at('v11', 0.2), 'NetChain', [['Input', 'image'], ['Output', 'class']], netIcon), n: 1 },
+      inlineImageInput(at('v11'), 'NetModel["Wolfram ImageIdentify Net V1"][', 'x_mandrill.png', 44, NB.v13, 1),
+      { ...entityCell(at('v11', 0.25), [['mandrill', 'concept']]), n: 1 },
       inp(at('v11', 0.5), 11, 'EntityRegister[EntityStore["Word" -> <|"Entities" -> words|>]]', 0.15), out(at('v11', 0.7), 11, '{Word}'),
       inp(at('repos'), 2, CODE.x_fireballs, 0.25), imageCell(at('repos', 0.35), 'x_fireballs.png', 470, 250, 2),
       inp(at('repos', 1.1), 3, 'ResourceFunction["BirdSay"]["Every language starts with a few words."]', 0.25),
@@ -177,12 +181,13 @@ const L = (k: Section, a: number, u: number, text: string, red?: string[]): Line
 export const CAPTIONS: Line[] = [
   L('v1', 0.25, 1.85, 'Its first vocabulary: 554 words.', ['554']),
   L('v1', 2.1, 3.85, 'Words for pictures, too.'),
-  L('next', 0.25, 1.8, 'Bundled with every NeXT computer.'),
+  L('next', 0.25, 1.8, 'Bundled with every NeXT computer. And Spikey is born.', ['Spikey']),
   L('grammar', 0.2, 1.85, 'One grammar for everything.', ['grammar']),
   L('v2', 0.2, 1.85, 'It learns to make sound, and to draw in colour.', ['sound']),
-  L('v3', 0.3, 1.85, 'The notebook itself is written in the language.'),
+  L('v3', 0.3, 1.0, 'The notebook itself is written in the language.'),
+  L('v3', 1.1, 1.85, 'And math is typed the way it is written.'),
   L('v4', 0.15, 1.85, 'It learns to read other formats, and to grow patterns.'),
-  L('v5', 0.2, 1.85, 'It learns the names of colours.', ['colours']),
+  L('v5', 0.2, 1.85, 'It learns string patterns, and the names of colours.', ['patterns,']),
   L('v6', 0.2, 1.25, 'It learns about the world.'),
   L('v6', 1.3, 1.9, 'And about computation itself.'),
   L('v6', 2.05, 3.85, 'And it starts to answer back.'),
@@ -193,7 +198,7 @@ export const CAPTIONS: Line[] = [
   L('v10', 1.0, 2.8, 'Version 10 adds 1,022 words: the most ever.', ['1,022']),
   L('v10', 2.95, 4.8, 'The Earth, the stars, every country and language.'),
   L('v10', 4.9, 5.85, 'It even knows about its own words.', ['own']),
-  L('v11', 0.05, 0.45, 'It learns to learn.'),
+  L('v11', 0.05, 0.45, 'It learns to see.'),
   L('v11', 0.5, 0.95, 'And it takes your words, too.'),
   L('repos', 0.0, 1.9, 'Now anyone can add words.', ['anyone']),
   L('v12', 0.05, 0.65, 'Compiled, it runs fast.'),
@@ -216,7 +221,7 @@ export const ENTRIES: Entry[] = [
   E('v2', 0.2, 0.95, 'Play'),
   E('v3', 0.2, 0.95, 'Cell'),
   E('v4', 0.1, 1.85, 'CellularAutomaton'),
-  E('v5', 0.2, 0.95, 'Red'),
+  E('v5', 0.2, 0.95, 'StringCases'),
   E('v6', 0.2, 1.25, 'CountryData'),
   E('v6', 1.3, 1.9, 'TuringMachine'),
   E('v6', 2.0, 3.85, 'Manipulate'),
@@ -227,6 +232,7 @@ export const ENTRIES: Entry[] = [
   E('v10', 4.85, 5.85, 'WolframLanguageData'),
   E('v12', 0.0, 0.65, 'FunctionCompile'),
   E('v12', 1.2, 1.9, 'SystemModel'),
+  E('v11', 0.05, 0.45, 'NetModel'),
   E('v11', 0.5, 0.95, 'EntityStore'),
   E('v123', 0.05, 0.85, 'CreateDataStructure'),
   E('v123', 0.9, 1.9, 'ExpressionTree'),
@@ -273,6 +279,7 @@ export const LABELS: { at: number; title: string; sub: string }[] = [
   LB('v11', 0, 'Version 11', 'August 2016'),
   LB('repos', 0, 'The repositories', 'Data 2017 · Neural Nets 2018 · Functions 2019'),
   LB('v12', 0, 'Version 12', 'April 2019'),
+  LB('v12', 1.2, 'Version 12', 'April 2019 · SystemModel since 11.3'),
   LB('v123', 0, 'Version 12.1', 'March 2020'),
   LB('v123', 0.9, 'Version 12.3', 'May 2021'),
   LB('v132', 0, 'Version 13.2', 'December 2022 · astronomy'),

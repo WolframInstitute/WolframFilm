@@ -27,6 +27,7 @@ export interface Cell {
   h?: number; // custom height
   draw?: (g: G, x: number, y: number, w: number, bar: number) => void;
   style?: Partial<TextStyle>;
+  lab?: 'in' | 'out'; // label kind for custom cells
 }
 
 // ---------------------------------------------------------------- text, optionally aliased
@@ -94,7 +95,7 @@ export function drawCode(g: G, s: string, x: number, y: number, st: TextStyle, n
 
 // ---------------------------------------------------------------- layout
 export function cellHeight(c: Cell, nb: NbStyle, w: number, g: G): number {
-  const lab = nb.labelAbove && nb.label && c.n !== undefined && (c.kind === 'input' || c.kind === 'output') ? nb.label.size * 1.5 : 0;
+  const lab = nb.labelAbove && nb.label && c.n !== undefined && (c.kind === 'input' || c.kind === 'output' || c.kind === 'custom') ? nb.label.size * 1.5 : 0;
   if (c.kind === 'custom') return (c.h ?? 40) + lab;
   const st = styleOf(c, nb);
   const lines = wrapLines(g, c.text ?? '', st, w - nb.left - 30);
@@ -141,9 +142,9 @@ export function drawNotebook(g: G, rect: { x: number; y: number; w: number; h: n
     const h = hs[i]!;
     const x0 = rect.x + nb.left;
     const bracketY = y;
-    const labAbove = nb.labelAbove && nb.label && c.n !== undefined && (c.kind === 'input' || c.kind === 'output');
+    const labAbove = nb.labelAbove && nb.label && c.n !== undefined && (c.kind === 'input' || c.kind === 'output' || c.kind === 'custom');
     if (labAbove) {
-      const lab = nb.label!.fmt(c.kind === 'input' ? 'in' : 'out', c.n!);
+      const lab = nb.label!.fmt(c.lab ?? (c.kind === 'input' ? 'in' : 'out'), c.n!);
       drawText(g, lab, rect.x + 8, y + nb.label!.size * 1.1, nb.label!, nb.aa);
       y += nb.label!.size * 1.5;
     }
@@ -175,7 +176,7 @@ export function drawNotebook(g: G, rect: { x: number; y: number; w: number; h: n
     }
     // labels
     if (!labAbove && nb.label && (c.kind === 'input' || c.kind === 'output' || c.kind === 'custom') && c.n !== undefined) {
-      const lab = nb.label.fmt(c.kind === 'input' ? 'in' : 'out', c.n);
+      const lab = nb.label.fmt(c.lab ?? (c.kind === 'input' ? 'in' : 'out'), c.n);
       drawText(g, lab, x0 - 6, y + (c.kind === 'custom' ? (c.h ?? 40) / 2 + 5 : st.size * 1.05), nb.label, nb.aa, 'right');
     }
     y = bracketY + h + nb.gap;

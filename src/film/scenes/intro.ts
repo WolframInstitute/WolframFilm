@@ -43,18 +43,37 @@ export function coldOpen(c: Ctx) {
 const SMP_LINES: { at: number; s: string; out?: boolean; dim?: boolean }[] = [
   { at: 4.1, s: '#I[1]::  Ex[(a + b)^3]' },
   { at: 4.6, s: '#O[1]:   a^3 + 3 a^2 b + 3 a b^2 + b^3', out: true },
-  { at: 4.9, s: '#I[2]::  Plot[Sin[$x] Exp[-$x/8], {$x, 0, 20}]' },
+  { at: 4.9, s: '#I[2]::  Graph[Sin[1/x],x,0.02,0.2]' },
+  { at: 5.2, s: '#O[2]:', out: true },
 ];
-/** A line-printer plot of sin(x) e^(-x/8), 0 ≤ x ≤ 20, drawn with characters. */
+/**
+ * The SMP manual's own example (Reference Manual §10.2), printed the way SMP printed plots:
+ * stars joined vertically where the curve moves fast, a | axis with 0.5/-0.5 marks, and an
+ * underscore x-axis with its tick values written into it.
+ */
 const ASCII_PLOT: string[] = (() => {
-  const W = 56, Hh = 13, rows: string[][] = Array.from({ length: Hh }, () => Array(W).fill(' '));
-  const mid = Math.floor(Hh / 2);
-  for (let c = 0; c < W; c++) rows[mid]![c] = '-';
-  for (let r = 0; r < Hh; r++) rows[r]![0] = '|';
-  for (let c = 0; c < W; c++) {
-    const x = (c / (W - 1)) * 20, y = Math.sin(x) * Math.exp(-x / 8);
-    const r = Math.round(mid - y * mid);
-    rows[Math.max(0, Math.min(Hh - 1, r))]![c] = '*';
+  const W = 66, half = 7, Hh = 2 * half + 1, x0 = 0.02, x1 = 0.2;
+  const rows: string[][] = Array.from({ length: Hh }, () => Array(W).fill(' '));
+  const rowOf = (y: number) => Math.max(0, Math.min(Hh - 1, Math.round(half - y * half)));
+  const colOf = (x: number) => Math.round(((x - x0) / (x1 - x0)) * (W - 1));
+  // x-axis: underscores with tick labels written in
+  for (let c = 0; c < W; c++) rows[half]![c] = '_';
+  for (const [x, lab] of [[0.0625, '0.0625'], [0.125, '0.125'], [0.1875, '0.1875']] as [number, string][]) {
+    const c = colOf(x); [...lab].forEach((ch, i) => { if (c + i < W) rows[half]![c + i] = ch; });
+  }
+  rows[half]![0] = '0';
+  // y-axis with marks
+  for (let r = 0; r < Hh; r++) if (r !== half) rows[r]![0] = '|';
+  const r5 = rowOf(0.5), rm5 = rowOf(-0.5);
+  rows[r5]!.splice(0, 3, '0', '.', '5'); rows[rm5]!.splice(0, 4, '-', '0', '.', '5');
+  // the curve, with vertical runs between successive samples
+  let prev: number | null = null;
+  for (let c = 1; c < W; c++) {
+    const x = x0 + (c / (W - 1)) * (x1 - x0);
+    const r = rowOf(Math.sin(1 / x));
+    const lo = prev === null ? r : Math.min(prev, r), hi = prev === null ? r : Math.max(prev, r);
+    for (let k = lo; k <= hi; k++) if (rows[k]![c] === ' ' || rows[k]![c] === '_') rows[k]![c] = '*';
+    prev = r;
   }
   return rows.map((r) => r.join(''));
 })();
@@ -93,13 +112,13 @@ export function smp(c: Ctx) {
     y += L.out ? 62 : 52;
   }
   // the plot, printed row by row
-  const tfp = font(F.term, 30, 400);
+  const tfp = font(F.term, 27, 400);
   ASCII_PLOT.forEach((row, i) => {
-    const at = 5.3 + i * 0.07;
+    const at = 5.3 + i * 0.05;
     if (bar < at) return;
-    text(g, row, x0 + 40, y + i * 26, { font: tfp, color: mix(phosphor, '#C9FFD6', 0.25) });
+    text(g, row, x0 + 40, y + i * 21, { font: tfp, color: mix(phosphor, '#C9FFD6', 0.25) });
   });
-  if (bar >= 5.3) y += ASCII_PLOT.length * 26 + 20;
+  if (bar >= 5.3) y += ASCII_PLOT.length * 21 + 20;
   // caption, typed like program output
   const cap1 = 'NOVEMBER 1979. CALTECH.';
   const cap2 = 'A 20-YEAR-OLD PHYSICIST WRITES A LANGUAGE';
@@ -110,7 +129,7 @@ export function smp(c: Ctx) {
   text(g, typed(cap3, inv(7.2, 7.55, bar)), x0, cy + 110, { font: font(F.term, 58), color: '#E6FFEC' });
   g.shadowBlur = 0; g.shadowOffsetY = 0; g.shadowColor = 'transparent';
   // cursor
-  if (cursorOn(bar)) { g.fillStyle = phosphor; g.fillRect(x0, y - 40, 26, 46); }
+  if (cursorOn(bar) && bar < 6.45) { g.fillStyle = phosphor; g.fillRect(x0, y - 40, 26, 46); }
   // scanlines + flicker
   g.globalAlpha = 0.16;
   g.fillStyle = '#000';

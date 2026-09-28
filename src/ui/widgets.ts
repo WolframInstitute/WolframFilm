@@ -706,3 +706,47 @@ export function playCell(at: number, w: number, h: number, dur: number, n?: numb
     },
   };
 }
+
+/** An input with an image pasted inline, e.g. net[<image>]. */
+export function inlineImageInput(at: number, head: string, asset: string, size: number, nb: NbStyle, n?: number): Cell {
+  return {
+    kind: 'custom', at, h: size + 8, n, lab: 'in',
+    draw: (g, x, y, _w, bar) => {
+      const u = clamp((bar - at) / 0.2);
+      const shown = head.slice(0, Math.floor(u * head.length));
+      const cy = y + size / 2 + 6;
+      const w1 = drawCode(g, shown, x, cy, nb.input, nb);
+      if (u >= 1) {
+        drawAsset(g, asset, x + w1 + 2, y + 2, size, size);
+        drawText(g, ']', x + w1 + size + 6, cy, nb.input, nb.aa);
+      }
+    },
+  };
+}
+
+/** 3.0 typeset input: a sum entered from the BasicInput palette, and its TraditionalForm result. */
+export function typesetCell(at: number, kind: 'in' | 'out', n: number, nb: NbStyle): Cell {
+  return {
+    kind: 'custom', at, h: 58, n, lab: kind,
+    draw: (g, x, y, _w, bar) => {
+      const u = ease.outCubic(inv(at, at + 0.1, bar));
+      g.save(); g.globalAlpha = u;
+      const c = '#000';
+      if (kind === 'in') {
+        T(g, '∑', x + 2, y + 42, F.tinos, 34, 400, c);
+        T(g, '∞', x + 8, y + 10, F.tinos, 11, 400, c, 'center');
+        T(g, 'n=1', x + 12, y + 56, F.tinos, 11, 400, c, 'center', true);
+        T(g, '1', x + 48, y + 20, F.tinos, 15, 400, c, 'center');
+        g.fillStyle = c; g.fillRect(x + 36, y + 25, 26, 1.2);
+        T(g, 'n', x + 44, y + 42, F.tinos, 15, 400, c, 'center', true);
+        T(g, '2', x + 54, y + 34, F.tinos, 10, 400, c, 'center');
+      } else {
+        T(g, 'π', x + 10, y + 22, F.tinos, 17, 400, c, 'center', true);
+        T(g, '2', x + 20, y + 13, F.tinos, 10, 400, c, 'center');
+        g.fillStyle = c; g.fillRect(x + 2, y + 28, 24, 1.2);
+        T(g, '6', x + 14, y + 45, F.tinos, 16, 400, c, 'center');
+      }
+      g.restore();
+    },
+  };
+}

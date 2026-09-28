@@ -12,7 +12,7 @@ const block = (id: string, bar: number, era: string, kind: string, code: string,
 // SMP (src/film/scenes/intro.ts)
 block('smp-1', 4.1, 'SMP 1981', 'input', 'Ex[(a + b)^3]', 'shown as #I[1]::');
 block('smp-1-out', 4.6, 'SMP 1981', 'output', 'a^3 + 3 a^2 b + 3 a b^2 + b^3', 'shown as #O[1]:');
-block('smp-2', 4.9, 'SMP 1981', 'input', 'Plot[Sin[$x] Exp[-$x/8], {$x, 0, 20}]', 'SMP syntax unverified; followed by an ASCII plot');
+block('smp-2', 4.9, 'SMP 1981', 'input', 'Graph[Sin[1/x],x,0.02,0.2]', 'from the SMP Reference Manual §10.2; followed by its ASCII plot');
 for (const e of ERAS) {
   e.cells.forEach((c, i) => {
     const id = `${e.os}@${e.from}#${i}`;

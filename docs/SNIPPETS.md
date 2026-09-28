@@ -14,10 +14,10 @@ Ex[(a + b)^3]
 a^3 + 3 a^2 b + 3 a b^2 + b^3
 ```
 
-### 3. `smp-2` · 0:09.8 · smp · SMP 1981 · input · SMP syntax unverified; followed by an ASCII plot
+### 3. `smp-2` · 0:09.8 · smp · SMP 1981 · input · from the SMP Reference Manual §10.2; followed by its ASCII plot
 
 ```wl
-Plot[Sin[$x] Exp[-$x/8], {$x, 0, 20}]
+Graph[Sin[1/x],x,0.02,0.2]
 ```
 
 ### 4. `mac1@12#0` · 0:24.0 · v1 · Untitled-1 · In[1]
@@ -44,208 +44,208 @@ Plot3D[Sin[x y], {x, 0, 3}, {y, 0, 3}]
 -SurfaceGraphics-
 ```
 
-### 8. `next@16#0` · 0:32.0 · next · Untitled-1.ma  — · In[2]
+### 8. `next@16#0` · 0:32.0 · next · Untitled-1.ma  — · In[1]
 
 ```wl
-Characters["NeXT"]
+<<Polyhedra.m
 ```
 
-### 9. `next@16#1` · 0:33.0 · next · Untitled-1.ma  — · Out[2]
+### 9. `next@16#1` · 0:32.5 · next · Untitled-1.ma  — · In[2]
 
 ```wl
-{N, e, X, T}
+Show[Graphics3D[Stellate[Icosahedron[]]]]
 ```
 
-### 10. `next@16#2` · 0:36.0 · grammar · Untitled-1.ma  — · In[3]
-
-```wl
-FullForm[{x -> 1, f[y]}]
-```
-
-### 11. `next@16#3` · 0:37.2 · grammar · Untitled-1.ma  — · Out[3]
-
-```wl
-List[Rule[x, 1], f[y]]
-```
-
-### 12. `win31@20#0` · 0:40.0 · v2 · Mathematica for Windows - [Untitled-1] · In[1]
-
-```wl
-Play[Sin[1000 t (1 + t)] Sin[2 Pi t], {t, 0, 1.5}]
-```
-
-### 13. `win31@20#2` · 0:40.9 · v2 · Mathematica for Windows - [Untitled-1] · Out[1]
-
-```wl
--Sound-
-```
-
-### 14. `win31@20#3` · 0:42.0 · v2 · Mathematica for Windows - [Untitled-1] · In[2]
-
-```wl
-ParametricPlot3D[{u Cos[u] (4 + Cos[v + u]), u Sin[u] (4 + Cos[v + u]), u Sin[v + u]}, {u, 0, 4 Pi}, {v, 0, 2 Pi}]
-```
-
-### 15. `win31@20#5` · 0:42.8 · v2 · Mathematica for Windows - [Untitled-1] · Out[2]
+### 10. `next@16#3` · 0:33.4 · next · Untitled-1.ma  — · Out[2]
 
 ```wl
 -Graphics3D-
 ```
 
-### 16. `win95@22#0` · 0:44.0 · v3 · Mathematica - [Untitled-1] · title
+### 11. `next@16#4` · 0:36.0 · grammar · Untitled-1.ma  — · In[3]
+
+```wl
+FullForm[{x -> 1, f[y]}]
+```
+
+### 12. `next@16#5` · 0:37.2 · grammar · Untitled-1.ma  — · Out[3]
+
+```wl
+List[Rule[x, 1], f[y]]
+```
+
+### 13. `win31@20#0` · 0:40.0 · v2 · Mathematica for Windows - [Untitled-1] · In[1]
+
+```wl
+Play[Sin[1000 t (1 + t)] Sin[2 Pi t], {t, 0, 1.5}]
+```
+
+### 14. `win31@20#2` · 0:40.9 · v2 · Mathematica for Windows - [Untitled-1] · Out[1]
+
+```wl
+-Sound-
+```
+
+### 15. `win31@20#3` · 0:42.0 · v2 · Mathematica for Windows - [Untitled-1] · In[2]
+
+```wl
+ParametricPlot3D[{u Cos[u] (4 + Cos[v + u]), u Sin[u] (4 + Cos[v + u]), u Sin[v + u]}, {u, 0, 4 Pi}, {v, 0, 2 Pi}]
+```
+
+### 16. `win31@20#5` · 0:42.8 · v2 · Mathematica for Windows - [Untitled-1] · Out[2]
+
+```wl
+-Graphics3D-
+```
+
+### 17. `win95@22#0` · 0:44.0 · v3 · Mathematica - [Untitled-1] · title
 
 ```wl
 Notes on Language
 ```
 
-### 17. `mac9@24#0` · 0:48.0 · v4 · Untitled-1 · In[1]
+### 18. `mac9@24#0` · 0:48.0 · v4 · Untitled-1 · In[1]
 
 ```wl
-words = Import["survey.csv"]
+Show[Import["mandrill.gif"]]
 ```
 
-### 18. `mac9@24#1` · 0:48.6 · v4 · Untitled-1 · Out[1]
+### 19. `mac9@24#2` · 0:48.7 · v4 · Untitled-1 · Out[1]
 
 ```wl
-{{"word", "language"}, {"hello", "English"}, {"bonjour", "French"}, ...}
+-Graphics-
 ```
 
-### 19. `mac9@24#2` · 0:49.2 · v4 · Untitled-1 · In[2]
+### 20. `mac9@24#3` · 0:49.2 · v4 · Untitled-1 · In[2]
 
 ```wl
 Show[Graphics[Raster[1 - Reverse[CellularAutomaton[30, {{1}, 0}, 160]]]]]
 ```
 
-### 20. `mac9@24#4` · 0:50.0 · v4 · Untitled-1 · Out[2]
+### 21. `mac9@24#5` · 0:50.0 · v4 · Untitled-1 · Out[2]
 
 ```wl
 -Graphics-
 ```
 
-### 21. `xp@26#0` · 0:52.0 · v5 · Mathematica 5.1 - [Untitled-1] · In[1]
+### 22. `xp@26#0` · 0:52.0 · v5 · Mathematica 5.1 - [Untitled-1] · In[1]
 
 ```wl
-{Red, Green, Blue, Orange, Purple}
+StringCases["Every language starts with a few words.", WordCharacter..]
 ```
 
-### 22. `xp@26#1` · 0:52.7 · v5 · Mathematica 5.1 - [Untitled-1] · Out[1]
+### 23. `xp@26#1` · 0:52.7 · v5 · Mathematica 5.1 - [Untitled-1] · Out[1]
 
 ```wl
-{RGBColor[1, 0, 0], RGBColor[0, 1, 0], RGBColor[0, 0, 1], RGBColor[1, 0.5, 0], RGBColor[0.5, 0, 0.5]}
+{Every, language, starts, with, a, few, words}
 ```
 
-### 23. `xp@26#2` · 0:53.5 · v5 · Mathematica 5.1 - [Untitled-1] · In[2]
+### 24. `xp@26#2` · 0:53.5 · v5 · Mathematica 5.1 - [Untitled-1] · In[2]
 
 ```wl
 Show[Graphics[Table[{colors[[Mod[k, 10] + 1]], EdgeForm[White], Disk[(1 + k/24) {Cos[k Pi/5.2], Sin[k Pi/5.2]}, 0.25 + k/60]}, {k, 60, 0, -1}]]]
 ```
 
-### 24. `xp@26#4` · 0:54.4 · v5 · Mathematica 5.1 - [Untitled-1] · Out[2]
+### 25. `xp@26#4` · 0:54.4 · v5 · Mathematica 5.1 - [Untitled-1] · Out[2]
 
 ```wl
 -Graphics-
 ```
 
-### 25. `osx@28#0` · 0:56.0 · v6 · Untitled-1 · In[1]
+### 26. `osx@28#0` · 0:56.0 · v6 · Untitled-1 · In[1]
 
 ```wl
 WordData["language", "Definitions"]
 ```
 
-### 26. `osx@28#1` · 0:56.6 · v6 · Untitled-1 · Out[1]
+### 27. `osx@28#1` · 0:56.6 · v6 · Untitled-1 · Out[1]
 
 ```wl
 {{language, Noun, Faculty} -> the mental faculty or power of vocal communication, ...}
 ```
 
-### 27. `osx@28#2` · 0:57.0 · v6 · Untitled-1 · In[2]
+### 28. `osx@28#2` · 0:57.0 · v6 · Untitled-1 · In[2]
 
 ```wl
 Graphics[{ColorData["SunsetColors"][1 - Rescale[Log[CountryData[#, "Population"]], {11, 18.5}]], CountryData[#, "Polygon"]} & /@ CountryData["Europe"], PlotRange -> {{-25, 45}, {34, 72}}]
 ```
 
-### 28. `osx@28#4` · 0:58.6 · v6 · Untitled-1 · In[3]
+### 29. `osx@28#4` · 0:58.6 · v6 · Untitled-1 · In[3]
 
 ```wl
 ArrayPlot[TuringMachine[{596440, 2, 3}, {1, {{}, 0}}, 240][[All, 2]]]
 ```
 
-### 29. `osx@28#6` · 0:59.7 · v6 · Untitled-1 · In[4]
+### 30. `osx@28#6` · 0:59.7 · v6 · Untitled-1 · In[4]
 
 ```wl
 Manipulate[Plot3D[Sin[a x] Cos[y], {x, -3, 3}, {y, -3, 3}], {a, 0.5, 3}]
 ```
 
-### 30. `osx@28#8` · 1:08.0 · v7 · Untitled-1 · In[5]
+### 31. `osx@28#8` · 1:08.0 · v7 · Untitled-1 · In[5]
 
 ```wl
 ParallelTable[julia[x + I y], {y, 0.95, -0.95, -0.0064}, {x, -1.6, 1.6, 0.0067}]
 ```
 
-### 31. `osx@28#11` · 1:11.0 · v8 · Untitled-1 · Out[6]
+### 32. `osx@28#11` · 1:11.0 · v8 · Untitled-1 · Out[6]
 
 ```wl
 {Albania, Andorra, Austria, Belarus, Belgium, Bosnia and Herzegovina, Bulgaria, Croatia, ...}
 ```
 
-### 32. `osx@28#12` · 1:12.0 · v8 · Untitled-1 · In[7]
+### 33. `osx@28#12` · 1:12.0 · v8 · Untitled-1 · In[7]
 
 ```wl
 Graph[UndirectedEdge @@@ borders, VertexLabels -> Automatic]
 ```
 
-### 33. `osx@28#14` · 1:14.0 · v9 · Untitled-1 · In[8]
+### 34. `osx@28#14` · 1:14.0 · v9 · Untitled-1 · In[8]
 
 ```wl
 UnitConvert[Quantity[5., "Kilometers"], "Miles"]
 ```
 
-### 34. `osx@28#15` · 1:14.7 · v9 · Untitled-1 · Out[8]
+### 35. `osx@28#15` · 1:14.7 · v9 · Untitled-1 · Out[8]
 
 ```wl
 3.10686 mi
 ```
 
-### 35. `yosemite@40#0` · 1:21.0 · v10 · Untitled-1.nb · In[1]
+### 36. `yosemite@40#0` · 1:21.0 · v10 · Untitled-1.nb · In[1]
 
 ```wl
 Interpreter["Country"]["france"]
 ```
 
-### 36. `yosemite@40#2` · 1:22.4 · v10 · Untitled-1.nb · In[2]
+### 37. `yosemite@40#2` · 1:22.4 · v10 · Untitled-1.nb · In[2]
 
 ```wl
 GeoGraphics[{NightHemisphere[DateObject[{2014, 7, 9, 12}]], GeoPath[{champaign, #}, "GreatCircle"] & /@ cities}, GeoProjection -> "Orthographic"]
 ```
 
-### 37. `yosemite@40#4` · 1:26.0 · v10 · Untitled-1.nb · In[3]
+### 38. `yosemite@40#4` · 1:26.0 · v10 · Untitled-1.nb · In[3]
 
 ```wl
-WordTranslation["language", "French"]
+Pluralize["mouse"]
 ```
 
-### 38. `yosemite@40#5` · 1:26.5 · v10 · Untitled-1.nb · Out[3]
+### 39. `yosemite@40#5` · 1:26.4 · v10 · Untitled-1.nb · Out[3]
 
 ```wl
-{langue, langage}
+mice
 ```
 
-### 39. `yosemite@40#6` · 1:27.2 · v10 · Untitled-1.nb · In[4]
+### 40. `yosemite@40#6` · 1:27.2 · v10 · Untitled-1.nb · In[4]
 
 ```wl
 ListPlot[StarData[EntityClass["Star", "NakedEyeStar"], {"EffectiveTemperature", "AbsoluteMagnitude"}]]
 ```
 
-### 40. `yosemite@40#8` · 1:29.7 · v10 · Untitled-1.nb · In[5]
+### 41. `yosemite@40#8` · 1:29.7 · v10 · Untitled-1.nb · In[5]
 
 ```wl
 Graph[Flatten[Thread[UndirectedEdge[#, WolframLanguageData[#, "RelatedSymbols"]]] & /@ seeds]]
-```
-
-### 41. `bigsur@46#0` · 1:32.0 · v11 · Untitled-1.nb · In[1]
-
-```wl
-NetTrain[net, examples]
 ```
 
 ### 42. `bigsur@46#2` · 1:33.0 · v11 · Untitled-1.nb · In[11]

@@ -23,7 +23,7 @@ const typing = (at: number, dur: number, chars: number) => {
   }
 };
 typing(0.5, 2.1, 39); // cold open
-for (const [a, n] of [[4.1, 22], [4.9, 42]] as const) typing(a, 0.4, n); // SMP
+for (const [a, n] of [[4.1, 22], [4.9, 36]] as const) typing(a, 0.4, n); // SMP
 typing(6.5, 0.3, 23); typing(6.8, 0.45, 41); typing(7.2, 0.35, 33);
 for (const c of DEPLOY_TYPING) { typing(c.at, c.type, c.text.length); foley.push({ bar: c.at + c.type + 1 / 16, dur: 0.01, inst: 'tick', vel: 1 }); }
 for (const e of ERAS) for (const c of e.cells) {
