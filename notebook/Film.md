@@ -95,23 +95,31 @@ Plot[dark[t], {t, 30, 84}, PlotRange -> {0, 1}, AxesLabel -> {"bar", "dark"}]
 
 ## The Score
 
-The harmony walks i, VI, III, VII in A minor, one chord a bar, and lifts a whole tone for the climax:
+The harmony walks i, VI, III, VII in A minor, one chord a bar, and lifts a whole tone for the climax; the outro starts at bar 77:
 
 ```wl
 lift[b_] := If[b >= at["climax"], 2, 0];
 chordAt[b_] := {{57, 60, 64}, {57, 60, 65}, {55, 60, 64}, {55, 59, 62}}[[Mod[Floor[b], 4] + 1]] + lift[b];
 rootAt[b_] := {45, 41, 48, 43}[[Mod[Floor[b], 4] + 1]] + lift[b];
+end = at["outro"];
 chordAt /@ Range[0, 3]
 ```
 
-The melody is written by Rule 30. The centre column of the automaton grown from one cell gives four bits per eighth note: three pick a degree of A minor pentatonic, the fourth decides whether it sounds; downbeats always sound, on the chord root. It plays until the breakdown, from 11 to the chat notebooks, and in the outro, and it rests while the slider of 6.0 moves:
+Players are never quite even: a velocity for each note, reproducible, drawn from its own seed:
+
+```wl
+rnd[k_] := BlockRandom[SeedRandom[k]; RandomReal[]];
+```
+
+The melody is written by Rule 30. The centre column of the automaton grown from one cell gives four bits per eighth note: three pick a degree of A minor pentatonic, the fourth decides whether it sounds; downbeats always sound, on the chord root, and are accented. It plays until the breakdown, from 11 to the chat notebooks, and fades through the outro, and it rests while the slider of 6.0 moves:
 
 ```wl
 rule30 = CellularAutomaton[30, {{1}, 0}, {{0, 4000}, {0, 0}}][[All, 1]];
 manip = at["v6", 2];
-pluckOn[b_] := (b < at["breakdown"] || in[b, {at["v11"], at["llm"]}] || b >= at["outro"]) && ! in[b, {manip, manip + 2}];
+pluckOn[b_] := (b < at["breakdown"] || in[b, {at["v11"], at["llm"]}] || b >= end) && ! in[b, {manip, manip + 2}];
 pluckNote[s_] := Which[! pluckOn[s / 8], Missing[], Mod[s, 8] == 0, chordAt[s / 8][[1]] + 12, rule30[[4 s + 4]] == 0, Missing[],
     True, {69, 72, 74, 76, 79, 81, 84, 86}[[4 rule30[[4 s + 1]] + 2 rule30[[4 s + 2]] + rule30[[4 s + 3]] + 1]] + lift[s / 8]];
+pluckVelocity[s_] := If[Mod[s, 8] == 0, 0.9, 0.55 + 0.3 rnd[s]] If[s / 8 < 12, 1, 0.6] If[s / 8 >= end, Max[0, 1 - (s / 8 - end - 1) / 6], 1];
 Take[rule30, 32]
 ```
 
@@ -119,7 +127,8 @@ The melody as a Track that computes itself: asked about any stretch of time, it 
 
 ```wl
 melody = Track[Function[span, Table[With[{n = pluckNote[s]}, If[MissingQ[n], Nothing,
-    <|"Value" -> n, "Whole" -> {s / 8, (s + 1) / 8}, "Part" -> {Max[span[[1]], s / 8], Min[span[[2]], (s + 1) / 8]}|>]], {s, Max[0, Floor[8 span[[1]]]], Ceiling[8 span[[2]]] - 1}]]];
+    <|"Value" -> n, "Velocity" -> pluckVelocity[s], "Whole" -> {s / 8, (s + 1) / 8}, "Part" -> {Max[span[[1]], s / 8], Min[span[[2]], (s + 1) / 8]}|>]],
+    {s, Max[0, Floor[8 span[[1]]]], Ceiling[8 span[[2]]] - 1}]]];
 melody["Query", 12, 13]
 ```
 
@@ -132,37 +141,40 @@ noteRoll[tracks_, {a_, b_}] := With[{ev = Join @@ (#["Query", a, b] & /@ Flatten
 noteRoll[melody, {12, 14}]
 ```
 
-The drums. Soft kicks under 1986, four on the floor from 1.0 to the outro, dropping out for the breakdown, a beat's silence before each drop, and half time into 15.0:
+The drums. Soft kicks under 1986, four on the floor from 1.0 to the outro, dropping out for the breakdown, a beat's silence before each drop, and half time into 15.0; claps on two and four, hats on the offbeat eighths with ghost sixteenths in the busier stretches, open hats in the drops:
 
 ```wl
-end = at["outro"]; gaps = {{at["breakdown"] - 1/4, at["breakdown", 2]}, {at["agents", 2] - 1/4, at["agents", 2]}}; half = {at["v15"], at["v15", 2]};
+gaps = {{at["breakdown"] - 1/4, at["breakdown", 2]}, {at["agents", 2] - 1/4, at["agents", 2]}}; half = {at["v15"], at["v15", 2]};
 drums[b_] := 12 <= b < end && ! in[b, "breakdown"];
 gap[x_] := AnyTrue[gaps, in[x, #] &];
-kick = EventTrack[Join[{#, 1/4, "bd"} & /@ Join[Range[8, 10.5, 1/2], {11, 11.5}],
-    {#, 1/4, "bd"} & /@ Select[Range[12, end - 1/4, 1/4], drums[Floor[#]] && ! gap[#] && ! (in[#, half] && OddQ[4 #]) &], {{end, 1/4, "bd"}}]];
-claps = EventTrack[{#, 1/4, "cp"} & /@ Select[Flatten[Table[b + {1/4, 3/4}, {b, 12, end - 1}]], drums[Floor[#]] && ! in[#, "v14"] && ! in[#, half] && ! gap[#] &]];
+softKicks = EventTrack[Append[{#, 1/4, "bd", 0.8} & /@ Join[Range[8, 10.5, 1/2], {11}], {11.5, 1/4, "bd", 0.7}]];
+kick = EventTrack[Append[{#, 1/4, "bd"} & /@ Select[Range[12, end - 1/4, 1/4], drums[Floor[#]] && ! gap[#] && ! (in[#, half] && OddQ[4 #]) &], {end, 1/4, "bd"}]];
+claps = EventTrack[{#, 1/4, "cp", If[FractionalPart[#] == 1/4, 0.8, 0.85]} & /@ Select[Flatten[Table[b + {1/4, 3/4}, {b, 12, end - 1}]], drums[Floor[#]] && ! in[#, "v14"] && ! in[#, half] && ! gap[#] &]];
 sixteenths[b_] := inAny[b, {{at["v4"], at["breakdown"]}, {at["v10"], at["llm"]}, "agents", "climax"}];
-hats = EventTrack[{#, 1/16, "hh"} & /@ Select[Range[12, end - 1/16, 1/16], drums[Floor[#]] && ! in[#, "v14"] && ! gap[#] && Mod[16 #, 4] == 2 &]];
-ghostHats = EventTrack[{#, 1/16, "hh"} & /@ Select[Range[12, end - 1/16, 1/16], drums[Floor[#]] && ! in[#, "v14"] && ! gap[#] && Mod[16 #, 4] != 2 && sixteenths[#] &]];
-openHats = EventTrack[{#, 1/8, "oh"} & /@ Select[Range[12, end - 1/16, 1/16], Mod[16 #, 4] == 2 && ! gap[#] && inAny[#, {{at["v10"], at["v10", 6]}, "climax", "families"}] &]];
+hats = EventTrack[{#, 1/16, "hh", 0.75 + 0.2 rnd[16 #]} & /@ Select[Range[12, end - 1/16, 1/16], drums[Floor[#]] && ! in[#, "v14"] && ! gap[#] && Mod[16 #, 4] == 2 &]];
+ghostHats = EventTrack[{#, 1/16, "hh", If[Mod[16 #, 4] == 0, 0.35, 0.45] + 0.15 rnd[16 #]} & /@
+    Select[Range[12, end - 1/16, 1/16], drums[Floor[#]] && ! in[#, "v14"] && ! gap[#] && Mod[16 #, 4] != 2 && sixteenths[Floor[#]] &]];
+openHats = EventTrack[{#, 1/8, "oh", 0.45} & /@ Select[Range[12, end - 1/16, 1/16], Mod[16 #, 4] == 2 && drums[Floor[#]] && ! gap[#] && inAny[Floor[#], {{at["v10"], at["v10", 6]}, "climax", "families"}] &]];
 noteRoll[{kick, claps, hats, ghostHats, openHats}, {40, 41}]
 ```
 
-The band. A pad holds each chord; the bass pumps octaves on the offbeats in the drops and walks quarter roots elsewhere; stabs punch the drops and every beat of the plot montage:
+The band. A pad holds each chord, swelling in the breakdown, and a long chord ends it over a held bass; the bass pumps octaves on the offbeats in the drops and walks quarter roots elsewhere; stabs punch the drops and every beat of the plot montage:
 
 ```wl
 drops = {{12, 18}, {at["v10"], at["v10", 6]}, "climax", "families"};
-pad = EventTrack[Join[Flatten[Table[{b, 1, #} & /@ chordAt[b], {b, 4, end - 1}], 1], {end, 5, #} & /@ Append[chordAt[end], chordAt[end][[1]] + 12]]];
-bass = EventTrack[Append[Table[With[{b = s / 8}, Which[! drums[Floor[b]] || gap[b], Nothing,
-    inAny[b, drops], If[OddQ[s], {b, 1/8, rootAt[b] + If[Mod[s, 4] == 3, 12, 0]}, Nothing],
-    EvenQ[s], {b, 1/8, rootAt[b]}, True, Nothing]], {s, 96, 8 end - 1}], {end, 5, rootAt[end]}]];
+padVelocity[b_] := Which[b < 12, 0.55, in[b, "breakdown"], 0.8, in[b, "v14"], 0.7, True, 0.6];
+pad = EventTrack[Join[Flatten[Table[{b, 1, #, padVelocity[b]} & /@ chordAt[b], {b, 4, end - 1}], 1], {end, 5, #, 0.9} & /@ Append[chordAt[end], chordAt[end][[1]] + 12]]];
+bass = EventTrack[Table[With[{b = s / 8}, Which[! drums[Floor[b]] || gap[b], Nothing,
+    inAny[Floor[b], drops], If[OddQ[s], {b, 1/8, rootAt[b] + If[Mod[s, 4] == 3, 12, 0], 0.9}, Nothing],
+    EvenQ[s], {b, 1/8, rootAt[b], 0.8}, True, Nothing]], {s, 96, 8 end - 1}]];
+longBass = EventTrack[{{end, 5, rootAt[end], 0.9}}];
 stabs = EventTrack[Flatten[Table[Which[
-    inAny[b, {{12, 18}, {at["v10"], at["v10", 6]}, "climax"}], Table[{b + p / 16, 1/16, n + 12}, {p, {0, 3, 6, 10, 12}}, {n, chordAt[b]}],
-    in[b, "families"], Table[{b + q / 4, 1/8, n + 12}, {q, 0, 3}, {n, chordAt[b]}], True, {}], {b, 12, end - 1}], 2]];
+    inAny[b, {{12, 18}, {at["v10"], at["v10", 6]}, "climax"}], Table[{b + p / 16, 1/16, n + 12, 0.5}, {p, {0, 3, 6, 10, 12}}, {n, chordAt[b]}],
+    in[b, "families"], Table[{b + q / 4, 1/8, n + 12, 0.62}, {q, 0, 3}, {n, chordAt[b]}], True, {}], {b, 12, end - 1}], 2]];
 noteRoll[{pad, bass, stabs}, {40, 42}]
 ```
 
-The tunes. A four-bar hook and its answer, first played by the lead when the language gets its name, then by a bell for 15.0, then by both, a whole tone up, for the climax; a voice sings over the chat notebooks:
+The tunes. A four-bar hook and its answer, first played by the lead when the language gets its name, then by a bell for 15.0, then by both, a whole tone up, for the climax; a voice sings over the chat notebooks; arpeggios climb through the breakdown and into the climax:
 
 ```wl
 hook = {{0, 1.5, 69}, {1.5, 0.5, 72}, {2, 1, 76}, {3, 1, 74}, {4, 1.5, 72}, {5.5, 0.5, 69}, {6, 1, 72}, {7, 1, 77},
@@ -170,35 +182,61 @@ hook = {{0, 1.5, 69}, {1.5, 0.5, 72}, {2, 1, 76}, {3, 1, 74}, {4, 1.5, 72}, {5.5
 answer = {{0, 1.5, 76}, {1.5, 0.5, 74}, {2, 1, 76}, {3, 1, 81}, {4, 1.5, 77}, {5.5, 0.5, 76}, {6, 1, 72}, {7, 1, 69},
     {8, 1, 67}, {9, 1, 72}, {10, 1, 76}, {11, 1, 79}, {12, 2, 79}, {14, 1, 74}, {15, 1, 71}};
 voiceLine = {{0, 2, 76}, {2, 1, 72}, {3, 1, 74}, {4, 3, 72}, {7, 1, 69}, {8, 2, 67}, {10, 1, 72}, {11, 1, 76}, {12, 4, 74}};
-phrase[start_, notes_, k_ : 0] := {start + #1 / 4, #2 / 4, #3 + k} & @@@ notes;
-lead = EventTrack[Join[phrase[at["v10"], hook], phrase[at["v10", 4], Take[answer, 8]], phrase[at["climax"], hook, 2], phrase[at["climax", 4], answer, 2]]];
-bell = EventTrack[Join[phrase[at["v15"], hook], phrase[at["v15", 4], Take[answer, 8]], phrase[at["climax"], hook, 14], phrase[at["climax", 4], answer, 14]]];
-voice = EventTrack[phrase[at["llm"], voiceLine]];
-arps = EventTrack[Flatten[Table[With[{c = chordAt[s / 16]}, {s / 16, 1/16, {c[[1]], c[[2]], c[[3]], c[[1]] + 12, c[[3]], c[[2]]}[[Mod[s, 6] + 1]] + 12}],
+phrase[start_, notes_, vel_, k_ : 0] := {start + #1 / 4, #2 / 4, #3 + k, vel} & @@@ notes;
+lead = EventTrack[Join[phrase[at["v10"], hook, 0.8], phrase[at["v10", 4], Take[answer, 8], 0.8], phrase[at["climax"], hook, 0.85, 2], phrase[at["climax", 4], answer, 0.85, 2]]];
+bell = EventTrack[Join[phrase[at["v15"], hook, 0.9], phrase[at["v15", 4], Take[answer, 8], 0.85], phrase[at["climax"], hook, 0.5, 14], phrase[at["climax", 4], answer, 0.5, 14]]];
+voice = EventTrack[phrase[at["llm"], voiceLine, 0.8]];
+arps = EventTrack[Flatten[Table[With[{c = chordAt[s / 16]}, {s / 16, 1/16, {c[[1]], c[[2]], c[[3]], c[[1]] + 12, c[[3]], c[[2]]}[[Mod[s, 6] + 1]] + 12, 0.4 + 0.5 (s / 16 - r[[1]]) / (r[[2]] - r[[1]])}],
     {r, {{at["breakdown"], at["breakdown", 1.75]}, {at["agents"], at["agents", 1.75]}}}, {s, 16 r[[1]], 16 r[[2]] - 1}], 1]];
 noteRoll[lead, {40, 48}]
 ```
 
-The seams between sections: crashes on every new era, risers and a snare roll into each drop, impacts on the drops:
+The seams between sections: crashes on every new era, risers and an accelerating snare roll into each drop, impacts on the drops:
 
 ```wl
-crashes = EventTrack[{#, 2, "cr"} & /@ Join[{12}, at /@ {"next", "grammar", "v2", "v3", "v4", "v5", "v6", "families", "v7", "v8", "v9", "v10", "v11", "repos", "v12", "v123", "v132", "llm", "v14", "v15", "climax", "outro"},
-    {manip, at["v10", 4], at["v15", 4]}, at["climax"] + {2, 4, 6}]];
-risers = EventTrack[{{10, 2, 60}, {at["breakdown"], 1.9, 60}, {at["agents"], 1.8, 60}}];
-impacts = EventTrack[{#, 2, 60} & /@ {12, at["families"], at["v10"], at["climax"], end}];
-roll = EventTrack[Flatten[Table[{s / 16, 1/16, "sd"}, {r, {{11, 12}, {at["breakdown", 1], at["breakdown", 1.875]}, {at["agents", 1], at["agents", 1.75]}}}, {s, 16 r[[1]], 16 r[[2]] - 1}], 1]];
+crashes = EventTrack[Join[{{12, 2, "cr", 1}}, {at[#], 2, "cr", 0.6} & /@ {"next", "grammar"}, {at[#], 2, "cr", 0.55} & /@ {"v2", "v3", "v4", "v5", "v6"}, {{manip, 2, "cr", 0.55}, {at["families"], 2, "cr", 0.9}},
+    {at[#], 2, "cr", 0.45} & /@ {"v7", "v8", "v9"}, {{at["v10"], 2, "cr", 1}, {at["v10", 4], 2, "cr", 0.6}}, {at[#], 2, "cr", 0.5} & /@ {"v11", "repos", "v12", "v123", "v132"},
+    {{at["llm"], 2, "cr", 0.7}, {at["v14"], 2, "cr", 0.4}, {at["v15"], 2, "cr", 0.6}, {at["v15", 4], 2, "cr", 0.4}, {at["climax"], 2, "cr", 1}},
+    {at["climax", #], 2, "cr", 0.7} & /@ {2, 4, 6}, {{end, 2, "cr", 1}}]];
+risers = EventTrack[{{10, 2, 60, 1}, {at["breakdown"], 1.9, 60, 1.1}, {at["agents"], 1.8, 60, 1}}];
+rolls = EventTrack[{{11, 1, "sd", 0.8}, {at["breakdown", 1], 0.875, "sd", 1}, {at["agents", 1], 0.75, "sd", 0.9}}];
+impacts = EventTrack[{{12, 2, 60, 1}, {at["families"], 2, 60, 0.6}, {at["v10"], 2, 60, 1.1}, {at["climax"], 2, 60, 1.2}, {end, 2, 60, 1.1}}];
 ```
 
-The mix, drums from WAnim's own kit:
+The 6.0 notebook's Manipulate slider, held and snapped on the beat, a fraction of its two bars in, out:
 
 ```wl
-score = Track[{Gain[0.3][Synth["Pluck"][melody]], Gain[0.16][Synth["Supersaw"][pad]], Gain[0.3][Synth["Sawtooth"][bass]], Gain[0.12][Synth["Supersaw"][stabs]],
-    Gain[0.22][Synth["Sawtooth"][lead]], Gain[0.3][Synth["Bell"][bell]], Gain[0.2][Synth["Triangle"][voice]], Gain[0.16][Synth["Pluck"][arps]],
-    Gain[0.5][kick], Gain[0.28][claps], Gain[0.17][hats], Gain[0.08][ghostHats], Gain[0.1][openHats],
-    Gain[0.2][crashes], Gain[0.2][Synth["Riser"][risers]], Gain[0.35][Synth["Impact"][impacts]], Gain[0.2][roll]}];
+sliderAt[u_] := Module[{keys = {{0, 0.1}, {0.25, 0.1}, {0.5, 0.85}, {0.7, 0.85}, {0.9, 0.3}, {1.05, 0.3}, {1.25, 0.52}, {2, 0.52}}, i},
+    i = Max[1, LengthWhile[keys, #[[1]] <= 2 u &]]; If[i >= Length[keys], keys[[-1, 2]],
+    keys[[i, 2]] + (keys[[i + 1, 2]] - keys[[i, 2]]) Easing["InOutCubic"][(2 u - keys[[i, 1]]) / (keys[[i + 1, 1]] - keys[[i, 1]])]]];
+Plot[sliderAt[u], {u, 0, 1}, PlotRange -> {0, 1}]
 ```
 
-The whole soundtrack, a bar every two seconds:
+The music bus runs through a low-pass that the film opens and closes: dull before the drums, following that slider, sweeping up through the breakdown, breathing in 14.x, opening through the agent's build:
+
+```wl
+musicCutoff[b_] := Which[b < 4, 5000, in[b, {manip, manip + 2}], 260 60^sliderAt[(b - manip) / 2], in[b, "breakdown"], 700 24^(((b - at["breakdown"]) / 2)^2),
+    in[b, "v14"], 900 + 400 Sin[(b - at["v14"]) Pi / 2], in[b, "agents"], 1200 14^((b - at["agents"]) / 2), True, 18000];
+Plot[musicCutoff[b], {b, 0, 84}, ScalingFunctions -> "Log", PlotRange -> All, AxesLabel -> {"bar", "Hz"}]
+```
+
+The 2.0 notebook plays a sound; it is heard, sampled from the kernel, when its cell evaluates:
+
+```wl
+chirp = Audio[Play[Sin[1000 t (1 + t)] Sin[2 Pi t], {t, 0, 1.5}]]
+```
+
+Every part on its instrument, mixed: the music, bass and reverb duck under the kick, the sends go through a shared ping-pong delay and reverb, and the master is saturated, limited and faded:
+
+```wl
+score = Mixer["Sidechain" -> kick, "Cutoff" -> musicCutoff][Track[{Instrument["Pluck"][melody], Instrument["Pad"][pad], Instrument["Bass"][bass], Instrument["LongBass"][longBass],
+    Instrument["Stab"][stabs], Instrument["Lead"][lead], Instrument["Bell"][bell], Instrument["Voice"][voice], Instrument["Arp"][arps],
+    Instrument["SoftKick"][softKicks], Instrument["Kick"][kick], Instrument["Clap"][claps], Instrument["Hat"][hats], Instrument["Hat"][ghostHats], Instrument["OpenHat"][openHats],
+    Instrument["Crash"][crashes], Instrument["Riser"][risers], Instrument["Roll"][rolls], Instrument["Impact"][impacts],
+    Gain[0.14][EventTrack[{{at["v2", 0.45], 1, chirp}}]]}]];
+```
+
+The whole soundtrack, a bar every two seconds (the typing heard in the film is added by the film itself, from what it types):
 
 ```wl
 Audio[score, 84, "CyclesPerSecond" -> 1/2]
@@ -423,12 +461,9 @@ tm = Transpose[TuringMachine[{596440, 2, 3}, {1, {{}, 0}}, 240][[All, 2]]];
 europeMap = GeoRegionValuePlot[CountryData["Europe"] -> "Population", ColorFunction -> "SunsetColors", ImageSize -> 330]
 ```
 
-The slider of Manipulate, held and snapped on the beat, then the surface turned by hand:
+The slider of Manipulate (sliderAt, defined with the score, since the music's filter follows it too), then the surface turned by hand:
 
 ```wl
-sliderAt[u_] := Module[{keys = {{0, 0.1}, {0.25, 0.1}, {0.5, 0.85}, {0.7, 0.85}, {0.9, 0.3}, {1.05, 0.3}, {1.25, 0.52}, {2, 0.52}}, i},
-    i = LengthWhile[keys, #[[1]] <= 2 u &]; If[i >= Length[keys], keys[[-1, 2]],
-    keys[[i, 2]] + (keys[[i + 1, 2]] - keys[[i, 2]]) Easing["InOutCubic"][(2 u - keys[[i, 1]]) / (keys[[i + 1, 1]] - keys[[i, 1]])]]];
 manipulate[u_] := With[{a0 = 0.5 + 2.5 sliderAt[u], turn = Max[0, 2 u - 1.3] 1.4},
     Manipulate[Plot3D[Sin[a x] Cos[y], {x, -3, 3}, {y, -3, 3}, ImageSize -> 260, ViewPoint -> {3.2 Cos[turn - 0.9], 3.2 Sin[turn - 0.9], 2}], {{a, a0}, 0.5, 3}]];
 manipulate[0.3]
@@ -541,13 +576,13 @@ hud = {eraLabel[{12, 16}, "Mathematica 1.0", "June 23, 1988 \[CenterDot] Macinto
         "Pulse" -> kick, FontColor -> fg]};
 ```
 
-The edit: the segments stacked in time, a soft backdrop keeping the narration legible over the wall, the window through its eras, the score underneath:
+The edit: the segments stacked in time, a soft backdrop keeping the narration legible over the wall, the window through its eras, the score underneath, and the typing heard, key by key, from everything the film types:
 
 ```wl
 column = {12, 69} -> Function[t, {CanvasGradient[{1190, 0, 100, 1080}, "Horizontal", ground[t], {{0, 0}, {1, 0.88}}],
     CanvasRectangle[{1290, 0, 630, 1080}, ground[t], Opacity -> 0.88], CanvasGradient[{0, 0, 1920, 170}, "Vertical", ground[t], {{0, 0.9}, {1, 0}}]}];
 film = Timeline[{coldOpen, smp, paper, y1986, name, wall, column, v1, next, v2, v3, v4, v5, v6, prints, characters, grammar,
-    v1Story, nextStory, midStory, lateStory, families, breakdown, wlTitle, hud}, "Duration" -> 41.5, "SecondsPerUnit" -> 2, "Soundtrack" -> score]
+    v1Story, nextStory, midStory, lateStory, families, breakdown, wlTitle, hud}, "Duration" -> 41.5, "SecondsPerUnit" -> 2, "Soundtrack" -> score, "Foley" -> True]
 ```
 
 Twelve moments of it:
