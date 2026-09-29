@@ -4,7 +4,7 @@ Name: "In[1]:= The Life of a Language"
 Author: Nikolay Murzin
 Date: 2026
 Description: "A film about the Wolfram Language told as a natural language gaining words, computed and composed entirely in this notebook with WAnim"
-Abstract: "A language is its words. This notebook makes a film about the Wolfram Language told that way: its vocabulary growing from a few hundred words in 1988 to thousands today, watched through the notebooks it was typed into, each of its era. Everything is computed here. The vocabulary comes from WolframLanguageData, the notebook outputs are evaluated, the melody is the centre column of Rule 30, and the picture reads the same Tracks that sound. Each segment of the film is one WAnim creation tool, so the whole edit is a list a person could type live. These are its first forty bars: from 1979 to the day the language got its name."
+Abstract: "A language is its words. This notebook makes a film about the Wolfram Language told that way: its vocabulary growing from a few hundred words in 1988 to thousands today, watched through the notebooks it was typed into, each of its era. Everything is computed here. The vocabulary comes from WolframLanguageData, the notebook outputs are evaluated, the melody is the centre column of Rule 30, and the picture reads the same Tracks that sound. Each segment of the film is one WAnim creation tool, so the whole edit is a list a person could type live. Eighty-four bars, from SMP in 1979 through every era of the notebook, the repositories, chat notebooks and the music of 15.0, to an agent that writes the language and the whole vocabulary on one page."
 Keywords: [WAnim, Timeline, Track, Rule 30, WolframLanguageData, film, music, notebook history]
 Sources: ["[WAnim](https://github.com/sw1sh/WAnim)", "[Summary of New Features in 15.0](https://reference.wolfram.com/language/guide/SummaryOfNewFeaturesIn150.html)", "[Stephen Wolfram's scrapbook](https://www.stephenwolfram.com/scrapbook/)", "[The Story of Spikey](https://writings.stephenwolfram.com/2018/12/the-story-of-spikey/)"]
 Links: ["[What Is a Computational Essay?](https://writings.stephenwolfram.com/2017/11/what-is-a-computational-essay/)"]
@@ -24,11 +24,11 @@ The film counts in bars of 120 BPM: one bar is one cycle of the score's Tracks, 
 
 ## The Vocabulary
 
-Every documented symbol, with the version that introduced it and how often it is used across code, documentation and notebooks:
+Every documented symbol, with the version that introduced it, how often it is used across code, documentation and notebooks, and whether it is named after a person:
 
 ```wl
-lexicon = Cases[WolframLanguageData[All, {"Name", "VersionIntroduced", "Frequencies"}],
-    {n_String, v_, f_} :> <|"Name" -> n, "Version" -> ToExpression[ToString[v]], "Frequency" -> Replace[f, {{"All" -> w_ ? NumericQ, ___} :> w, _ -> 10.^-9}]|>];
+lexicon = Cases[WolframLanguageData[All, {"Name", "VersionIntroduced", "Frequencies", "EponymousPeople"}],
+    {n_String, v_, f_, e_} :> <|"Name" -> n, "Version" -> ToExpression[ToString[v]], "Frequency" -> Replace[f, {{"All" -> w_ ? NumericQ, ___} :> w, _ -> 10.^-9}], "Eponym" -> MatchQ[e, {__}]|>];
 Dataset[lexicon]
 ```
 
@@ -48,7 +48,7 @@ new15 = Intersection[Flatten @ StringCases[Import["https://reference.wolfram.com
 They join the vocabulary as version 15:
 
 ```wl
-lexicon = Join[lexicon, <|"Name" -> #, "Version" -> 15., "Frequency" -> 10.^-9|> & /@ new15];
+lexicon = Join[lexicon, <|"Name" -> #, "Version" -> 15., "Frequency" -> 10.^-9, "Eponym" -> False|> & /@ new15];
 Counts[Floor[lexicon[[All, "Version"]]]]
 ```
 
@@ -335,8 +335,10 @@ Behind the window, the whole vocabulary as a dictionary page; each release's wor
 
 ```wl
 arrivals = Association[Flatten[releases[[All, "Arrivals"]]]];
-wall = WordWall[{#["Name"], #["Frequency"], Lookup[arrivals, #["Name"], Infinity]} & /@ lexicon, {12, 84}, "From" -> {583, 488}, "FlightCount" -> 80, Background -> ground,
-    "Color" -> (Blend[{RGBColor["#B9B3A7"], RGBColor["#34363C"]}, dark[#]] &), "StrongColor" -> (Blend[{RGBColor["#2A2825"], boneC}, dark[#]] &)];
+wallWords = {#["Name"], #["Frequency"], Lookup[arrivals, #["Name"], Infinity]} & /@ lexicon;
+wallStyle = {"From" -> {583, 488}, "FlightCount" -> 80, Background -> ground,
+    "Color" -> (Blend[{RGBColor["#B9B3A7"], RGBColor["#34363C"]}, dark[#]] &), "StrongColor" -> (Blend[{RGBColor["#2A2825"], boneC}, dark[#]] &)};
+wall = WordWall[wallWords, {12, 84}, wallStyle];
 ```
 
 The story on the right, in the ink of the moment: captions, and dictionary entries looked up live:
@@ -361,7 +363,7 @@ Spikey, in its first form and first display, dancing to the kick; it takes each 
 ```wl
 spikeyForm = Which[# < at["v2"], "Stellated", # < at["v10"], "Spiked", True, "Hexecontahedron"] &;
 spikeyStyle = Which[# < at["next"], "1Bit", # < at["v2"], "Gray", # < at["v6"], "Classic", True, "Red"] &;
-characters = {Spikey[{12, 69}, "Form" -> spikeyForm, "Style" -> spikeyStyle, "Pulse" -> kick], AutomatonTape[30, melody, {12, 16}, "Exit" -> "Cut"]};
+characters = {Spikey[{12, 66.9}, "Form" -> spikeyForm, "Style" -> spikeyStyle, "Pulse" -> kick], AutomatonTape[30, melody, {12, 16}, "Exit" -> "Cut"]};
 GraphicsRow[Timeline[{Backdrop[paperC], characters}, "Duration" -> 40]["Graphics", #, ImageSize -> 300] & /@ {13.3, 17, 29}]
 ```
 
@@ -559,6 +561,368 @@ wlTitle = {Backdrop[Function[t, Blend[{inkC, Transparent}, Easing["InExpo"][(t -
 Timeline[wlTitle, "Duration" -> 42]["Graphics", 40.9, ImageSize -> 480]
 ```
 
+## Bars 40 to 46: Version 10
+
+The window comes back out of the name as Yosemite. It reads what you mean, draws the Earth, and knows the stars. The globe of July 2014, its night side, and great circles from Champaign to the world:
+
+```wl
+champaign = Entity["City", {"Champaign", "Illinois", "UnitedStates"}];
+capitals = Entity["City", #] & /@ {{"Paris", "IleDeFrance", "France"}, {"Tokyo", "Tokyo", "Japan"}, {"SaoPaulo", "SaoPaulo", "Brazil"}, {"Moscow", "Moscow", "Russia"}, {"Sydney", "NewSouthWales", "Australia"}};
+globe = GeoGraphics[{NightHemisphere[DateObject[{2014, 7, 9, 12}]], red, Thick, GeoPath[{champaign, #}, "GreatCircle"] & /@ capitals},
+    GeoProjection -> "Orthographic", GeoCenter -> champaign, ImageSize -> 400]
+```
+
+Every star the eye can see, by temperature and brightness:
+
+```wl
+starPlot = ListPlot[StarData[EntityClass["Star", "NakedEyeStar"], {"EffectiveTemperature", "AbsoluteMagnitude"}],
+    ScalingFunctions -> {"Reverse", "Reverse"}, PlotStyle -> PointSize[0.006], AxesLabel -> {"temperature", "magnitude"}, ImageSize -> 460]
+```
+
+And the language knows its own words: which symbols are related to which. Two steps out from Plot, drawn an edge at a time:
+
+```wl
+related = NestGraph[Map[CanonicalName, WolframLanguageData[#, "RelatedSymbols"]] &, "Plot", 2];
+relatedGrowing[u_] := Graph[VertexList[related], Take[EdgeList[related], Max[1, Round[u EdgeCount[related]]]],
+    VertexCoordinates -> Thread[VertexList[related] -> GraphEmbedding[related]], VertexLabels -> "Name", VertexLabelStyle -> Directive[7, GrayLevel[0.3]],
+    VertexStyle -> red, EdgeStyle -> RGBColor["#6D82C7"], ImageSize -> {620, 380}];
+relatedGrowing[1]
+```
+
+The window, bursting back after the title:
+
+```wl
+v10 = NotebookSession[{{40.5, "In", "Interpreter[\"Country\"][\"france\"]", 0.25}, {40.85, "Out", Interpreter["Country"]["france"]},
+    {41.2, "In", "GeoGraphics[{NightHemisphere[DateObject[{2014, 7, 9, 12}]], GeoPath[{champaign, #}, \"GreatCircle\"] & /@ capitals}, GeoProjection -> \"Orthographic\"]", 0.3},
+    {41.55, "Out", globe}, {43, "In", "Pluralize[\"mouse\"]", 0.15}, {43.2, "Out", Pluralize["mouse"]},
+    {43.6, "In", "ListPlot[StarData[EntityClass[\"Star\", \"NakedEyeStar\"], {\"EffectiveTemperature\", \"AbsoluteMagnitude\"}]]", 0.25}, {43.9, "Out", starPlot},
+    {44.85, "In", "NestGraph[WolframLanguageData[#, \"RelatedSymbols\"] &, \"Plot\", 2]", 0.2}, {45.1, "Out", relatedGrowing, 0.7}}, {40.4, 46},
+    "Era" -> "Yosemite2014", "Title" -> "Untitled-1.nb", "EnterTime" -> 0.25, "Pulse" -> kick];
+v10["Graphics", 45.9, ImageSize -> 480]
+```
+
+## Bars 46 to 55: Version 11 to 13
+
+Big Sur, and a notebook that keeps going. It sees (the picture is in the input), and it takes your words as entities of their own:
+
+```wl
+mandrill = ImageResize[ExampleData[{"TestImage", "Mandrill"}], 44];
+seeInput = With[{img = mandrill}, HoldForm[NetModel["Wolfram ImageIdentify Net V1"][img]]];
+wordStore = EntityStore["Word" -> <|"Entities" -> AssociationMap[<|"Label" -> #|> &, lexicon[[All, "Name"]]]|>];
+registered = EntityRegister[wordStore]
+```
+
+From the repositories: every fireball the Data Repository knows, by the energy it radiated, and a bird that says anything:
+
+```wl
+fireballs = GeoBubbleChart[ResourceData["Fireballs and Bolides"][All, #Coordinates -> #TotalRadiatedEnergy &], ImageSize -> 470];
+bird = ResourceFunction["BirdSay"]["Every language starts with a few words."];
+{fireballs, bird}
+```
+
+Compiled code, a molecule turning, and a double pendulum simulated from its Modelica model; the pendulum is drawn from the positions of its two links:
+
+```wl
+compiled = FunctionCompile[Function[Typed[n, "MachineInteger"], Module[{s = 0., i = 1}, While[i <= n, s += Sin[N[i]]^2; i++]; s]]];
+caffeine = MoleculePlot3D[Molecule["caffeine"], ImageSize -> 280];
+turning3D[g_] := u |-> Show[g, ViewPoint -> {3 Cos[2 Pi u], 3 Sin[2 Pi u], 1}, SphericalRegion -> True];
+pendulumData = SystemModelSimulate["Modelica.Mechanics.MultiBody.Examples.Elementary.DoublePendulum", 6];
+links = pendulumData[{"boxBody1.frame_a.r_0[1]", "boxBody1.frame_a.r_0[2]", "boxBody1.frame_b.r_0[1]", "boxBody1.frame_b.r_0[2]", "boxBody2.frame_b.r_0[1]", "boxBody2.frame_b.r_0[2]"}];
+pendulum[u_] := With[{p = Partition[Through[links[6 u]], 2]},
+    Graphics[{GrayLevel[0.8], Line[Table[Through[links[[5 ;; 6]][s]], {s, 0, 6 u, 0.02}]], GrayLevel[0.2], AbsoluteThickness[3], Line[p], red, Disk[#, 0.03] & /@ Rest[p]},
+        PlotRange -> {{-0.7, 0.7}, {-0.8, 0.2}}, ImageSize -> {380, 260}]];
+{compiled[10^6], pendulum[0.7]}
+```
+
+A priority queue, and code as a tree:
+
+```wl
+queue = CreateDataStructure["PriorityQueue"]; Scan[queue["Push", #] &, {3, 1, 4, 1, 5}];
+tree = ExpressionTree[Unevaluated[Manipulate[Plot[Sin[a x], {x, 0, 2 Pi}], {a, 1, 5}]]];
+{queue, tree}
+```
+
+Orion, and a quantum circuit from a framework one PacletInstall away:
+
+```wl
+orion = Entity["Star", #] & /@ {"Betelgeuse", "Rigel", "Bellatrix", "Mintaka", "Alnilam", "Alnitak", "Saiph", "Meissa"};
+sky = AstroGraphics[{Yellow, PointSize[0.012], Point /@ orion}, AstroCenter -> Entity["Star", "Alnilam"], AstroRange -> Quantity[25, "AngularDegrees"],
+    AstroReferenceFrame -> "Equatorial", AstroBackground -> AstroStyling[{"DarkSky", "ShowConstellations" -> {Entity["Constellation", "Orion"]}}], ImageSize -> 400];
+PacletInstall["Wolfram/QuantumFramework"]; Needs["Wolfram`QuantumFramework`"];
+circuit = QuantumCircuitOperator[{"H", "CNOT" -> {1, 2}, "CNOT" -> {2, 3}}]["Diagram"];
+{sky, circuit}
+```
+
+One window from 11 to 13.2:
+
+```wl
+v11 = NotebookSession[{{46, "In", seeInput}, {46.25, "Out", NetModel["Wolfram ImageIdentify Net V1"][ExampleData[{"TestImage", "Mandrill"}]]},
+    {46.5, "In", "EntityRegister[EntityStore[\"Word\" -> <|\"Entities\" -> words|>]]", 0.15}, {46.7, "Out", registered},
+    {47, "In", "GeoBubbleChart[ResourceData[\"Fireballs and Bolides\"][All, #Coordinates -> #TotalRadiatedEnergy &]]", 0.25}, {47.35, "Out", fireballs},
+    {48.1, "In", "ResourceFunction[\"BirdSay\"][\"Every language starts with a few words.\"]", 0.25}, {48.4, "Out", bird},
+    {49, "In", "cf = FunctionCompile[Function[Typed[n, \"MachineInteger\"], Module[{s = 0., i = 1}, While[i <= n, s += Sin[N[i]]^2; i++]; s]]]", 0.25}, {49.3, "Out", compiled},
+    {49.7, "In", "MoleculePlot3D[Molecule[\"caffeine\"]]", 0.15}, {49.9, "Out", turning3D[caffeine], 1.6},
+    {50.2, "In", "SystemModelSimulate[\"Modelica.Mechanics.MultiBody.Examples.Elementary.DoublePendulum\", 6]", 0.2}, {50.35, "Out", pendulum, 0.65},
+    {51, "In", "pq = CreateDataStructure[\"PriorityQueue\"]; Scan[pq[\"Push\", #] &, {3, 1, 4, 1, 5}]; pq", 0.25}, {51.35, "Out", queue},
+    {51.9, "In", "ExpressionTree[Unevaluated[Manipulate[Plot[Sin[a x], {x, 0, 2 Pi}], {a, 1, 5}]]]", 0.25}, {52.2, "Out", tree},
+    {53, "In", "AstroGraphics[Point /@ orion, AstroCenter -> Entity[\"Star\", \"Alnilam\"], AstroBackground -> AstroStyling[{\"DarkSky\", \"ShowConstellations\" -> {Entity[\"Constellation\", \"Orion\"]}}]]", 0.25},
+    {53.3, "Out", sky}, {54, "In", "PacletInstall[\"Wolfram/QuantumFramework\"]", 0.1}, {54.1, "Out", PacletObject["Wolfram/QuantumFramework"]},
+    {54.3, "In", "QuantumCircuitOperator[{\"H\", \"CNOT\" -> {1, 2}, \"CNOT\" -> {2, 3}}][\"Diagram\"]", 0.15}, {54.5, "Out", circuit}}, {46, 55},
+    "Era" -> "BigSur2020", "Title" -> "Untitled-1.nb", "Enter" -> "Wipe", "EnterTime" -> 0.1, "From" -> v10, "Pulse" -> kick];
+GraphicsRow[v11["Graphics", #, ImageSize -> 400] & /@ {48.9, 50.9, 54.9}]
+```
+
+The repositories, as cards dealt down the right:
+
+```wl
+repoList = {{"Demonstrations Project", "2007", "interactive ideas, built with Manipulate"}, {"Wolfram Community", "2013", "where users share what they make"},
+    {"Data Repository", "2017", "data that computes"}, {"Neural Net Repository", "2018", "trained nets, one NetModel call away"}, {"Function Repository", "2019", "anyone can add a function"}};
+repos = {at["repos"], at["repos", 2.2]} -> Function[t, With[{leave = Tween[{at["repos", 1.95], at["repos", 2.2]}, "InCubic"][t]},
+    MapIndexed[With[{u = Tween[{#2[[1]] - 1, #2[[1]] - 0.2} / 4 + at["repos"], "OutExpo"][t], x0 = 1250, y = 190 + 92 (#2[[1]] - 1)}, With[{x = x0 + 60 (1 - u)},
+        If[u <= 0, {}, CanvasOpacity[u (1 - leave), {CanvasRectangle[{x, y, 590, 78}, Blend[{White, RGBColor["#1F2126"]}, dark[t]], "Radius" -> 6, Opacity -> 0.92],
+            CanvasRectangle[{x, y, 6, 78}, red], CanvasText[#1[[1]], {x + 24, y + 34}, CanvasFont["Source Sans 3", 28, 700], fg[t]],
+            CanvasText[#1[[2]], {x + 572, y + 34}, CanvasFont["Source Code Pro", 24, 600], red, Alignment -> Right],
+            CanvasText[#1[[3]], {x + 24, y + 62}, CanvasFont["Source Sans 3", 20, 400], soft[t]]}]]]] &, repoList]]];
+Timeline[{Backdrop[paperC], repos}, "Duration" -> 50]["Graphics", 48.5, ImageSize -> 480]
+```
+
+## Bars 55 to 67: Chat, Dark Mode, and Music
+
+A chat notebook: a question in English, an answer in both languages, and the code run:
+
+```wl
+chat = NotebookSession[{{55, "ChatInput", "What are the ten most common words in Alice in Wonderland?", 0.55},
+    {55.75, "ChatOutput", "You can count them with WordCounts:", {"Take[WordCounts[ExampleData[{\"Text\", \"AliceInWonderland\"}],", "  IgnoreCase -> True], 10]"}, "WordCounts"},
+    {57, "In", "Take[WordCounts[ExampleData[{\"Text\", \"AliceInWonderland\"}], IgnoreCase -> True], 10]", 0.3},
+    {57.4, "Out", Take[WordCounts[ExampleData[{"Text", "AliceInWonderland"}], IgnoreCase -> True], 10]}}, {55, 59},
+    "Era" -> "BigSur2020", "Title" -> "Chat.nb", "Enter" -> "Wipe", "EnterTime" -> 0.1, "From" -> v11, "Pulse" -> kick];
+chat["Graphics", 58.5, ImageSize -> 480]
+```
+
+The language keeps a record of itself. The releases, as a Tabular:
+
+```wl
+released = DateObject /@ {{1988, 6, 23}, {1991, 1, 15}, {1996, 9, 3}, {1999, 5, 19}, {2003, 6, 5}, {2007, 5, 1}, {2008, 11, 18}, {2010, 11, 15},
+    {2012, 11, 28}, {2014, 7, 9}, {2016, 8, 8}, {2019, 4, 16}, {2021, 12, 13}, {2023, 6, 28}, {2024, 1, 9}, {2026, 6, 16}};
+versions = Tabular[Table[<|"version" -> releases[[k, "Label"]], "released" -> released[[k]], "new words" -> Length[releases[[k, "Words"]]],
+    "since previous" -> If[k == 1, Missing["NotApplicable"], Round[QuantityMagnitude[DateDifference[released[[k - 1]], released[[k]], "Month"]], 0.1]]|>, {k, Length[releases] - 1}]]
+```
+
+Its fastest-growing stretch, in words a month:
+
+```wl
+fastest = TakeLargestBy[TransformColumns[versions, "words per month" -> Function[Round[#["new words"] / #["since previous"], 0.1]]], "words per month", 3]
+```
+
+Dark mode arrives:
+
+```wl
+v14 = NotebookSession[{{59.1, "In", "Tabular[versions]", 0.15}, {59.35, "Out", versions},
+    {59.95, "In", "TakeLargestBy[TransformColumns[versions, \"words per month\" -> Function[Round[#[\"new words\"]/#[\"since previous\"], 0.1]]], \"words per month\", 3]", 0.25},
+    {60.3, "Out", fastest}}, {59, 61}, "Era" -> "Dark2024", "Enter" -> "Wipe", "EnterTime" -> 0.1, "From" -> chat, "Pulse" -> kick];
+v14["Graphics", 60.9, ImageSize -> 480]
+```
+
+And 15.0 learns music. Asked in the chat bar for the melody we are hearing, it writes the bell's phrase, the same notes the score plays, as a MusicScore; then the window flies away:
+
+```wl
+v15 = NotebookSession[{{62, "In", "MusicScore[MusicNote[#3, #2/4] & @@@ Join[hook, Take[answer, 8]]]", 0.35},
+    {62.4, "Out", Magnify[MusicScore[MusicNote[#3, #2 / 4] & @@@ Join[hook, Take[answer, 8]]], 2]}}, {61, 67},
+    "Era" -> "BigSur2020", "Title" -> "Soundtrack.nb", "Enter" -> "Wipe", "EnterTime" -> 0.1, "From" -> v14, "ChatBar" -> {61.1, "Write the melody we are hearing as a score", 0.75, 62},
+    "Exit" -> "FlyAway", "ExitTime" -> 0.3, "Pulse" -> kick];
+GraphicsRow[v15["Graphics", #, ImageSize -> 400] & /@ {61.7, 64}]
+```
+
+The story from 10 to 15, with prints of the Raspberry Pi, the first chat notebooks and the count of functions by version:
+
+```wl
+morePrints = Import /@ <|"pi" -> "https://content.wolfram.com/sites/43/2013/11/wolfram-language-and-mathematica-on-raspberry-pi-1.png",
+    "chat" -> "https://content.wolfram.com/sites/43/2023/06/chatbook-hero-v3.png", "v14" -> "https://content.wolfram.com/sites/43/2024/01/sw010724buildingimg1.png"|>;
+commas[n_] := ToString[NumberForm[n, DigitBlock -> 3]];
+n10 = commas[Length[releases[[10, "Words"]]]];
+perMonth = ToString[Max[Normal[fastest[All, "words per month"]]]];
+modernStory = {story["Version 10 adds " <> n10 <> " words: the most ever.", {41, 42.8}, n10], story["The Earth, the stars, every country and language.", {42.95, 44.8}],
+    story["It even knows about its own words.", {44.9, 45.85}, "own"], story["It learns to see.", {46.05, 46.45}], story["And it takes your words, too.", {46.5, 46.95}],
+    story["Now anyone can add words.", {47, 48.9}, "anyone"], story["Compiled, it runs fast.", {49.05, 49.65}], story["Molecules, machines, whole systems.", {49.7, 50.9}],
+    story["Data structures, built in.", {51.05, 51.85}], story["Code is an expression too: a tree.", {51.9, 52.9}], story["From the Earth to the stars.", {53.05, 53.95}, "stars"],
+    story["Whole frameworks, one install away.", {54, 54.9}], story["Now machines learn to speak it.", {55.25, 56.9}, "machines"],
+    story["Natural language for people. Computational language for both.", {57.1, 58.85}], story["It keeps a record of itself.", {59.2, 59.9}],
+    story["Its fastest-growing stretch: " <> perMonth <> " new words a month.", {60, 60.85}, perMonth], story["Version 15: it learns music.", {61.25, 63.85}, "music"],
+    story["The notes you are hearing, as expressions.", {64, 66.7}],
+    entry["GeoGraphics", {41.2, 42.85}], entry["StarData", {43.6, 44.8}], entry["WolframLanguageData", {44.85, 45.85}], entry["NetModel", {46.05, 46.45}],
+    entry["EntityStore", {46.5, 46.95}], entry["FunctionCompile", {49, 49.65}], entry["SystemModel", {50.2, 50.9}], entry["CreateDataStructure", {51.05, 51.85}],
+    entry["ExpressionTree", {51.9, 52.9}], entry["AstroGraphics", {53.05, 53.95}], entry["PacletInstall", {54, 54.9}], entry["LLMFunction", {55.2, 56.95}],
+    entry["MusicNote", {61.2, 66.7}, "Note" -> "symbol \[CenterDot] new in 15.0, 2026", "Usage" -> "MusicNote[p, d] returns a music note with the specified pitch p and duration d."],
+    PhotoPrint[morePrints["pi"], "Free on every Raspberry Pi", {40.5, 41.35}, Position -> {1380, 740}, "Size" -> {380, 170}, "Tilt" -> 2, "Kicker" -> "From the archive \[CenterDot] 2013"],
+    PhotoPrint[morePrints["chat"], "The 1988 notebook, and a 2023 chat notebook", {57, 58.85}, "Kicker" -> "From the archive \[CenterDot] 2023"],
+    PhotoPrint[morePrints["v14"], "Built-in functions by version, 1 to 14", {59.1, 60.85}, Position -> {1250, 200}, "Tilt" -> -1, "Kicker" -> "From the archive \[CenterDot] 2024"]};
+```
+
+## Bars 67 to 69: Made by an Agent
+
+The film goes dark for a terminal: an agent, asked for a film about the language, calls the language. The outputs of this notebook fly in beside it:
+
+```wl
+thumb[g_] := First[ConformImages[{RemoveAlphaChannel[Rasterize[g, "Image", ImageResolution -> 96, Background -> White], White]}, {360, 280}, "Fit", Padding -> White]];
+agents = Module[{a0 = at["agents"], shown, lines, thumbs},
+    shown[t_] := Tween[{a0 - 0.1, a0 + 0.1}, "OutExpo"][t] (1 - Tween[{a0 + 1.8, a0 + 2}, "InExpo"][t]);
+    lines = {{0.05, "> make a short film about the Wolfram Language", "Prompt"},
+        {0.3, "\[FilledCircle] Bash(wolframscript -code 'Length[WolframLanguageData[]]')", "Call"}, {0.45, "  \:2514  " <> commas[Length[lexicon]] <> " symbols \[CenterDot] names, versions, frequencies", "Result"},
+        {0.6, "\[FilledCircle] Write(notebook/Film.md)", "Call"}, {0.75, "  \:2514  a film as a list of layers", "Result"},
+        {0.9, "\[FilledCircle] Bash(wolframscript -file build.wls)", "Call"}, {1.05, "  \:2514  Film.nb", "Result"},
+        {1.2, "\[FilledCircle] Bash(wolframscript -code 'film[\"Video\"]')", "Call"}, {1.35, "  \:2514  1920\[Times]1080 \[CenterDot] 60 fps \[CenterDot] the score and every key", "Result"}};
+    thumbs = thumb /@ {Plot3D[Sin[x y], {x, 0, 3}, {y, 0, 3}], ArrayPlot[ca], europeMap, parallelFrame[1], bordersGrowing[1], globe, sky, caffeine, circuit};
+    {Backdrop[Function[t, Blend[{Transparent, inkC}, shown[t]]], {a0 - 0.1, a0 + 2}],
+     {a0 - 0.1, a0 + 2} -> Function[t, CanvasOpacity[shown[t], {
+        MapIndexed[With[{i = #2[[1]] - 1, u = Tween[{a0 + 0.2 + 0.13 (#2[[1]] - 1), a0 + 0.55 + 0.13 (#2[[1]] - 1)}, "OutCubic"][t], j = BlockRandom[RandomReal[{-0.5, 0.5}, 3], RandomSeeding -> #2[[1]]]},
+            With[{target = {1260 + 200 Mod[i, 3] + 40 j[[1]], 180 + 190 Floor[i / 3] + 30 j[[2]]}}, If[u <= 0, {},
+                CanvasTransform[CanvasTranslate[{2120, target[[2]] + 200} + ({target[[1]], target[[2]]} - {2120, target[[2]] + 200}) u] . CanvasRotate[0.18 j[[3]] (1 - u / 2)],
+                    {CanvasRectangle[{-4, -4, 188, 148}, White], CanvasImage[#1, {0, 0, 180, 140}]}]]]] &, thumbs],
+        CanvasRectangle[{96, 170, 1060, 660}, RGBColor["#16181C"], "Radius" -> 12], CanvasRectangle[{96, 170, 1060, 660}, RGBColor["#2C3038"], "Radius" -> 12, "Stroke" -> 1.5],
+        MapIndexed[CanvasDisk[{120 + 22 (#2[[1]] - 1), 192}, 7, RGBColor[#1]] &, {"#FF5F57", "#FEBC2E", "#28C840"}],
+        CanvasText["claude \[LongDash] ~/src/wolfram/WolframFilm", {626, 198}, CanvasFont["Source Code Pro", 17], RGBColor["#8A8F98"], Alignment -> Center],
+        Module[{y = 250}, Table[If[t < a0 + l[[1]], Nothing, {CanvasText[TypedText[l[[2]], (t - a0 - l[[1]]) / If[l[[3]] === "Prompt", 0.25, 0.1]], {132, y},
+            CanvasFont["Source Code Pro", If[l[[3]] === "Prompt", 28, 24], If[l[[3]] === "Call", 600, 400]],
+            RGBColor[Switch[l[[3]], "Prompt", "#EDE9E0", "Call", "#E8A26B", _, "#8FA3B8"]]], y += If[l[[3]] === "Result", 54, 40]}[[1]]], {l, lines}]]}]],
+     Title["WOLFRAM AS A TOOL FOR AI \[CenterDot] FEBRUARY 2026", {a0 + 0.2, a0 + 2}, Position -> {96, 110}, Alignment -> Left, FontSize -> 20, FontWeight -> 600, FontColor -> red,
+        "Tracking" -> 3, "Enter" -> "Fade", "Exit" -> "Fade", "ExitTime" -> 0.2],
+     Title["AIs now call the language as a tool.", {a0 + 0.2, a0 + 2}, Position -> {96, 930}, Alignment -> Left, FontSize -> 60, FontWeight -> 800, FontColor -> boneC,
+        "Enter" -> "Fade", "Exit" -> "Fade", "ExitTime" -> 0.2],
+     Title["This film was made that way.", {a0 + 1, a0 + 2}, Position -> {96, 1010}, Alignment -> Left, FontSize -> 44, FontWeight -> 400, FontColor -> RGBColor["#FF3B1F"],
+        "Enter" -> "Fade", "Exit" -> "Fade", "ExitTime" -> 0.2]}];
+Timeline[agents, "Duration" -> 69]["Graphics", 68.2, ImageSize -> 480]
+```
+
+Then Spikey hops to the middle, grows a face, and high-fives Claude, who pops up from below:
+
+```wl
+claudeMascot[{cx_, cy_}, px_, raise_, t_] := With[{rows = {"..XXXXXXX..", "..XOXXXOX..", "AAXXXXXXXAA", "..XXXXXXX..", "..X.X.X.X.."}},
+    Table[With[{c = StringTake[rows[[r]], {k}]}, If[c === ".", Nothing,
+        With[{d = Which[r == 5 && (k == 3 || k == 7) && OddQ[Floor[8 t]], {0, -0.25 px}, c === "A" && k <= 2, {-0.2 px raise, -2.4 px raise}, True, {0, 0}]},
+            CanvasRectangle[{cx - 5.5 px + (k - 1) px + d[[1]], cy - 2.5 px + (r - 1) px + d[[2]], px + 0.5, px + 0.5}, If[c === "O", RGBColor["#1B1B1B"], RGBColor["#D97757"]]]]]],
+        {r, 5}, {k, 11}]];
+spark[{x_, y_}, u_] := If[0 < u < 1, {Table[CanvasLine[{{x, y} + (18 + 60 u) {Cos[a], Sin[a]}, {x, y} + (40 + 120 u) {Cos[a], Sin[a]}}, RGBColor[1, 0.925, 0.667], "Thickness" -> 5 (1 - u), Opacity -> 1 - u], {a, 0, 2 Pi - Pi / 6, Pi / 6}],
+    CanvasDisk[{x, y}, 30 (1 - u) + 6, RGBColor[1, 0.957, 0.784], Opacity -> 0.95 (1 - u)]}, {}];
+highFive = Module[{t0 = at["agents"], hit = at["agents", 1.25], su, lean, raise, spikeyAt, radius, claudeAt},
+    su = Tween[{t0 + 0.15, t0 + 0.55}, "InOutCubic"];
+    lean = Function[t, Tween[{hit - 0.25, hit}, "InOutCubic"][t] (1 - Tween[{hit + 0.1, hit + 0.35}, "InOutCubic"][t])];
+    raise = Function[t, Tween[{hit - 0.3, hit - 0.05}, {"OutBack", 1.5}][t] (1 - Tween[{hit + 0.3, hit + 0.5}, "InCubic"][t])];
+    spikeyAt = Function[t, {1790 - 370 su[t] + 30 lean[t], 930 - 70 su[t] - 120 Sin[Pi su[t]] - If[su[t] >= 1, 14 Abs[Sin[4 Pi (t - t0)]], 0]}];
+    radius = Function[t, (50 + 10 su[t]) (1 - Tween[{t0 + 1.8, t0 + 2}, "InCubic"][t])];
+    claudeAt = Function[t, {1740 - 30 lean[t], 1180 - 318 Tween[{t0 + 0.5, t0 + 0.75}, {"OutBack", 1.6}][t] - If[t > hit + 0.1, 18 Abs[Sin[8 Pi (t - hit)]], 0]}];
+    {Spikey[{t0 + 0.15, t0 + 2}, Position -> spikeyAt, "Radius" -> radius, "Face" -> True, "Raise" -> raise, "Blink" -> (hit < # < hit + 0.06 &),
+        "Form" -> "Hexecontahedron", "Style" -> "Red", "Dance" -> 0.4, "Pulse" -> kick, "Enter" -> "Cut"],
+     {t0 + 0.5, t0 + 2} -> Function[t, CanvasOpacity[1 - Tween[{t0 + 1.8, t0 + 2}, "InCubic"][t], claudeMascot[claudeAt[t], 17, raise[t], t]]],
+     {hit, hit + 0.35} -> Function[t, With[{s = spikeyAt[t], r = radius[t], c = claudeAt[t], k = raise[t]},
+        spark[(s + r {0.95 + 0.25 k, 0.5 - 1.25 k} + c + 17 {-5 - 0.2 k, -0.5 - 2.4 k}) / 2, (t - hit) / 0.35]]]}];
+Timeline[{Backdrop[inkC], highFive}, "Duration" -> 69]["Graphics", at["agents", 1.3], ImageSize -> 480]
+```
+
+## Bars 69 to 77: The Whole Vocabulary
+
+The numbers the finale states, all computed from the lexicon:
+
+```wl
+byFrequency = SortBy[lexicon, -#Frequency &];
+questions = Select[byFrequency, StringEndsQ[#Name, "Q"] &][[All, "Name"]];
+eponyms = Select[byFrequency, #Eponym &][[All, "Name"]];
+longest = Take[SortBy[lexicon, {-StringLength[#Name] &, #Name &}], 6][[All, "Name"]];
+averageLength = AssociationThread[releases[[All, "Label"]], N[Mean[StringLength /@ #Words[[All, "Name"]]]] & /@ releases];
+<|"words" -> Length[lexicon], "most used" -> byFrequency[[1, "Name"]], "questions" -> Length[questions], "eponyms" -> Length[eponyms], "average letters" -> averageLength[[{1, -1}]]|>
+```
+
+The camera starts close on the most used word and pulls out to the whole page; then the words each statement is about stand out, the page dimming around them:
+
+```wl
+climaxAt = at["climax"];
+focus = wall["Places"][byFrequency[[1, "Name"]]];
+camera[t_] := Which[
+    in[t, {climaxAt, climaxAt + 4}], With[{z = 1 + 3.2 (1 - Easing["InOutCubic"][(t - climaxAt) / 4])},
+        CanvasTranslate[{960, 540}] . CanvasScale[z] . CanvasTranslate[-(focus + ({960, 540} - focus) (1 - (z - 1) / 3.2))]],
+    t >= end, CanvasTranslate[{0, 300 Easing["InCubic"][Clip[(t - end) / 1.2]]}],
+    True, None];
+emphasisSpans = {{2, 4, MemberQ[{"List", "Rule", "Times", "Power", "Set"}, #] &}, {4, 6, StringLength[#] >= 24 &}, {6, 7, StringEndsQ[#, "Q"] &}, {7, 8, MemberQ[eponyms, #] &}};
+emphasis[t_] := FirstCase[emphasisSpans, {a_, b_, test_} /; in[t, climaxAt + {a, b}] :>
+    {test, Tween[climaxAt + {a, a + 0.3}, "OutCubic"][t] (1 - Tween[climaxAt + {b - 0.2, b}, "Linear"][t])}, None];
+wall = WordWall[wallWords, {12, end + 2}, "Presence" -> (Clip[2 (# - climaxAt), {0, 1}] &), "Camera" -> camera, "Emphasis" -> emphasis, wallStyle];
+GraphicsRow[Timeline[{Backdrop[inkC], wall}, "Duration" -> 84]["Graphics", #, ImageSize -> 400] & /@ {climaxAt + 0.5, climaxAt + 2.5, climaxAt + 6.5}]
+```
+
+The words over time, a line through every release, drawn on a Stage in pixels of the frame:
+
+```wl
+yearOf[d_] := 1986 + QuantityMagnitude[DateDifference[DateObject[{1986, 1, 1}], d, "Year"]];
+growthPoints = MapThread[{1680 (yearOf[#1] - 1986) / 42, 780 #2 / Length[lexicon]} &, {released, Accumulate[Length[#Words] & /@ releases]}];
+growthCurve = Stage[Function[t, Module[{fade = 1 - 0.81 Tween[climaxAt + {1.8, 2.2}, "InCubic"][t], u, path = {{0, 0}}, k = 1},
+    While[k <= Length[growthPoints] && (u = Tween[climaxAt + {k - 2, k - 1} / 8, "OutCubic"][t]) > 0,
+        AppendTo[path, path[[-1]] + (growthPoints[[k]] - path[[-1]]) u]; If[u < 1, Break[]]; k++];
+    {Opacity[0.15 fade, RGBColor["#FF3B1F"]], AbsoluteThickness[26], Line[path], Opacity[0.3 fade, RGBColor["#FF3B1F"]], AbsoluteThickness[14], Line[path],
+     Opacity[fade, RGBColor["#FF3B1F"]], AbsoluteThickness[6], Line[path],
+     Table[With[{v = Tween[climaxAt + {k - 1, k - 0.36} / 8, {"OutBack", 3}][t]}, If[v <= 0, Nothing,
+        {Opacity[fade, boneC], Disk[growthPoints[[k]], 7 v], Text[Style[releases[[k, "Label"]], 20, Bold, FontFamily -> "Source Code Pro"], growthPoints[[k]] + {0, 18}, {0, -1}]}]],
+        {k, Length[growthPoints]}]}]], {climaxAt, climaxAt + 8}, PlotRange -> {{0, 1680}, {0, 780}}, "Screen" -> {120, 180, 1680, 780}];
+Timeline[{Backdrop[inkC], growthCurve}, "Duration" -> 84]["Graphics", climaxAt + 1.9, ImageSize -> 480]
+```
+
+What it says, in panels on the left, and specimens of real words on the right:
+
+```wl
+statement[{t0_, t1_}, big_, small_, hl_ : None] := With[{w = 80 + Max[CanvasTextWidth[big, CanvasFont["Source Sans 3", 64, 800]], CanvasTextWidth[small, CanvasFont["Source Sans 3", 30]]]},
+    {{t0, t1} -> Function[t, CanvasRectangle[{70, 180 - 20 (1 - Tween[{t0, t0 + 0.2}, "OutExpo"][t]), w, 250}, inkC, "Radius" -> 6,
+        Opacity -> 0.86 Tween[{t0, t0 + 0.2}, "OutExpo"][t] (1 - Tween[{t1 - 0.15, t1}, "InCubic"][t])]],
+     Title[big, {t0, t1}, Position -> {110, 300}, Alignment -> Left, FontSize -> 64, FontWeight -> 800, FontColor -> boneC, "Highlight" -> hl, "HighlightColor" -> RGBColor["#FF3B1F"],
+        "EnterTime" -> 0.2, "Exit" -> "Fade", "ExitTime" -> 0.15],
+     Title[small, {t0, t1}, Position -> {112, 370}, Alignment -> Left, FontSize -> 30, FontWeight -> 400, FontColor -> RGBColor["#B9BBC2"], "EnterTime" -> 0.2, "Exit" -> "Fade", "ExitTime" -> 0.15]}];
+card[{t0_, t1_}, title_, body_] := {t0, t1} -> Function[t, With[{u = Tween[{t0 + 0.1, t0 + 0.35}, "OutExpo"][t], dy = 30 (1 - Tween[{t0 + 0.1, t0 + 0.35}, "OutExpo"][t])},
+    CanvasOpacity[u (1 - Tween[{t1 - 0.15, t1}, "InCubic"][t]), {CanvasRectangle[{1250, 170 + dy, 590, 740}, inkC, "Radius" -> 8, Opacity -> 0.9],
+        CanvasText[ToUpperCase[title], {1286, 226 + dy}, CanvasFont["Source Sans 3", 18, 600], red, "Tracking" -> 3], body[t, {1286, 270 + dy}]}]]];
+wordColumns[names_, t0_] := Function[{t, xy}, MapIndexed[CanvasText[#1, xy + {290 Mod[#2[[1]] - 1, 2], 20 + 64 Floor[(#2[[1]] - 1) / 2]}, CanvasFont["Source Code Pro", 22, 600], boneC,
+    Opacity -> Tween[{t0, t0 + 0.15} + (#2[[1]] - 1) / 40, "OutCubic"][t]] &, Take[names, UpTo[18]]]];
+climax = With[{c = climaxAt, top = Take[byFrequency, 12], avg = Values[averageLength]}, {growthCurve,
+    statement[c + {0.05, 1.95}, commas[Length[lexicon]] <> " words.", "There were " <> commas[Length[releases[[1, "Words"]]]] <> " in 1988."],
+    statement[c + {2, 3.95}, "Its most common word: " <> top[[1, "Name"]] <> ".", "In English it\[CloseCurlyQuote]s \[OpenCurlyDoubleQuote]the\[CloseCurlyDoubleQuote].", top[[1, "Name"]]],
+    statement[c + {4, 5.95}, "Its words grew longer.", "An average new word: " <> ToString[Round[avg[[1]], 0.1]] <> " letters in 1988, " <> ToString[Round[avg[[-1]], 0.1]] <> " in 2026."],
+    statement[c + {6, 6.97}, ToString[Length[questions]] <> " words ask a question.", "EvenQ, PrimeQ, StringQ\[Ellipsis] the Q makes it a question.", ToString[Length[questions]]],
+    statement[c + {7, 8}, ToString[Length[eponyms]] <> " carry a person\[CloseCurlyQuote]s name.", StringRiffle[Take[eponyms, 4], ", "] <> "\[Ellipsis]", ToString[Length[eponyms]]],
+    card[c + {2, 4}, "Most used words", Function[{t, xy}, MapIndexed[With[{k = Tween[c + 2.15 + (#2[[1]] - 1) / 32 + {0, 0.3}, "OutCubic"][t], y = xy[[2]] + 50 (#2[[1]] - 1),
+            w = 250 #1["Frequency"] / top[[1, "Frequency"]], hot = #2[[1]] == 1},
+        {CanvasText[#1["Name"], {xy[[1]], y + 20}, CanvasFont["Source Code Pro", 22, 600], If[hot, RGBColor["#FF3B1F"], boneC]],
+         CanvasRectangle[{xy[[1]] + 250, y + 4, w k, 20}, If[hot, RGBColor["#FF3B1F"], boneC], Opacity -> If[hot, 1, 0.5]],
+         CanvasText[ToString[Round[100 #1["Frequency"], 0.1]] <> "%", {xy[[1]] + 258 + w k, y + 21}, CanvasFont["Source Code Pro", 17], RGBColor["#A9ABB2"], Opacity -> k]}] &, top]]],
+    card[c + {4, 6}, "Longest words", Function[{t, xy}, {
+        MapIndexed[With[{k = Tween[c + 4.15 + (#2[[1]] - 1) / 16 + {0, 0.25}, "OutCubic"][t], y = xy[[2]] + 16 + 44 (#2[[1]] - 1)},
+            {CanvasText[#1, {xy[[1]], y}, CanvasFont["Source Code Pro", 17, 600], boneC, Opacity -> k],
+             CanvasText[ToString[StringLength[#1]], {xy[[1]] + 510, y}, CanvasFont["Source Code Pro", 17], red, Alignment -> Right, Opacity -> k]}] &, longest],
+        CanvasText["AVERAGE LETTERS PER NEW WORD, BY VERSION", xy + {0, 318}, CanvasFont["Source Sans 3", 15, 600], RGBColor["#A9ABB2"], "Tracking" -> 2],
+        MapIndexed[With[{k = Tween[c + 4.5 + (#2[[1]] - 1) / 24 + {0, 0.3}, "OutCubic"][t], bw = 510 / Length[avg], i = #2[[1]] - 1, hot = MemberQ[{1, Length[avg]}, #2[[1]]]},
+            {CanvasRectangle[{xy[[1]] + i bw + 3, xy[[2]] + 600 - 250 #1 / 18 k, bw - 6, 250 #1 / 18 k}, If[hot, RGBColor["#FF3B1F"], boneC], Opacity -> If[hot, 1, 0.45]],
+             CanvasText[Keys[averageLength][[#2[[1]]]], {xy[[1]] + i bw + bw / 2, xy[[2]] + 624}, CanvasFont["Source Code Pro", 12], RGBColor["#A9ABB2"], Alignment -> Center],
+             If[hot, CanvasText[ToString[Round[#1, 0.1]], {xy[[1]] + i bw + bw / 2, xy[[2]] + 590 - 250 #1 / 18}, CanvasFont["Source Code Pro", 16, 600], RGBColor["#FF3B1F"],
+                Alignment -> Center, Opacity -> k], {}]}] &, avg]}]],
+    card[c + {6, 7}, "Words that ask", wordColumns[questions, c + 6.1]],
+    card[c + {7, 8}, "Words named after people", wordColumns[eponyms, c + 7.1]]}];
+GraphicsRow[Timeline[{Backdrop[inkC], climax}, "Duration" -> 84]["Graphics", #, ImageSize -> 400] & /@ (climaxAt + {0.9, 3, 5.5})]
+```
+
+## Bars 77 to 84: Still Growing
+
+The page falls away and fades to paper, a fresh notebook deploys the film to the cloud, and the last lines are said; Spikey takes a bow and the film fades to black:
+
+```wl
+filmURL = "https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1.mp4";
+outro = {{end, end + 2} -> Function[t, CanvasRectangle[{0, 0, 1920, 1080}, ground[t], Opacity -> Tween[{end, end + 1.2}, "InCubic"][t]]],
+    NotebookSession[{{end + 1.6, "In", "CopyFile[Export[\"In1.mp4\", film[\"Video\"]], CloudObject[\"WolframFilm/In1.mp4\", Permissions -> \"Public\"]]", 0.6},
+        {end + 2.4, "Out", CloudObject[filmURL]}}, {end + 1.4, 84}, "Era" -> "BigSur2020", "Title" -> "Deploy.nb", "Screen" -> {260, 110, 1400, 470}, "EnterTime" -> 0.35, "PushIn" -> 0],
+    Title[commas[Length[lexicon]] <> " words.", {end + 3.75, end + 6.9}, Position -> {960, 720}, FontSize -> 76, FontWeight -> 800, FontColor -> fg, "Enter" -> "Fade", "EnterTime" -> 0.25,
+        "Exit" -> "Fade", "ExitTime" -> 0.6],
+    Title["Still growing.", {end + 4.25, end + 6.9}, Position -> {960, 810}, FontSize -> 76, FontWeight -> 300, FontColor -> red, "Enter" -> "Fade", "EnterTime" -> 0.25, "Exit" -> "Fade", "ExitTime" -> 0.6],
+    Title["THE WOLFRAM LANGUAGE  \[CenterDot]  1988 \[Dash] 2026", {end + 5, end + 6.9}, Position -> {960, 930}, FontSize -> 26, FontWeight -> 600, FontColor -> RGBColor["#8B877F"],
+        "Tracking" -> 6, "Enter" -> "Fade", "EnterTime" -> 0.5, "Exit" -> "Fade", "ExitTime" -> 0.6],
+    Spikey[{end + 4.5, 84}, Position -> {960, 980}, "Radius" -> 42, "Form" -> "Hexecontahedron", "Style" -> "Red", "EnterTime" -> 0.4, "Pulse" -> kick],
+    {end + 6.4, 84} -> Function[t, CanvasRectangle[{0, 0, 1920, 1080}, Black, Opacity -> Clip[(t - end - 6.4) / 0.6, {0, 1}]]]};
+Timeline[{Backdrop[ground, {0, 84}], outro}, "Duration" -> 84]["Graphics", end + 5.8, ImageSize -> 480]
+```
+
 ## The Film
 
 The instruments across all of it: each era's label, the count of words, and the years, beating with the kick:
@@ -569,26 +933,38 @@ hud = {eraLabel[{12, 16}, "Mathematica 1.0", "June 23, 1988 \[CenterDot] Macinto
     eraLabel[{24, 26}, "Mathematica 4", "1999 \[Dash] 2002 \[CenterDot] Mac OS 9"], eraLabel[{26, 28}, "Mathematica 5.1", "October 2004 \[CenterDot] Windows XP"],
     eraLabel[{28, 32}, "Mathematica 6.0", "May 2007 \[CenterDot] Mac OS X"], eraLabel[{34, 35}, "Mathematica 7", "November 2008 \[CenterDot] built-in parallel computing"],
     eraLabel[{35, 37}, "Mathematica 8", "November 2010"], eraLabel[{37, 40}, "Mathematica 9", "November 2012"],
-    Counter[wordCount, {12, 84}, "Label" -> "Words in the language", FontColor -> fg],
+    eraLabel[{40.4, 41}, "The Wolfram Language", "Named Nov 2013 \[CenterDot] free on every Raspberry Pi"], eraLabel[{41, 44.85}, "Version 10", "July 2014 \[CenterDot] " <> n10 <> " new words"],
+    eraLabel[{44.85, 46}, "Version 10.2", "2015 \[CenterDot] the language describes itself"], eraLabel[{46, 47}, "Version 11", "August 2016"],
+    eraLabel[{47, 49}, "The repositories", "Data 2017 \[CenterDot] Neural Nets 2018 \[CenterDot] Functions 2019"], eraLabel[{49, 50.2}, "Version 12", "April 2019"],
+    eraLabel[{50.2, 51}, "Version 12", "April 2019 \[CenterDot] SystemModel since 11.3"], eraLabel[{51, 51.9}, "Version 12.1", "March 2020"], eraLabel[{51.9, 53}, "Version 12.3", "May 2021"],
+    eraLabel[{53, 54}, "Version 13.2", "December 2022 \[CenterDot] astronomy"], eraLabel[{54, 55}, "Paclet Repository", "March 2023 \[CenterDot] whole frameworks"],
+    eraLabel[{55, 59}, "Version 13.3", "June 2023 \[CenterDot] chat notebooks"], eraLabel[{59, 61}, "Version 14", "2024 \[Dash] 2025 \[CenterDot] dark mode arrives in 14.3"],
+    eraLabel[{61, 67}, "Version 15", "June 16, 2026"],
+    Counter[wordCount, {12, end + 0.5}, "Label" -> "Words in the language", FontColor -> fg, "Exit" -> "Fade", "ExitTime" -> 0.5],
     YearRuler[{{4, 1979.85}, {8, 1981.45}, {8.5, 1986.8}, {12, 1988.47}, {16, 1988.9}, {20, 1991.04}, {22, 1996.67}, {24, 1999.38}, {25, 2002.}, {26, 2004.8},
-        {28, 2007.33}, {34, 2008.88}, {35, 2010.87}, {37, 2012.9}, {38.5, 2013.87}}, {4, 84},
-        "Marks" -> {{1988.47, "1.0"}, {1991.04, "2.0"}, {1996.67, "3.0"}, {1999.38, "4"}, {2003.5, "5"}, {2007.33, "6.0"}, {2008.88, "7"}, {2010.87, "8"}, {2012.9, "9"}},
-        "Pulse" -> kick, FontColor -> fg]};
+        {28, 2007.33}, {34, 2008.88}, {35, 2010.87}, {37, 2012.9}, {38.5, 2013.87}, {40.5, 2014.52}, {44.85, 2015.5}, {46, 2016.6}, {47, 2017.3}, {47.75, 2018.45},
+        {48.25, 2019.45}, {49, 2019.29}, {51, 2020.2}, {51.9, 2021.38}, {53, 2022.95}, {54, 2023.2}, {55, 2023.49}, {59, 2024.03}, {60, 2025.6}, {61, 2026.46},
+        {67, 2026.6}, {77, 2026.75}}, {4, end + 0.5},
+        "Marks" -> {{1988.47, "1.0"}, {1991.04, "2.0"}, {1996.67, "3.0"}, {1999.38, "4"}, {2003.5, "5"}, {2007.33, "6.0"}, {2008.88, "7"}, {2010.87, "8"}, {2012.9, "9"},
+            {2014.52, "10"}, {2016.6, "11"}, {2019.29, "12"}, {2022.95, "13"}, {2024.03, "14"}, {2026.46, "15"}},
+        "Pulse" -> kick, FontColor -> fg, "Exit" -> "Fade", "ExitTime" -> 0.5]};
 ```
 
 The edit: the segments stacked in time, a soft backdrop keeping the narration legible over the wall, the window through its eras, the score underneath, and the typing heard, key by key, from everything the film types:
 
 ```wl
-column = {12, 69} -> Function[t, {CanvasGradient[{1190, 0, 100, 1080}, "Horizontal", ground[t], {{0, 0}, {1, 0.88}}],
+column = {12, 67} -> Function[t, {CanvasGradient[{1190, 0, 100, 1080}, "Horizontal", ground[t], {{0, 0}, {1, 0.88}}],
     CanvasRectangle[{1290, 0, 630, 1080}, ground[t], Opacity -> 0.88], CanvasGradient[{0, 0, 1920, 170}, "Vertical", ground[t], {{0, 0.9}, {1, 0}}]}];
-film = Timeline[{coldOpen, smp, paper, y1986, name, wall, column, v1, next, v2, v3, v4, v5, v6, prints, characters, grammar,
-    v1Story, nextStory, midStory, lateStory, families, breakdown, wlTitle, hud}, "Duration" -> 41.5, "SecondsPerUnit" -> 2, "Soundtrack" -> score, "Foley" -> True]
+film = Timeline[{coldOpen, smp, paper, y1986, name, wall, column, v1, next, v2, v3, v4, v5, v6, v10, v11, chat, v14, v15, prints, characters, grammar,
+    v1Story, nextStory, midStory, lateStory, modernStory, repos, families, breakdown, wlTitle, agents, highFive, climax, outro, hud},
+    "Duration" -> 84, "SecondsPerUnit" -> 2, "Soundtrack" -> score, "Foley" -> True]
 ```
 
-Twelve moments of it:
+Eighteen moments of it:
 
 ```wl
-GraphicsGrid[Partition[film["Graphics", #, ImageSize -> 400] & /@ {3.2, 7.6, 11.3, 13.3, 17, 19.6, 21.8, 23.8, 30.8, 33.6, 36.9, 40.9}, 3], ImageSize -> 1200]
+GraphicsGrid[Partition[film["Graphics", #, ImageSize -> 400] & /@ {3.2, 7.6, 11.3, 13.3, 17, 19.6, 21.8, 23.8, 30.8, 33.6, 36.9, 40.9,
+    45.9, 50.9, 58.5, 64, 68.3, 81.8}, 3], ImageSize -> 1200]
 ```
 
 Watch it, with the audio as the clock; click to play, drag to scrub:
@@ -605,9 +981,14 @@ Render it, frames in parallel, as a Video:
 film["Video"]
 ```
 
-## What Comes Next
+## Deploy It
 
-These forty bars reach the language's name. The rest is the same notebook in the eras after it (Yosemite, Big Sur, the chat notebooks, dark mode, and the music of 15.0), the repositories anyone can add words to, an agent that writes the language, and a finale where the whole vocabulary fills the frame. The score above already runs to the end.
+The film puts itself in the cloud, the call its last notebook types:
+
+```wl
+#| eval: false
+CopyFile[Export["In1.mp4", film["Video"]], CloudObject["WolframFilm/In1.mp4", Permissions -> "Public"]]
+```
 
 ## References
 
