@@ -13,3 +13,5 @@ SetDirectory[dir];
 (* the notebook's last cell copies the video to the cloud *)
 If[! TrueQ[$CloudConnected], Quiet @ CloudConnect[]];
 Print[mtn[FileNameJoin[{dir, "Film.md"}], FileNameJoin[{dir, "Film.nb"}], "UseCache" -> False, "EvaluateSeparator" -> None]];
+(* and the notebook itself, public, beside the film it made *)
+Print[CopyFile[FileNameJoin[{dir, "Film.nb"}], CloudObject["WolframFilm/Film.nb", Permissions -> "Public"], OverwriteTarget -> True]];
