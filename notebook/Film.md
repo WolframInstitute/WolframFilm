@@ -466,7 +466,7 @@ The slider of Manipulate (sliderAt, defined with the score, since the music's fi
 
 ```wl
 manipulate[u_] := With[{a0 = 0.5 + 2.5 sliderAt[u], turn = Max[0, 2 u - 1.3] 1.4},
-    Manipulate[Plot3D[Sin[a x] Cos[y], {x, -3, 3}, {y, -3, 3}, ImageSize -> 260, ViewPoint -> {3.2 Cos[turn - 0.9], 3.2 Sin[turn - 0.9], 2}], {{a, a0}, 0.5, 3}]];
+    Manipulate[Plot3D[Sin[a x] Cos[y], {x, -3, 3}, {y, -3, 3}, ImageSize -> 260, ViewPoint -> {3.2 Cos[turn - 0.9], 3.2 Sin[turn - 0.9], 2}], {{a, a0, "a"}, 0.5, 3}]];
 manipulate[0.3]
 ```
 
