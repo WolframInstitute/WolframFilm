@@ -1,5 +1,5 @@
 #!/usr/bin/env wolframscript
-(* wolframscript -f notebook/build.wls: convert Film.md into Film.nb with MarkdownToNotebook, evaluating every
+(* wolframscript -f notebook/build.wls: convert In1.md into In1.nb with MarkdownToNotebook, evaluating every
    cell in one shared context (the film is built up section by section).  The notebook installs the WAnim
    paclet (WolframInstitute/WAnim) from the Paclet Repository in its first cell; the converter is the
    deployed MarkdownToNotebook resource function.  Cloud work is done as the account in ../.env. *)
@@ -13,6 +13,6 @@ cloudConnect[FileNameJoin[{ParentDirectory[dir], ".env"}]];
 mtn = ResourceFunction[ResourceObject["https://www.wolframcloud.com/obj/nikm/DeployedResources/Function/MarkdownToNotebook"]];
 (* the film's Video is written beside the notebook *)
 SetDirectory[dir];
-Print[mtn[FileNameJoin[{dir, "Film.md"}], FileNameJoin[{dir, "Film.nb"}], "UseCache" -> False, "EvaluateSeparator" -> None]];
+Print[mtn[FileNameJoin[{dir, "In1.md"}], FileNameJoin[{dir, "In1.nb"}], "UseCache" -> False, "EvaluateSeparator" -> None]];
 (* and the notebook itself, public, beside the film it made, its outputs as pictures the cloud can show *)
 Get[FileNameJoin[{dir, "publish.wls"}]];

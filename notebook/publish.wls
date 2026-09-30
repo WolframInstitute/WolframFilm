@@ -1,5 +1,5 @@
 #!/usr/bin/env wolframscript
-(* wolframscript -f notebook/publish.wls: publish Film.nb to the Wolfram Cloud, public, as the essay template's
+(* wolframscript -f notebook/publish.wls: publish In1.nb to the Wolfram Cloud, public, as the essay template's
    Publish to Cloud would: the finished essay, without the template's editing toolbar.  The cloud has no WAnim,
    draws some panels differently and gives up on heavy graphics, so every graphical or live output goes up as
    the picture the desktop shows; the film's Video and each Audio stay players, streamed from public cloud copies. *)
@@ -27,7 +27,7 @@ retry[e_] := Module[{r = $Failed, i = 0}, While[FailureQ[r] && i++ < 4, r = Quie
 asPicture[b_] := With[{img = retry[UsingFrontEnd[Rasterize[Cell[BoxData[b], "Output"], "Image", ImageResolution -> 144]]]},
     BoxData[ToBoxes[Image[img, ImageSize -> ImageDimensions[img] / 2]]]];
 
-nb = Get[FileNameJoin[{dir, "Film.nb"}]];
+nb = Get[FileNameJoin[{dir, "In1.nb"}]];
 (* the first live players drawn in a session come out empty or with WAnim's loading messages in them,
    so two are drawn and thrown away first *)
 Scan[asPicture, Take[Cases[nb, Cell[BoxData[b_], "Output", ___] /; StringContainsQ[ToString[b, InputForm], "WAnim`"] :> b, Infinity], UpTo[2]]];
@@ -42,6 +42,6 @@ cloudNb = cloudNb /. (DockedCells -> _) :> (DockedCells -> {});
 cloudNb = Notebook[First[cloudNb], Sequence @@ DeleteCases[List @@ Rest[cloudNb], (DockedCells | WindowToolbars) -> _], DockedCells -> {}];
 
 (* saved by the front end, which stores pictures compressed *)
-UsingFrontEnd[With[{o = NotebookPut[cloudNb, Visible -> False]}, NotebookSave[o, FileNameJoin[{dir, "Film-cloud.nb"}]]; NotebookClose[o]]];
-Print[FileByteCount[FileNameJoin[{dir, "Film-cloud.nb"}]]];
-Print[CopyFile[FileNameJoin[{dir, "Film-cloud.nb"}], CloudObject["WolframFilm/Film.nb", Permissions -> "Public"], OverwriteTarget -> True]];
+UsingFrontEnd[With[{o = NotebookPut[cloudNb, Visible -> False]}, NotebookSave[o, FileNameJoin[{dir, "In1-cloud.nb"}]]; NotebookClose[o]]];
+Print[FileByteCount[FileNameJoin[{dir, "In1-cloud.nb"}]]];
+Print[CopyFile[FileNameJoin[{dir, "In1-cloud.nb"}], CloudObject["WolframFilm/In1.nb", Permissions -> "Public"], OverwriteTarget -> True]];

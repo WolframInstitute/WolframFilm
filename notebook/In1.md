@@ -792,8 +792,8 @@ agents = Module[{a0 = at["agents"], shown, lines, thumbs},
     shown[t_] := Tween[{a0 - 0.1, a0 + 0.1}, "OutExpo"][t] (1 - Tween[{a0 + 1.8, a0 + 2}, "InExpo"][t]);
     lines = {{0.05, "> make a short film about the Wolfram Language", "Prompt"},
         {0.3, "\[FilledCircle] Bash(wolframscript -code 'Length[WolframLanguageData[]]')", "Call"}, {0.45, "  \:2514  " <> commas[Length[lexicon]] <> " symbols \[CenterDot] names, versions, frequencies", "Result"},
-        {0.6, "\[FilledCircle] Write(notebook/Film.md)", "Call"}, {0.75, "  \:2514  a film as a list of layers", "Result"},
-        {0.9, "\[FilledCircle] Bash(wolframscript -file build.wls)", "Call"}, {1.05, "  \:2514  Film.nb", "Result"},
+        {0.6, "\[FilledCircle] Write(notebook/In1.md)", "Call"}, {0.75, "  \:2514  a film as a list of layers", "Result"},
+        {0.9, "\[FilledCircle] Bash(wolframscript -file build.wls)", "Call"}, {1.05, "  \:2514  In1.nb", "Result"},
         {1.2, "\[FilledCircle] Bash(wolframscript -code 'film[\"Video\"]')", "Call"}, {1.35, "  \:2514  1920\[Times]1080 \[CenterDot] 60 fps \[CenterDot] the score and every key", "Result"}};
     thumbs = thumb /@ {Plot3D[Sin[x y], {x, 0, 3}, {y, 0, 3}], ArrayPlot[ca], europeMap, parallelFrame[1], bordersGrowing[1], globe, sky, caffeine, circuit};
     {Backdrop[Function[t, Blend[{Transparent, inkC}, shown[t]]], {a0 - 0.1, a0 + 2}],

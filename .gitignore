@@ -7,7 +7,7 @@ assets/fonts/intl/
 CLAUDE.md
 .cursor/
 notebook/*.mp4
-notebook/Film-cloud.nb
-notebook/Film.nb
+notebook/In1-cloud.nb
+notebook/In1.nb
 .env
 .env.*

@@ -55,8 +55,8 @@ so rebuilding a language after an edit only re-encodes the sections that changed
 
 ## The notebook (Wolfram Language, WAnim)
 
-`notebook/Film.md` is the film as a Wolfram Language computational essay, built with
-[WAnim](https://github.com/sw1sh/WAnim) (`WolframInstitute/WAnim`); `notebook/Film.nb` is the evaluated notebook.
+`notebook/In1.md` is the film as a Wolfram Language computational essay, built with
+[WAnim](https://github.com/sw1sh/WAnim) (`WolframInstitute/WAnim`); `notebook/In1.nb` is the evaluated notebook.
 It is self-contained: nothing is read from disk. The vocabulary comes from `WolframLanguageData` plus the 15.0
 new-features guide, the notebook outputs are evaluated, the archive prints are imported from their public URLs,
 and every segment is one WAnim creation tool (`Typewriter`, `Terminal`, `Title`, `NotebookSession`, `WordWall`,
@@ -65,7 +65,7 @@ whose soundtrack is a `Track` -- the Rule 30 melody Track is also what the autom
 
 ```sh
 scripts/install-fonts.sh              # the Wolfram front end only sees installed fonts
-wolframscript -f notebook/build.wls   # Film.md -> Film.nb (needs WAnim and MarkdownToNotebook next to this repo)
+wolframscript -f notebook/build.wls   # In1.md -> In1.nb (needs WAnim and MarkdownToNotebook next to this repo)
 ```
 
 In the notebook, `film["Dynamic"]` plays it live (the audio is the master clock) and `film["Video"]` renders it
