@@ -1000,14 +1000,14 @@ video = Video[CopyFile["In1.mp4", CloudObject["WolframFilm/In1.mp4", Permissions
 
 ## References
 
-[1] WAnim: https://github.com/sw1sh/WAnim
+[1] [WAnim](https://github.com/sw1sh/WAnim), the paclet the film is made with
 
-[2] The Wolfram Language's vocabulary: `WolframLanguageData`, https://reference.wolfram.com/language/ref/WolframLanguageData.html
+[2] The Wolfram Language's vocabulary: [WolframLanguageData](https://reference.wolfram.com/language/ref/WolframLanguageData.html)
 
-[3] Summary of New Features in 15.0: https://reference.wolfram.com/language/guide/SummaryOfNewFeaturesIn150.html
+[3] [Summary of New Features in 15.0](https://reference.wolfram.com/language/guide/SummaryOfNewFeaturesIn150.html)
 
-[4] Stephen Wolfram's scrapbook: https://www.stephenwolfram.com/scrapbook/
+[4] [Stephen Wolfram's scrapbook](https://www.stephenwolfram.com/scrapbook/)
 
-[5] S. Wolfram, "The Story of Spikey" (2018): https://writings.stephenwolfram.com/2018/12/the-story-of-spikey/
+[5] S. Wolfram, ["The Story of Spikey"](https://writings.stephenwolfram.com/2018/12/the-story-of-spikey/) (2018)
 
-[6] S. Wolfram, "What Is a Computational Essay?" (2017): https://writings.stephenwolfram.com/2017/11/what-is-a-computational-essay/
+[6] S. Wolfram, ["What Is a Computational Essay?"](https://writings.stephenwolfram.com/2017/11/what-is-a-computational-essay/) (2017)
