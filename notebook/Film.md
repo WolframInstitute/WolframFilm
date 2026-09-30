@@ -132,13 +132,10 @@ melody = Track[Function[span, Table[With[{n = pluckNote[s]}, If[MissingQ[n], Not
 melody["Query", 12, 13]
 ```
 
-A score is easiest to read as a roll: each note a bar from its onset to its end, at its pitch, or on its drum's row; several tracks share one roll:
+A Track shows itself as a live piano roll: click it to hear it. Early brings bar 12 to the start, and Bars says how many to show:
 
 ```wl
-noteRoll[tracks_, {a_, b_}] := With[{ev = Join @@ (#["Query", a, b] & /@ Flatten[{tracks}])}, With[{rows = Union[Select[ev[[All, "Value"]], StringQ]]},
-    Graphics[{RGBColor["#DD1100"], With[{y = Replace[#Value, s_String :> First[FirstPosition[rows, s]]]}, Rectangle[{#Whole[[1]], y - 0.4}, {#Whole[[2]] - 0.01, y + 0.4}]] & /@ ev},
-        AspectRatio -> 1/4, ImageSize -> 600, Frame -> True, FrameTicks -> {Automatic, If[rows === {}, Automatic, Transpose[{Range[Length[rows]], rows}]]}]]];
-noteRoll[melody, {12, 14}]
+PianoRoll[Bars[2][Early[12][melody]]]
 ```
 
 The drums. Soft kicks under 1986, four on the floor from 1.0 to the outro, dropping out for the breakdown, a beat's silence before each drop, and half time into 15.0; claps on two and four, hats on the offbeat eighths with ghost sixteenths in the busier stretches, open hats in the drops:
@@ -155,7 +152,7 @@ hats = EventTrack[{#, 1/16, "hh", 0.75 + 0.2 rnd[16 #]} & /@ Select[Range[12, en
 ghostHats = EventTrack[{#, 1/16, "hh", If[Mod[16 #, 4] == 0, 0.35, 0.45] + 0.15 rnd[16 #]} & /@
     Select[Range[12, end - 1/16, 1/16], drums[Floor[#]] && ! in[#, "v14"] && ! gap[#] && Mod[16 #, 4] != 2 && sixteenths[Floor[#]] &]];
 openHats = EventTrack[{#, 1/8, "oh", 0.45} & /@ Select[Range[12, end - 1/16, 1/16], Mod[16 #, 4] == 2 && drums[Floor[#]] && ! gap[#] && inAny[Floor[#], {{at["v10"], at["v10", 6]}, "climax", "families"}] &]];
-noteRoll[{kick, claps, hats, ghostHats, openHats}, {40, 41}]
+Punchcard[Bars[1][Track[Early[40] /@ {kick, claps, hats, ghostHats, openHats}]]]
 ```
 
 The band. A pad holds each chord, swelling in the breakdown, and a long chord ends it over a held bass; the bass pumps octaves on the offbeats in the drops and walks quarter roots elsewhere; stabs punch the drops and every beat of the plot montage:
@@ -171,7 +168,7 @@ longBass = EventTrack[{{end, 5, rootAt[end], 0.9}}];
 stabs = EventTrack[Flatten[Table[Which[
     inAny[b, {{12, 18}, {at["v10"], at["v10", 6]}, "climax"}], Table[{b + p / 16, 1/16, n + 12, 0.5}, {p, {0, 3, 6, 10, 12}}, {n, chordAt[b]}],
     in[b, "families"], Table[{b + q / 4, 1/8, n + 12, 0.62}, {q, 0, 3}, {n, chordAt[b]}], True, {}], {b, 12, end - 1}], 2]];
-noteRoll[{pad, bass, stabs}, {40, 42}]
+PianoRoll[Bars[2][Track[Early[40] /@ {pad, bass, stabs}]]]
 ```
 
 The tunes. A four-bar hook and its answer, first played by the lead when the language gets its name, then by a bell for 15.0, then by both, a whole tone up, for the climax; a voice sings over the chat notebooks; arpeggios climb through the breakdown and into the climax:
@@ -188,7 +185,7 @@ bell = EventTrack[Join[phrase[at["v15"], hook, 0.9], phrase[at["v15", 4], Take[a
 voice = EventTrack[phrase[at["llm"], voiceLine, 0.8]];
 arps = EventTrack[Flatten[Table[With[{c = chordAt[s / 16]}, {s / 16, 1/16, {c[[1]], c[[2]], c[[3]], c[[1]] + 12, c[[3]], c[[2]]}[[Mod[s, 6] + 1]] + 12, 0.4 + 0.5 (s / 16 - r[[1]]) / (r[[2]] - r[[1]])}],
     {r, {{at["breakdown"], at["breakdown", 1.75]}, {at["agents"], at["agents", 1.75]}}}, {s, 16 r[[1]], 16 r[[2]] - 1}], 1]];
-noteRoll[lead, {40, 48}]
+PianoRoll[Bars[8][Early[40][lead]]]
 ```
 
 The seams between sections: crashes on every new era, risers and an accelerating snare roll into each drop, impacts on the drops:
@@ -358,12 +355,12 @@ eraLabel[{t0_, t1_}, name_, sub_] := {Title[ToUpperCase[sub], {t0, t1}, Position
 eraLabel[{12, 16}, "Mathematica 1.0", "June 23, 1988 \[CenterDot] Macintosh"]
 ```
 
-Spikey, in its first form and first display, dancing to the kick; it takes each era's form and display as they come. Beside it, the melody's automaton runs into a read head, and the note under the head is asked of the melody Track itself:
+Spikey, dancing to the kick, as each version drew it: the stellated icosahedron of 1.0 on a one-bit Mac and a greyscale NeXT, the lilac hyperbolic dodecahedron of 2, then glass, rainbow, gold, the reds and oranges, the grey of 12 and the red Spikey of today. It changes on each release's bar. Beside it for as long as it dances, the melody's automaton, the centre column of Rule 30, runs into a read head, and the note under the head is asked of the melody Track itself:
 
 ```wl
-spikeyForm = Which[# < at["v2"], "Stellated", # < at["v10"], "Spiked", True, "Hexecontahedron"] &;
-spikeyStyle = Which[# < at["next"], "1Bit", # < at["v2"], "Gray", # < at["v6"], "Classic", True, "Red"] &;
-characters = {Spikey[{12, 66.9}, "Form" -> spikeyForm, "Style" -> spikeyStyle, "Pulse" -> kick], AutomatonTape[30, melody, {12, 16}, "Exit" -> "Cut"]};
+spikeyVersion = Function[t, 1 + LengthWhile[{20, 22, 24, 26, 28, 34, 35, 37, 40.5, 46, 49, 53}, # <= t &]];
+spikeyDisplay = Which[# < at["next"], "1Bit", # < at["v2"], "Gray", True, Automatic] &;
+characters = {Spikey[{12, 66.9}, "Version" -> spikeyVersion, "Style" -> spikeyDisplay, "Pulse" -> kick], AutomatonTape[30, melody, {12, 66.9}, "Ink" -> fg, "Exit" -> "Cut"]};
 GraphicsRow[Timeline[{Backdrop[paperC], characters}, "Duration" -> 40]["Graphics", #, ImageSize -> 300] & /@ {13.3, 17, 29}]
 ```
 
@@ -399,11 +396,13 @@ nextStory = {story["Bundled with every NeXT computer. And Spikey is born.", {16.
 
 ## Bars 20 to 28: Windows, and the Mac Again
 
-Mathematica 2.0 on Windows 3.1 plays a sound, drawing its waveform as 2.0 did, and plots a surface in colour:
+Mathematica 2.0 on Windows 3.1 plays a sound, drawing its waveform in a box as 2.0 did and colouring what has played, and plots a surface in colour:
 
 ```wl
-chirp = Rasterize[Plot[Sin[1000 t (1 + t)] Sin[2 Pi t], {t, 0, 1.5}, PlotPoints -> 600, Axes -> False, AspectRatio -> 1/5, ImageSize -> 300, PlotStyle -> Black], ImageResolution -> 144];
-v2 = NotebookSession[{{20, "In", "Play[Sin[1000 t (1 + t)] Sin[2 Pi t], {t, 0, 1.5}]", 0.3}, {20.4, "Out", chirp}, {20.45, "Out", "-Sound-"},
+soundEnvelope = With[{d = First[AudioData[Audio[Play[Sin[1000 t (1 + t)] Sin[2 Pi t], {t, 0, 1.5}]]]]}, MinMax /@ Partition[d, Floor[Length[d] / 150]]];
+playing[u_] := Graphics[{MapIndexed[{If[#2[[1]] <= u Length[soundEnvelope], RGBColor[0, 0, 0.5], GrayLevel[0.6]], Rectangle[{#2[[1]] - 1, #1[[1]]}, {#2[[1]], #1[[2]]}]} &, soundEnvelope]},
+    Frame -> True, FrameTicks -> None, FrameStyle -> Black, PlotRange -> {{0, Length[soundEnvelope]}, {-1.05, 1.05}}, AspectRatio -> 70 / 300, ImageSize -> 300];
+v2 = NotebookSession[{{20, "In", "Play[Sin[1000 t (1 + t)] Sin[2 Pi t], {t, 0, 1.5}]", 0.3}, {20.4, "Out", playing, 0.75}, {20.45, "Out", "-Sound-"},
     {21.0, "In", "ParametricPlot3D[{u Cos[u] (4 + Cos[v + u]), u Sin[u] (4 + Cos[v + u]), u Sin[v + u]}, {u, 0, 4 Pi}, {v, 0, 2 Pi}]", 0.2},
     {21.3, "Out", ParametricPlot3D[{u Cos[u] (4 + Cos[v + u]), u Sin[u] (4 + Cos[v + u]), u Sin[v + u]}, {u, 0, 4 Pi}, {v, 0, 2 Pi}]}}, {20, 22},
     "Era" -> "Win1991", "Title" -> "Mathematica for Windows - [Untitled-1]", "Enter" -> "Wipe", "EnterTime" -> 0.1, "From" -> next, "GraphicsSize" -> 250, "Pulse" -> kick];
@@ -475,7 +474,9 @@ manipulate[0.3]
 
 ```wl
 julia = Compile[{{z, _Complex}}, Module[{w = z, k = 0}, While[Abs[w] < 2 && k < 60, w = w^2 + (-0.8 + 0.156 I); k++]; k]];
+LaunchKernels[4];
 juliaSet = ParallelTable[julia[x + I y], {y, 0.95, -0.95, -0.02}, {x, -1.6, 1.6, 0.02}];
+CloseKernels[];
 juliaColors = Map[List @@ ColorData["SunsetColors"][#/60] &, juliaSet, {2}];
 parallelFrame[u_] := With[{band = Ceiling[Length[juliaSet] / 4]}, Image[MapIndexed[If[Mod[#2[[1]] - 1, band] < u band, #1, ConstantArray[{0.93, 0.93, 0.93}, Length[#1]]] &, juliaColors], ImageSize -> 460]];
 parallelFrame[0.6]
@@ -500,9 +501,9 @@ v6 = NotebookSession[{{28, "In", "WordData[\"language\", \"Definitions\"]", 0.2}
     {28.5, "In", "GeoRegionValuePlot[CountryData[\"Europe\"] -> \"Population\", ColorFunction -> \"SunsetColors\"]", 0.2}, {28.75, "Out", europeMap},
     {29.3, "In", "ArrayPlot[Transpose[TuringMachine[{596440, 2, 3}, {1, {{}, 0}}, 240][[All, 2]]]]", 0.2},
     {29.5, "Out", u |-> ArrayPlot[PadRight[tm[[All, ;; Max[1, Round[241 u]]]], Dimensions[tm]], ImageSize -> 520, ColorRules -> {0 -> White, 1 -> RGBColor["#E0701A"], 2 -> RGBColor["#2D4A8A"]}], 0.45},
-    {manip - 0.15, "In", "Manipulate[Plot3D[Sin[a x] Cos[y], {x, -3, 3}, {y, -3, 3}], {a, 0.5, 3}]", 0.15}, {manip, "Out", manipulate, 2, 48},
+    {manip - 0.15, "In", "Manipulate[Plot3D[Sin[a x] Cos[y], {x, -3, 3}, {y, -3, 3}], {a, 0.5, 3}]", 0.15}, {manip, "Out", manipulate, 2},
     {34, "In", "ParallelTable[julia[x + I y], {y, 0.95, -0.95, -0.02}, {x, -1.6, 1.6, 0.02}]", 0.2}, {34.25, "Out", parallelFrame, 0.6},
-    {35, "In", "= countries in europe", 0.3}, {35.5, "Out", Short[CommonName[europe], 1]},
+    {35, "FreeForm", "countries in europe", "CountryData[\"Europe\"]", 0.3}, {35.5, "Out", Short[CommonName[europe], 1]},
     {36, "In", "Graph[UndirectedEdge @@@ borders, VertexLabels -> Automatic]", 0.2}, {36.25, "Out", bordersGrowing, 0.6},
     {37, "In", "UnitConvert[Quantity[5., \"Kilometers\"], \"Miles\"]", 0.25}, {37.35, "Out", UnitConvert[Quantity[5., "Kilometers"], "Miles"]}}, {28, 40},
     "Era" -> "MacOSX2007", "Enter" -> "Wipe", "EnterTime" -> 0.1, "From" -> v5, "Hide" -> {sections["families"]}, "Dim" -> {38, 39.8}, "PushIn" -> 0.05, "Pulse" -> kick];
@@ -624,13 +625,14 @@ Compiled code, a molecule turning, and a double pendulum simulated from its Mode
 
 ```wl
 compiled = FunctionCompile[Function[Typed[n, "MachineInteger"], Module[{s = 0., i = 1}, While[i <= n, s += Sin[N[i]]^2; i++]; s]]];
-caffeine = MoleculePlot3D[Molecule["caffeine"], ImageSize -> 280];
+caffeine = MoleculePlot3D[Molecule["caffeine"], ImageSize -> 190];
 turning3D[g_] := u |-> Show[g, ViewPoint -> {3 Cos[2 Pi u], 3 Sin[2 Pi u], 1}, SphericalRegion -> True];
 pendulumData = SystemModelSimulate["Modelica.Mechanics.MultiBody.Examples.Elementary.DoublePendulum", 6];
 links = pendulumData[{"boxBody1.frame_a.r_0[1]", "boxBody1.frame_a.r_0[2]", "boxBody1.frame_b.r_0[1]", "boxBody1.frame_b.r_0[2]", "boxBody2.frame_b.r_0[1]", "boxBody2.frame_b.r_0[2]"}];
+reach = CoordinateBounds[Join[{{0, 0}}, Flatten[Table[Partition[Through[links[s]], 2], {s, 0, 6, 0.01}], 1]], Scaled[0.06]];
 pendulum[u_] := With[{p = Partition[Through[links[6 u]], 2]},
     Graphics[{GrayLevel[0.8], Line[Table[Through[links[[5 ;; 6]][s]], {s, 0, 6 u, 0.02}]], GrayLevel[0.2], AbsoluteThickness[3], Line[p], red, Disk[#, 0.03] & /@ Rest[p]},
-        PlotRange -> {{-0.7, 0.7}, {-0.8, 0.2}}, ImageSize -> {380, 260}]];
+        PlotRange -> reach, ImageSize -> {Automatic, 200}]];
 {compiled[10^6], pendulum[0.7]}
 ```
 
@@ -642,14 +644,17 @@ tree = ExpressionTree[Unevaluated[Manipulate[Plot[Sin[a x], {x, 0, 2 Pi}], {a, 1
 {queue, tree}
 ```
 
-Orion, and a quantum circuit from a framework one PacletInstall away:
+Orion, and a quantum circuit from a framework one PacletInstall away; its summary opens into the circuit's diagram. The framework first:
+
+```wl
+PacletInstall["Wolfram/QuantumFramework"]; Needs["Wolfram`QuantumFramework`"]
+```
 
 ```wl
 orion = Entity["Star", #] & /@ {"Betelgeuse", "Rigel", "Bellatrix", "Mintaka", "Alnilam", "Alnitak", "Saiph", "Meissa"};
 sky = AstroGraphics[{Yellow, PointSize[0.012], Point /@ orion}, AstroCenter -> Entity["Star", "Alnilam"], AstroRange -> Quantity[25, "AngularDegrees"],
     AstroReferenceFrame -> "Equatorial", AstroBackground -> AstroStyling[{"DarkSky", "ShowConstellations" -> {Entity["Constellation", "Orion"]}}], ImageSize -> 400];
-PacletInstall["Wolfram/QuantumFramework"]; Needs["Wolfram`QuantumFramework`"];
-circuit = QuantumCircuitOperator[{"H", "CNOT" -> {1, 2}, "CNOT" -> {2, 3}}]["Diagram"];
+qco = QuantumCircuitOperator[{"H", "CNOT" -> {1, 2}, "CNOT" -> {2, 3}}]; circuit = Show[qco["Diagram"], ImageSize -> 380];
 {sky, circuit}
 ```
 
@@ -667,7 +672,7 @@ v11 = NotebookSession[{{46, "In", seeInput}, {46.25, "Out", NetModel["Wolfram Im
     {51.9, "In", "ExpressionTree[Unevaluated[Manipulate[Plot[Sin[a x], {x, 0, 2 Pi}], {a, 1, 5}]]]", 0.25}, {52.2, "Out", tree},
     {53, "In", "AstroGraphics[Point /@ orion, AstroCenter -> Entity[\"Star\", \"Alnilam\"], AstroBackground -> AstroStyling[{\"DarkSky\", \"ShowConstellations\" -> {Entity[\"Constellation\", \"Orion\"]}}]]", 0.25},
     {53.3, "Out", sky}, {54, "In", "PacletInstall[\"Wolfram/QuantumFramework\"]", 0.1}, {54.1, "Out", PacletObject["Wolfram/QuantumFramework"]},
-    {54.3, "In", "QuantumCircuitOperator[{\"H\", \"CNOT\" -> {1, 2}, \"CNOT\" -> {2, 3}}][\"Diagram\"]", 0.15}, {54.5, "Out", circuit}}, {46, 55},
+    {54.3, "In", "QuantumCircuitOperator[{\"H\", \"CNOT\" -> {1, 2}, \"CNOT\" -> {2, 3}}]", 0.15}, {54.5, "Out", qco}, {54.8, "Replace", circuit}}, {46, 55},
     "Era" -> "BigSur2020", "Title" -> "Untitled-1.nb", "Enter" -> "Wipe", "EnterTime" -> 0.1, "From" -> v10, "Pulse" -> kick];
 GraphicsRow[v11["Graphics", #, ImageSize -> 400] & /@ {48.9, 50.9, 54.9}]
 ```
@@ -723,11 +728,29 @@ v14 = NotebookSession[{{59.1, "In", "Tabular[versions]", 0.15}, {59.35, "Out", v
 v14["Graphics", 60.9, ImageSize -> 480]
 ```
 
-And 15.0 learns music. Asked in the chat bar for the melody we are hearing, it writes the bell's phrase, the same notes the score plays, as a MusicScore; then the window flies away:
+And 15.0 learns music. Asked in the chat bar for the melody we are hearing, it writes the bell's phrase as notes, the same notes the score plays, pitch names and lengths:
 
 ```wl
-v15 = NotebookSession[{{62, "In", "MusicScore[MusicNote[#3, #2/4] & @@@ Join[hook, Take[answer, 8]]]", 0.35},
-    {62.4, "Out", Magnify[MusicScore[MusicNote[#3, #2 / 4] & @@@ Join[hook, Take[answer, 8]]], 2]}}, {61, 67},
+pitchName[m_] := {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"}[[Mod[m, 12] + 1]] <> ToString[Quotient[m, 12] - 1];
+bellNotes = {pitchName[#3], Rationalize[#2 / 4]} & @@@ Join[hook, Take[answer, 8]];
+bellScore = MusicScore[MusicNote @@@ bellNotes];
+bellCode = "MusicScore[MusicNote @@@ " <> ToString[bellNotes, InputForm] <> "]"
+```
+
+As it plays, the score's playhead follows the bell, the way it moves when the score itself is played: its display, a front end panel, drawn with its position set to the second we are hearing:
+
+```wl
+scoreAt[score_, sec_] := With[{a = First[ToBoxes[score]], s = N[sec]}, Music`MusicGUI[a["head"], a["midi"], a["inputs"], a["duration"]] /.
+    {HoldPattern[Music`MusicVisualizationDump`pos = 0.] :> (Music`MusicVisualizationDump`pos = s),
+     HoldPattern[Music`MusicVisualizationDump`playState = "Stopped"] :> (Music`MusicVisualizationDump`playState = "Playing")}];
+Magnify[scoreAt[bellScore, 5], 1.5]
+```
+
+The window, and then it flies away:
+
+```wl
+v15 = NotebookSession[{{62, "In", bellCode, 0.8},
+    {62.8, "Out", u |-> Magnify[scoreAt[bellScore, 2 (62.8 + 4.2 u - at["v15"])], 1.5], 4.2}}, {61, 67},
     "Era" -> "BigSur2020", "Title" -> "Soundtrack.nb", "Enter" -> "Wipe", "EnterTime" -> 0.1, "From" -> v14, "ChatBar" -> {61.1, "Write the melody we are hearing as a score", 0.75, 62},
     "Exit" -> "FlyAway", "ExitTime" -> 0.3, "Pulse" -> kick];
 GraphicsRow[v15["Graphics", #, ImageSize -> 400] & /@ {61.7, 64}]
@@ -811,7 +834,7 @@ highFive = Module[{t0 = at["agents"], hit = at["agents", 1.25], su, lean, raise,
     radius = Function[t, (50 + 10 su[t]) (1 - Tween[{t0 + 1.8, t0 + 2}, "InCubic"][t])];
     claudeAt = Function[t, {1740 - 30 lean[t], 1180 - 318 Tween[{t0 + 0.5, t0 + 0.75}, {"OutBack", 1.6}][t] - If[t > hit + 0.1, 18 Abs[Sin[8 Pi (t - hit)]], 0]}];
     {Spikey[{t0 + 0.15, t0 + 2}, Position -> spikeyAt, "Radius" -> radius, "Face" -> True, "Raise" -> raise, "Blink" -> (hit < # < hit + 0.06 &),
-        "Form" -> "Hexecontahedron", "Style" -> "Red", "Dance" -> 0.4, "Pulse" -> kick, "Enter" -> "Cut"],
+        "Version" -> 15, "Dance" -> 0.4, "Pulse" -> kick, "Enter" -> "Cut"],
      {t0 + 0.5, t0 + 2} -> Function[t, CanvasOpacity[1 - Tween[{t0 + 1.8, t0 + 2}, "InCubic"][t], claudeMascot[claudeAt[t], 17, raise[t], t]]],
      {hit, hit + 0.35} -> Function[t, With[{s = spikeyAt[t], r = radius[t], c = claudeAt[t], k = raise[t]},
         spark[(s + r {0.95 + 0.25 k, 0.5 - 1.25 k} + c + 17 {-5 - 0.2 k, -0.5 - 2.4 k}) / 2, (t - hit) / 0.35]]]}];
@@ -911,14 +934,14 @@ The page falls away and fades to paper, a fresh notebook deploys the film to the
 ```wl
 filmURL = "https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1.mp4";
 outro = {{end, end + 2} -> Function[t, CanvasRectangle[{0, 0, 1920, 1080}, ground[t], Opacity -> Tween[{end, end + 1.2}, "InCubic"][t]]],
-    NotebookSession[{{end + 1.6, "In", "CopyFile[Export[\"In1.mp4\", film[\"Video\"]], CloudObject[\"WolframFilm/In1.mp4\", Permissions -> \"Public\"]]", 0.6},
+    NotebookSession[{{end + 1.6, "In", "CopyFile[\"In1.mp4\", CloudObject[\"WolframFilm/In1.mp4\", Permissions -> \"Public\"]]", 0.6},
         {end + 2.4, "Out", CloudObject[filmURL]}}, {end + 1.4, 84}, "Era" -> "BigSur2020", "Title" -> "Deploy.nb", "Screen" -> {260, 110, 1400, 470}, "EnterTime" -> 0.35, "PushIn" -> 0],
     Title[commas[Length[lexicon]] <> " words.", {end + 3.75, end + 6.9}, Position -> {960, 720}, FontSize -> 76, FontWeight -> 800, FontColor -> fg, "Enter" -> "Fade", "EnterTime" -> 0.25,
         "Exit" -> "Fade", "ExitTime" -> 0.6],
     Title["Still growing.", {end + 4.25, end + 6.9}, Position -> {960, 810}, FontSize -> 76, FontWeight -> 300, FontColor -> red, "Enter" -> "Fade", "EnterTime" -> 0.25, "Exit" -> "Fade", "ExitTime" -> 0.6],
     Title["THE WOLFRAM LANGUAGE  \[CenterDot]  1988 \[Dash] 2026", {end + 5, end + 6.9}, Position -> {960, 930}, FontSize -> 26, FontWeight -> 600, FontColor -> RGBColor["#8B877F"],
         "Tracking" -> 6, "Enter" -> "Fade", "EnterTime" -> 0.5, "Exit" -> "Fade", "ExitTime" -> 0.6],
-    Spikey[{end + 4.5, 84}, Position -> {960, 980}, "Radius" -> 42, "Form" -> "Hexecontahedron", "Style" -> "Red", "EnterTime" -> 0.4, "Pulse" -> kick],
+    Spikey[{end + 4.5, 84}, Position -> {960, 980}, "Radius" -> 42, "Version" -> 15, "EnterTime" -> 0.4, "Pulse" -> kick],
     {end + 6.4, 84} -> Function[t, CanvasRectangle[{0, 0, 1920, 1080}, Black, Opacity -> Clip[(t - end - 6.4) / 0.6, {0, 1}]]]};
 Timeline[{Backdrop[ground, {0, 84}], outro}, "Duration" -> 84]["Graphics", end + 5.8, ImageSize -> 480]
 ```
@@ -967,27 +990,11 @@ GraphicsGrid[Partition[film["Graphics", #, ImageSize -> 400] & /@ {3.2, 7.6, 11.
     45.9, 50.9, 58.5, 64, 68.3, 81.8}, 3], ImageSize -> 1200]
 ```
 
-Watch it, with the audio as the clock; click to play, drag to scrub:
+Render it, frames in parallel, to a file beside this notebook, and store it in the cloud, public, the way the video player's Store in Cloud (Public) does: a CloudObject copy, which the Video then plays from:
 
 ```wl
-#| eval: false
-film["Dynamic"]
-```
-
-Render it, frames in parallel, as a Video:
-
-```wl
-#| eval: false
-film["Video"]
-```
-
-## Deploy It
-
-The film puts itself in the cloud, the call its last notebook types:
-
-```wl
-#| eval: false
-CopyFile[Export["In1.mp4", film["Video"]], CloudObject["WolframFilm/In1.mp4", Permissions -> "Public"]]
+film["Video", ExpandFileName["In1.mp4"]];
+video = Video[CopyFile["In1.mp4", CloudObject["WolframFilm/In1.mp4", Permissions -> "Public"], OverwriteTarget -> True]]
 ```
 
 ## References
