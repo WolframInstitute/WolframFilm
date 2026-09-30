@@ -476,7 +476,8 @@ manipulate[0.3]
 ```wl
 julia = Compile[{{z, _Complex}}, Module[{w = z, k = 0}, While[Abs[w] < 2 && k < 60, w = w^2 + (-0.8 + 0.156 I); k++]; k]];
 LaunchKernels[4];
-juliaSet = ParallelTable[julia[x + I y], {y, 0.95, -0.95, -0.02}, {x, -1.6, 1.6, 0.02}];
+(* only the compiled function goes to the kernels, not the rest of the notebook *)
+juliaSet = With[{julia = julia}, ParallelTable[julia[x + I y], {y, 0.95, -0.95, -0.02}, {x, -1.6, 1.6, 0.02}, DistributedContexts -> None]];
 CloseKernels[];
 juliaColors = Map[List @@ ColorData["SunsetColors"][#/60] &, juliaSet, {2}];
 parallelFrame[u_] := With[{band = Ceiling[Length[juliaSet] / 4]}, Image[MapIndexed[If[Mod[#2[[1]] - 1, band] < u band, #1, ConstantArray[{0.93, 0.93, 0.93}, Length[#1]]] &, juliaColors], ImageSize -> 460]];
