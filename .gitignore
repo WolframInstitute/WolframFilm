@@ -9,3 +9,5 @@ CLAUDE.md
 notebook/*.mp4
 notebook/Film-cloud.nb
 notebook/Film.nb
+.env
+.env.*

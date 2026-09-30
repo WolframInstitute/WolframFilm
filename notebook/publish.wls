@@ -5,7 +5,8 @@
    the picture the desktop shows; the film's Video and each Audio stay players, streamed from public cloud copies. *)
 $AllowInternet = True;
 dir = DirectoryName[$InputFileName];
-If[! TrueQ[$CloudConnected], Quiet @ CloudConnect[]];
+Get[FileNameJoin[{dir, "cloud.wl"}]];
+cloudConnect[FileNameJoin[{ParentDirectory[dir], ".env"}]];
 Needs["WolframInstitute`WAnim`"];
 (* pictures as the page shows them: light *)
 UsingFrontEnd[CurrentValue[$FrontEnd, LightDark] = "Light"];

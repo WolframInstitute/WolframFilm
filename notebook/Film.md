@@ -14,9 +14,10 @@ Links: ["[What Is a Computational Essay?](https://writings.stephenwolfram.com/20
 
 A film here is an AnimatedGraphics: Graphics with a time axis, a list of things each shown over its span of time. WAnim's creation tools make those things. A typed line, a terminal of 1979, a notebook of 1988 that types and evaluates on the clock, a card for a symbol, a dancing Spikey: each segment of the film is one call, placed in time. The soundtrack is a Track in the same list, a pattern that answers what plays when, and the picture can ask it the same question.
 
-The creation tools, the canvas they draw on, and the pattern language:
+The creation tools, the canvas they draw on, and the pattern language, installed from the Wolfram Paclet Repository:
 
 ```wl
+PacletInstall["WolframInstitute/WAnim"];
 Needs["WolframInstitute`WAnim`"]
 ```
 
