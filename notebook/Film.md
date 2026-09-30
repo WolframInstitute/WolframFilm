@@ -5,14 +5,14 @@ Author: Nikolay Murzin
 Date: 2026
 Description: "A film about the Wolfram Language told as a natural language gaining words, computed and composed entirely in this notebook with WAnim"
 Abstract: "A language is its words. This notebook makes a film about the Wolfram Language told that way: its vocabulary growing from a few hundred words in 1988 to thousands today, watched through the notebooks it was typed into, each of its era. Everything is computed here. The vocabulary comes from WolframLanguageData, the notebook outputs are evaluated, the melody is the centre column of Rule 30, and the picture reads the same Tracks that sound. Each segment of the film is one WAnim creation tool, so the whole edit is a list a person could type live. Eighty-four bars, from SMP in 1979 through every era of the notebook, the repositories, chat notebooks and the music of 15.0, to an agent that writes the language and the whole vocabulary on one page."
-Keywords: [WAnim, Timeline, Track, Rule 30, WolframLanguageData, film, music, notebook history]
+Keywords: [WAnim, AnimatedGraphics, Track, Rule 30, WolframLanguageData, film, music, notebook history]
 Sources: ["[WAnim](https://github.com/sw1sh/WAnim)", "[Summary of New Features in 15.0](https://reference.wolfram.com/language/guide/SummaryOfNewFeaturesIn150.html)", "[Stephen Wolfram's scrapbook](https://www.stephenwolfram.com/scrapbook/)", "[The Story of Spikey](https://writings.stephenwolfram.com/2018/12/the-story-of-spikey/)"]
 Links: ["[What Is a Computational Essay?](https://writings.stephenwolfram.com/2017/11/what-is-a-computational-essay/)"]
 ---
 
 ## A Film Is a List
 
-A film here is a Timeline: a list of layers, each drawing its part of the picture at every moment it covers. WAnim's creation tools make those layers. A typed line, a terminal of 1979, a notebook of 1988 that types and evaluates on the clock, a card for a symbol, a dancing Spikey: each segment of the film is one call, placed in time. The soundtrack is a Track, a pattern that answers what plays when, and the picture can ask it the same question.
+A film here is an AnimatedGraphics: Graphics with a time axis, a list of things each shown over its span of time. WAnim's creation tools make those things. A typed line, a terminal of 1979, a notebook of 1988 that types and evaluates on the clock, a card for a symbol, a dancing Spikey: each segment of the film is one call, placed in time. The soundtrack is a Track in the same list, a pattern that answers what plays when, and the picture can ask it the same question.
 
 The creation tools, the canvas they draw on, and the pattern language:
 
@@ -20,7 +20,7 @@ The creation tools, the canvas they draw on, and the pattern language:
 Needs["WolframInstitute`WAnim`"]
 ```
 
-The film counts in bars of 120 BPM: one bar is one cycle of the score's Tracks, and every time below is a bar. The timeline at the end says how long a bar lasts.
+The film counts in bars of 120 BPM: one bar is one cycle of the score's Tracks, and every time below is a bar. The film, at the end, says how long a bar lasts: half a cycle a second.
 
 ## The Vocabulary
 
@@ -245,9 +245,9 @@ Typed in the dark, its last word lit, then swallowed by the cursor:
 
 ```wl
 coldOpen = {Backdrop[RGBColor["#050506"], {0, 4}],
-    Typewriter["Every language starts with a few words.", {0.5, 4}, Position -> {960, 554}, "TypingTime" -> 2.1, "Highlight" -> "words", "HighlightTime" -> 2.8,
+    Typewriter["Every language starts with a few words.", {0.5, 4}, Position -> {960, 554}, "TypeTime" -> 2.1, "Highlight" -> "words", "HighlightTime" -> 2.8,
         "Exit" -> "Collapse", "ExitTime" -> 0.45]};
-coldOpen[[2]]["Graphics", 3.2, Background -> Black, ImageSize -> 480]
+coldOpen[[2]][3.2, Background -> Black, ImageSize -> 480]
 ```
 
 ## Bars 4 to 8: SMP, 1979
@@ -269,10 +269,10 @@ Column[asciiPlot, BaseStyle -> {FontFamily -> "Courier", 8}]
 The terminal powers on, types the session, prints the plot and the caption, and powers off:
 
 ```wl
-smp = Terminal[{{4.1, "#I[1]::  Ex[(a + b)^3]"}, {4.6, "#O[1]:   a^3 + 3 a^2 b + 3 a b^2 + b^3", "Output"},
+smp = TerminalSession[{{4.1, "#I[1]::  Ex[(a + b)^3]"}, {4.6, "#O[1]:   a^3 + 3 a^2 b + 3 a b^2 + b^3", "Output"},
     {4.9, "#I[2]::  Graph[Sin[1/x],x,0.02,0.2]"}, {5.2, "#O[2]:", "Output"}, {5.3, asciiPlot, "Print"},
     {6.5, "NOVEMBER 1979. CALTECH.", "Caption"}, {6.8, "A 20-YEAR-OLD PHYSICIST WRITES A LANGUAGE", "Caption"}, {7.2, "FOR TALKING TO HIS COMPUTER: SMP.", "Caption"}}, {4, 8}];
-smp["Graphics", 7.6, ImageSize -> 480]
+smp[7.6, ImageSize -> 480]
 ```
 
 ## Bars 8 to 12: 1986, and a Name
@@ -293,21 +293,21 @@ The screen turns to paper; he starts again:
 
 ```wl
 paper = Backdrop[If[# < 8.4, Blend[{RGBColor["#050506"], paperC}, Easing["OutCubic"][(# - 8) / 0.4]], ground[#]] &, {8, 84}];
-y1986 = {Title["1986", {8.05, 10}, Position -> {160, 470}, Alignment -> Left, FontSize -> 220, FontColor -> red, "EnterTime" -> 0.35],
-    Typewriter["He starts again, from nothing.", {8.35, 10}, Position -> {170, 580}, Alignment -> Left, "TypingTime" -> 0.55, "Cursor" -> None,
+y1986 = {TitleCard["1986", {8.05, 10}, Position -> {160, 470}, Alignment -> Left, FontSize -> 220, FontColor -> red, "EnterTime" -> 0.35],
+    Typewriter["He starts again, from nothing.", {8.35, 10}, Position -> {170, 580}, Alignment -> Left, "TypeTime" -> 0.55, "Cursor" -> None,
         FontFamily -> "Source Sans 3", FontSize -> 60, FontWeight -> 600, FontColor -> inkC],
-    Typewriter["A language for everything.", {8.95, 10}, Position -> {170, 660}, Alignment -> Left, "TypingTime" -> 0.5, "Cursor" -> None,
+    Typewriter["A language for everything.", {8.95, 10}, Position -> {170, 660}, Alignment -> Left, "TypeTime" -> 0.5, "Cursor" -> None,
         FontFamily -> "Source Sans 3", FontSize -> 60, FontWeight -> 300, FontColor -> inkC]};
 ```
 
 The name, one letter per eighth note, then everything collapses into the drop:
 
 ```wl
-name = {Title["Mathematica", {10, 12}, "Enter" -> "Letters", "Cursor" -> True, Position -> {960, 580}, FontSize -> 170, FontColor -> inkC,
-        "Exit" -> "Collapse", "ExitTime" -> 0.4, "CollapsePoint" -> {960, 520}],
-    Title["The name? Steve Jobs suggested it.", {10.9, 12}, "Enter" -> "Fade", Position -> {960, 690}, FontSize -> 48, FontWeight -> 400, FontSlant -> Italic,
-        FontColor -> RGBColor["#55524C"], "Exit" -> "Collapse", "ExitTime" -> 0.4, "CollapsePoint" -> {960, 520}]};
-Timeline[{paper, y1986, name, prints}, "Duration" -> 12]["Graphics", 11.3, ImageSize -> 480]
+name = {TitleCard["Mathematica", {10, 12}, "Enter" -> "Letters", "Cursor" -> True, Position -> {960, 580}, FontSize -> 170, FontColor -> inkC,
+        "Exit" -> {"Collapse", {960, 520}}, "ExitTime" -> 0.4],
+    TitleCard["The name? Steve Jobs suggested it.", {10.9, 12}, "Enter" -> "Fade", Position -> {960, 690}, FontSize -> 48, FontWeight -> 400, FontSlant -> Italic,
+        FontColor -> RGBColor["#55524C"], "Exit" -> {"Collapse", {960, 520}}, "ExitTime" -> 0.4]};
+AnimatedGraphics[{paper, y1986, name, prints}, "Duration" -> 12][11.3, ImageSize -> 480]
 ```
 
 ## Bars 12 to 16: Mathematica 1.0
@@ -324,8 +324,8 @@ A Macintosh in 1988, at half resolution and one bit, typing and evaluating on th
 v1 = NotebookSession[{{12, "In", "Names[\"*\"]"}, {12.5, "Out", v1Names},
     {13.3, "In", "Integrate[1/(x^3 - 1), x]"}, {13.6, "Out", ToString[Integrate[1/(x^3 - 1), x], OutputForm]},
     {14.05, "In", "Plot3D[Sin[x y], {x, 0, 3}, {y, 0, 3}]"}, {14.45, "Out", Plot3D[Sin[x y], {x, 0, 3}, {y, 0, 3}]}}, {12, 16},
-    "TypeTime" -> 0.2, "GraphicsSize" -> 250, "Pulse" -> kick];
-v1["Graphics", 14.9, ImageSize -> 480]
+    "TypeTime" -> 0.2, "GraphicsSize" -> 250];
+v1[14.9, ImageSize -> 480]
 ```
 
 Behind the window, the whole vocabulary as a dictionary page; each release's words fly out of the latest output to their places, and the page darkens with the film. The wall is told the colour it sits on, so it can keep its settled words as one opaque picture:
@@ -333,7 +333,7 @@ Behind the window, the whole vocabulary as a dictionary page; each release's wor
 ```wl
 arrivals = Association[Flatten[releases[[All, "Arrivals"]]]];
 wallWords = {#["Name"], #["Frequency"], Lookup[arrivals, #["Name"], Infinity]} & /@ lexicon;
-wallStyle = {"From" -> {583, 488}, "FlightCount" -> 80, Background -> ground,
+wallStyle = {"Origin" -> {583, 488}, "FlightCount" -> 80, Background -> ground,
     "Color" -> (Blend[{RGBColor["#B9B3A7"], RGBColor["#34363C"]}, dark[#]] &), "StrongColor" -> (Blend[{RGBColor["#2A2825"], boneC}, dark[#]] &)};
 wall = WordWall[wallWords, {12, 84}, wallStyle];
 ```
@@ -341,7 +341,7 @@ wall = WordWall[wallWords, {12, 84}, wallStyle];
 The story on the right, in the ink of the moment: captions, and dictionary entries looked up live:
 
 ```wl
-story[s_, span_, hl_ : None] := Caption[s, span, "Highlight" -> hl, FontColor -> fg];
+story[s_, span_, hl_ : None] := CaptionText[s, span, "Highlight" -> hl, FontColor -> fg];
 entry[name_, span_, opts___] := DictionaryCard[name, span, opts, FontColor -> fg, "NoteColor" -> soft];
 v1Story = {story["Its first vocabulary: " <> ToString[Length[releases[[1, "Words"]]]] <> " words.", {12.25, 13.85}, ToString[Length[releases[[1, "Words"]]]]],
     story["Words for pictures, too.", {14.1, 15.85}], entry["Names", {12.3, 13.25}], entry["Integrate", {13.3, 13.95}]}
@@ -350,8 +350,8 @@ v1Story = {story["Its first vocabulary: " <> ToString[Length[releases[[1, "Words
 The era, in the corner, for as long as it lasts:
 
 ```wl
-eraLabel[{t0_, t1_}, name_, sub_] := {Title[ToUpperCase[sub], {t0, t1}, Position -> {96, 76}, Alignment -> Left, FontSize -> 18, FontWeight -> 600, FontColor -> red, "Tracking" -> 3, "Enter" -> "Fade", "Exit" -> "Cut"],
-    Title[name, {t0, t1}, Position -> {96, 124}, Alignment -> Left, FontSize -> 46, FontColor -> fg, "Enter" -> "Fade", "Exit" -> "Cut"]};
+eraLabel[{t0_, t1_}, name_, sub_] := {TitleCard[ToUpperCase[sub], {t0, t1}, Position -> {96, 76}, Alignment -> Left, FontSize -> 18, FontWeight -> 600, FontColor -> red, "Tracking" -> 3, "Enter" -> "Fade", "Exit" -> "Cut"],
+    TitleCard[name, {t0, t1}, Position -> {96, 124}, Alignment -> Left, FontSize -> 46, FontColor -> fg, "Enter" -> "Fade", "Exit" -> "Cut"]};
 eraLabel[{12, 16}, "Mathematica 1.0", "June 23, 1988 \[CenterDot] Macintosh"]
 ```
 
@@ -360,8 +360,8 @@ Spikey, dancing to the kick, as each version drew it: the stellated icosahedron 
 ```wl
 spikeyVersion = Function[t, 1 + LengthWhile[{20, 22, 24, 26, 28, 34, 35, 37, 40.5, 46, 49, 53}, # <= t &]];
 spikeyDisplay = Which[# < at["next"], "1Bit", # < at["v2"], "Gray", True, Automatic] &;
-characters = {Spikey[{12, 66.9}, "Version" -> spikeyVersion, "Style" -> spikeyDisplay, "Pulse" -> kick], AutomatonTape[30, melody, {12, 66.9}, "Ink" -> fg, "Exit" -> "Cut"]};
-GraphicsRow[Timeline[{Backdrop[paperC], characters}, "Duration" -> 40]["Graphics", #, ImageSize -> 300] & /@ {13.3, 17, 29}]
+characters = {Spikey[{12, 66.9}, "Version" -> spikeyVersion, "Display" -> spikeyDisplay], AutomatonTape[30, melody, {12, 66.9}, "Ink" -> fg, "Exit" -> "Cut"]};
+GraphicsRow[AnimatedGraphics[{Backdrop[paperC], characters}, "Duration" -> 40][#, ImageSize -> 300] & /@ {13.3, 17, 29}]
 ```
 
 ## Bars 16 to 20: NeXT, and One Grammar
@@ -371,15 +371,15 @@ The same window, now on a NeXT: four greys, the Spikey of 1.0 computed as a poly
 ```wl
 next = NotebookSession[{{16.25, "In", "PolyhedronData[\"GreatStellatedDodecahedron\"]", 0.25}, {16.6, "Out", PolyhedronData["GreatStellatedDodecahedron"]},
     {18, "In", "FullForm[{x -> 1, f[y]}]", 0.4}, {18.6, "Out", FullForm[{x -> 1, f[y]}]}}, {16, 20},
-    "Era" -> "NeXT1988", "Title" -> "Untitled-1.ma", "Enter" -> "Wipe", "EnterTime" -> 0.1, "From" -> v1, "GraphicsSize" -> 190, "Pulse" -> kick];
-next["Graphics", 18.9, ImageSize -> 480]
+    "Era" -> "NeXT1988", "Title" -> "Untitled-1.ma", "From" -> v1, "GraphicsSize" -> 190];
+next[18.9, ImageSize -> 480]
 ```
 
 That grammar, drawn: every expression is a head applied to arguments, all the way down:
 
 ```wl
 grammar = TreeDiagram[Hold[{x -> 1, f[y]}], {18.7, 20}, Position -> {1540, 250}, FontColor -> fg];
-grammar["Graphics", 19.6, ImageSize -> 480]
+grammar[19.6, ImageSize -> 480]
 ```
 
 Photographs of the machine it shipped on:
@@ -405,8 +405,8 @@ playing[u_] := Graphics[{MapIndexed[{If[#2[[1]] <= u Length[soundEnvelope], RGBC
 v2 = NotebookSession[{{20, "In", "Play[Sin[1000 t (1 + t)] Sin[2 Pi t], {t, 0, 1.5}]", 0.3}, {20.4, "Out", playing, 0.75}, {20.45, "Out", "-Sound-"},
     {21.0, "In", "ParametricPlot3D[{u Cos[u] (4 + Cos[v + u]), u Sin[u] (4 + Cos[v + u]), u Sin[v + u]}, {u, 0, 4 Pi}, {v, 0, 2 Pi}]", 0.2},
     {21.3, "Out", ParametricPlot3D[{u Cos[u] (4 + Cos[v + u]), u Sin[u] (4 + Cos[v + u]), u Sin[v + u]}, {u, 0, 4 Pi}, {v, 0, 2 Pi}]}}, {20, 22},
-    "Era" -> "Win1991", "Title" -> "Mathematica for Windows - [Untitled-1]", "Enter" -> "Wipe", "EnterTime" -> 0.1, "From" -> next, "GraphicsSize" -> 250, "Pulse" -> kick];
-v2["Graphics", 21.8, ImageSize -> 480]
+    "Era" -> "Win1991", "Title" -> "Mathematica for Windows - [Untitled-1]", "From" -> next, "GraphicsSize" -> 250];
+v2[21.8, ImageSize -> 480]
 ```
 
 3.0 on Windows 95: the notebook is itself an expression, and mathematics is typed as it is written:
@@ -415,8 +415,8 @@ v2["Graphics", 21.8, ImageSize -> 480]
 v3 = NotebookSession[{{22, "Title", "Notes on Language"}, {22.1, "Text", "Every language starts with a few words."},
     {22.5, "In", "NotebookRead[PreviousCell[]]", 0.2}, {22.8, "Out", ToString[Cell["Every language starts with a few words.", "Text"], InputForm]},
     {23.1, "In", HoldForm[Integrate[1/(x^3 - 1), x]]}, {23.45, "Out", Integrate[1/(x^3 - 1), x]}}, {22, 24},
-    "Era" -> "Win1996", "Title" -> "Mathematica - [Untitled-1]", "Enter" -> "Wipe", "EnterTime" -> 0.1, "From" -> v2, "Pulse" -> kick];
-v3["Graphics", 23.8, ImageSize -> 480]
+    "Era" -> "Win1996", "Title" -> "Mathematica - [Untitled-1]", "From" -> v2];
+v3[23.8, ImageSize -> 480]
 ```
 
 4 on Mac OS 9 reads pictures and grows Rule 30, a row at a time:
@@ -426,8 +426,8 @@ ca = CellularAutomaton[30, {{1}, 0}, 80];
 v4 = NotebookSession[{{24, "In", "ExampleData[{\"TestImage\", \"Mandrill\"}]", 0.15}, {24.25, "Out", ImageResize[ExampleData[{"TestImage", "Mandrill"}], 150]},
     {24.6, "In", "ArrayPlot[CellularAutomaton[30, {{1}, 0}, 80]]", 0.25},
     {24.9, "Out", u |-> ArrayPlot[Join[Take[ca, Max[1, Round[81 u]]], ConstantArray[0, {81 - Max[1, Round[81 u]], 161}]], ImageSize -> 420], 1}}, {24, 26},
-    "Era" -> "Mac1999", "Enter" -> "Wipe", "EnterTime" -> 0.1, "From" -> v3, "Pulse" -> kick];
-v4["Graphics", 25.5, ImageSize -> 480]
+    "Era" -> "Mac1999", "From" -> v3];
+v4[25.5, ImageSize -> 480]
 ```
 
 5.1 on Windows XP: string patterns, and the names of colours:
@@ -437,8 +437,8 @@ v5 = NotebookSession[{{26, "In", "StringCases[\"Every language starts with a few
     {26.35, "Out", StringCases["Every language starts with a few words.", WordCharacter ..]},
     {26.75, "In", "Graphics[Table[{{Red, Orange, Yellow, Green, Cyan, Blue, Purple, Magenta, Pink, Brown}[[Mod[k, 10] + 1]], EdgeForm[White], Disk[(1 + k/24) {Cos[k Pi/5.2], Sin[k Pi/5.2]}, 0.25 + k/60]}, {k, 60, 0, -1}]]", 0.3},
     {27.1, "Out", Graphics[Table[{{Red, Orange, Yellow, Green, Cyan, Blue, Purple, Magenta, Pink, Brown}[[Mod[k, 10] + 1]], EdgeForm[White], Disk[(1 + k/24) {Cos[k Pi/5.2], Sin[k Pi/5.2]}, 0.25 + k/60]}, {k, 60, 0, -1}], ImageSize -> 250]}}, {26, 28},
-    "Era" -> "WinXP2004", "Title" -> "Mathematica 5.1 - [Untitled-1]", "Enter" -> "Wipe", "EnterTime" -> 0.1, "From" -> v4, "Pulse" -> kick];
-v5["Graphics", 27.6, ImageSize -> 480]
+    "Era" -> "WinXP2004", "Title" -> "Mathematica 5.1 - [Untitled-1]", "From" -> v4];
+v5[27.6, ImageSize -> 480]
 ```
 
 The story of these eras:
@@ -506,8 +506,8 @@ v6 = NotebookSession[{{28, "In", "WordData[\"language\", \"Definitions\"]", 0.2}
     {35, "FreeForm", "countries in europe", "CountryData[\"Europe\"]", 0.3}, {35.5, "Out", Short[CommonName[europe], 1]},
     {36, "In", "Graph[UndirectedEdge @@@ borders, VertexLabels -> Automatic]", 0.2}, {36.25, "Out", bordersGrowing, 0.6},
     {37, "In", "UnitConvert[Quantity[5., \"Kilometers\"], \"Miles\"]", 0.25}, {37.35, "Out", UnitConvert[Quantity[5., "Kilometers"], "Miles"]}}, {28, 40},
-    "Era" -> "MacOSX2007", "Enter" -> "Wipe", "EnterTime" -> 0.1, "From" -> v5, "Hide" -> {sections["families"]}, "Dim" -> {38, 39.8}, "PushIn" -> 0.05, "Pulse" -> kick];
-GraphicsRow[v6["Graphics", #, ImageSize -> 400] & /@ {31, 36.9}]
+    "Era" -> "MacOSX2007", "From" -> v5, "Hide" -> {sections["families"]}, "Dim" -> {38, 39.8}, "PushIn" -> 0.05];
+GraphicsRow[v6[#, ImageSize -> 400] & /@ {31, 36.9}]
 ```
 
 What the narrator says over them, and the entries it looks up:
@@ -534,10 +534,10 @@ tiles = {{"ContourPlot", ContourPlot[Sin[x y], {x, 0, 3}, {y, 0, 3}]}, {"Density
     {"ComplexPlot3D", turning[ComplexPlot3D[(z^2 + 1) / (z^2 - 1), {z, -2 - 2 I, 2 + 2 I}]]}};
 versionOf = AssociationThread[lexicon[[All, "Name"]], lexicon[[All, "Version"]]];
 families = {Backdrop[paperC, sections["families"]], WordScroll[family, sections["families"]],
-    Title["Words come in families: \[Ellipsis]Plot", {32, 34}, "Highlight" -> "\[Ellipsis]Plot", Position -> {96, 150}, Alignment -> Left, FontSize -> 64, FontWeight -> 800, FontColor -> inkC, "Enter" -> "Fade", "Exit" -> "Cut"],
-    Title[ToString[Length[family]] <> " words in the \[Ellipsis]Plot and \[Ellipsis]Chart families.", {32, 34}, Position -> {98, 202}, Alignment -> Left, FontSize -> 30, FontWeight -> 400, FontColor -> RGBColor["#6B675F"], "Enter" -> "Fade", "Exit" -> "Cut"],
-    TileGrid[Append[#, With[{v = versionOf[#[[1]]]}, If[IntegerQ[v], ToString[v] <> ".0", ToString[v]]]] & /@ tiles, sections["families"], "Pulse" -> kick, "Exit" -> "Cut"]};
-Timeline[families, "Duration" -> 34]["Graphics", 33.95, ImageSize -> 640]
+    TitleCard["Words come in families: \[Ellipsis]Plot", {32, 34}, "Highlight" -> "\[Ellipsis]Plot", Position -> {96, 150}, Alignment -> Left, FontSize -> 64, FontWeight -> 800, FontColor -> inkC, "Enter" -> "Fade", "Exit" -> "Cut"],
+    TitleCard[ToString[Length[family]] <> " words in the \[Ellipsis]Plot and \[Ellipsis]Chart families.", {32, 34}, Position -> {98, 202}, Alignment -> Left, FontSize -> 30, FontWeight -> 400, FontColor -> RGBColor["#6B675F"], "Enter" -> "Fade", "Exit" -> "Cut"],
+    TileGrid[Append[#, With[{v = versionOf[#[[1]]]}, If[IntegerQ[v], ToString[v] <> ".0", ToString[v]]]] & /@ tiles, sections["families"], "Exit" -> "Cut"]};
+AnimatedGraphics[families, "Duration" -> 34][33.95, ImageSize -> 640]
 ```
 
 ## Bars 38 to 40: A Name
@@ -545,21 +545,21 @@ Timeline[families, "Duration" -> 34]["Graphics", 33.95, ImageSize -> 640]
 The music falls away and the page darkens:
 
 ```wl
-breakdown = {{38, 40} -> Function[t, CanvasRectangle[{0, 0, 1920, 1080}, ground[t], Opacity -> 0.78 Easing["OutCubic"][(t - 38.05) / 0.25]]],
-    Title["It isn\[CloseCurlyQuote]t only for math anymore.", {38.1, 39}, Position -> {960, 560}, FontSize -> 84, FontColor -> fg, "Enter" -> "Rise"],
-    Title["It needs a name.", {39, 39.97}, Position -> {960, 570}, FontSize -> 110, FontColor -> red, "Enter" -> "Rise", "ExitTime" -> 0.17]};
-Timeline[breakdown, "Duration" -> 40, Background -> paperC]["Graphics", 39.5, ImageSize -> 480]
+breakdown = {Backdrop[ground, {38, 40}, Opacity -> (0.78 Easing["OutCubic"][(# - 38.05) / 0.25] &)],
+    TitleCard["It isn\[CloseCurlyQuote]t only for math anymore.", {38.1, 39}, Position -> {960, 560}, FontSize -> 84, FontColor -> fg, "Enter" -> "Rise"],
+    TitleCard["It needs a name.", {39, 39.97}, Position -> {960, 570}, FontSize -> 110, FontColor -> red, "Enter" -> "Rise", "ExitTime" -> 0.17]};
+AnimatedGraphics[breakdown, "Duration" -> 40, Background -> paperC][39.5, ImageSize -> 480]
 ```
 
 On the drop, the name, letter by letter:
 
 ```wl
 wlTitle = {Backdrop[Function[t, Blend[{inkC, Transparent}, Easing["InExpo"][(t - 41.25) / 0.25]]], {40, 41.5}],
-    Title["THE", {40, 41.5}, Position -> {960, 420}, FontSize -> 58, FontWeight -> 300, FontColor -> boneC, "Tracking" -> 12, "Enter" -> "Fade", "EnterTime" -> 0.18],
-    Title["Wolfram Language", {40, 41.5}, Position -> {960, 600}, FontSize -> 168, FontWeight -> 800, FontColor -> boneC, "Highlight" -> "Wolfram",
-        "Enter" -> "Letters", "LetterInterval" -> 1/64, "Tracking" -> -3],
-    Title["November 13, 2013", {40.6, 41.5}, Position -> {960, 710}, FontFamily -> "Source Code Pro", FontSize -> 34, FontWeight -> 400, FontColor -> RGBColor["#9A9CA3"], "Enter" -> "Fade"]};
-Timeline[wlTitle, "Duration" -> 42]["Graphics", 40.9, ImageSize -> 480]
+    TitleCard["THE", {40, 41.5}, Position -> {960, 420}, FontSize -> 58, FontWeight -> 300, FontColor -> boneC, "Tracking" -> 12, "Enter" -> "Fade", "EnterTime" -> 0.18],
+    TitleCard["Wolfram Language", {40, 41.5}, Position -> {960, 600}, FontSize -> 168, FontWeight -> 800, FontColor -> boneC, "Highlight" -> "Wolfram",
+        "Enter" -> "Letters", "Interval" -> 1/64, "Tracking" -> -3],
+    TitleCard["November 13, 2013", {40.6, 41.5}, Position -> {960, 710}, FontFamily -> "Source Code Pro", FontSize -> 34, FontWeight -> 400, FontColor -> RGBColor["#9A9CA3"], "Enter" -> "Fade"]};
+AnimatedGraphics[wlTitle, "Duration" -> 42][40.9, ImageSize -> 480]
 ```
 
 ## Bars 40 to 46: Version 10
@@ -598,8 +598,8 @@ v10 = NotebookSession[{{40.5, "In", "Interpreter[\"Country\"][\"france\"]", 0.25
     {41.55, "Out", globe}, {43, "In", "Pluralize[\"mouse\"]", 0.15}, {43.2, "Out", Pluralize["mouse"]},
     {43.6, "In", "ListPlot[StarData[EntityClass[\"Star\", \"NakedEyeStar\"], {\"EffectiveTemperature\", \"AbsoluteMagnitude\"}]]", 0.25}, {43.9, "Out", starPlot},
     {44.85, "In", "NestGraph[WolframLanguageData[#, \"RelatedSymbols\"] &, \"Plot\", 2]", 0.2}, {45.1, "Out", relatedGrowing, 0.7}}, {40.4, 46},
-    "Era" -> "Yosemite2014", "Title" -> "Untitled-1.nb", "EnterTime" -> 0.25, "Pulse" -> kick];
-v10["Graphics", 45.9, ImageSize -> 480]
+    "Era" -> "Yosemite2014", "Title" -> "Untitled-1.nb", "EnterTime" -> 0.25];
+v10[45.9, ImageSize -> 480]
 ```
 
 ## Bars 46 to 55: Version 11 to 13
@@ -673,8 +673,8 @@ v11 = NotebookSession[{{46, "In", seeInput}, {46.25, "Out", NetModel["Wolfram Im
     {53, "In", "AstroGraphics[Point /@ orion, AstroCenter -> Entity[\"Star\", \"Alnilam\"], AstroBackground -> AstroStyling[{\"DarkSky\", \"ShowConstellations\" -> {Entity[\"Constellation\", \"Orion\"]}}]]", 0.25},
     {53.3, "Out", sky}, {54, "In", "PacletInstall[\"Wolfram/QuantumFramework\"]", 0.1}, {54.1, "Out", PacletObject["Wolfram/QuantumFramework"]},
     {54.3, "In", "QuantumCircuitOperator[{\"H\", \"CNOT\" -> {1, 2}, \"CNOT\" -> {2, 3}}]", 0.15}, {54.5, "Out", qco}, {54.8, "Replace", circuit}}, {46, 55},
-    "Era" -> "BigSur2020", "Title" -> "Untitled-1.nb", "Enter" -> "Wipe", "EnterTime" -> 0.1, "From" -> v10, "Pulse" -> kick];
-GraphicsRow[v11["Graphics", #, ImageSize -> 400] & /@ {48.9, 50.9, 54.9}]
+    "Era" -> "BigSur2020", "Title" -> "Untitled-1.nb", "From" -> v10];
+GraphicsRow[v11[#, ImageSize -> 400] & /@ {48.9, 50.9, 54.9}]
 ```
 
 The repositories, as cards dealt down the right:
@@ -688,7 +688,7 @@ repos = {at["repos"], at["repos", 2.2]} -> Function[t, With[{leave = Tween[{at["
             CanvasRectangle[{x, y, 6, 78}, red], CanvasText[#1[[1]], {x + 24, y + 34}, CanvasFont["Source Sans 3", 28, 700], fg[t]],
             CanvasText[#1[[2]], {x + 572, y + 34}, CanvasFont["Source Code Pro", 24, 600], red, Alignment -> Right],
             CanvasText[#1[[3]], {x + 24, y + 62}, CanvasFont["Source Sans 3", 20, 400], soft[t]]}]]]] &, repoList]]];
-Timeline[{Backdrop[paperC], repos}, "Duration" -> 50]["Graphics", 48.5, ImageSize -> 480]
+AnimatedGraphics[{Backdrop[paperC], repos}, "Duration" -> 50][48.5, ImageSize -> 480]
 ```
 
 ## Bars 55 to 67: Chat, Dark Mode, and Music
@@ -700,8 +700,8 @@ chat = NotebookSession[{{55, "ChatInput", "What are the ten most common words in
     {55.75, "ChatOutput", "You can count them with WordCounts:", {"Take[WordCounts[ExampleData[{\"Text\", \"AliceInWonderland\"}],", "  IgnoreCase -> True], 10]"}, "WordCounts"},
     {57, "In", "Take[WordCounts[ExampleData[{\"Text\", \"AliceInWonderland\"}], IgnoreCase -> True], 10]", 0.3},
     {57.4, "Out", Take[WordCounts[ExampleData[{"Text", "AliceInWonderland"}], IgnoreCase -> True], 10]}}, {55, 59},
-    "Era" -> "BigSur2020", "Title" -> "Chat.nb", "Enter" -> "Wipe", "EnterTime" -> 0.1, "From" -> v11, "Pulse" -> kick];
-chat["Graphics", 58.5, ImageSize -> 480]
+    "Era" -> "BigSur2020", "Title" -> "Chat.nb", "From" -> v11];
+chat[58.5, ImageSize -> 480]
 ```
 
 The language keeps a record of itself. The releases, as a Tabular:
@@ -724,8 +724,8 @@ Dark mode arrives:
 ```wl
 v14 = NotebookSession[{{59.1, "In", "Tabular[versions]", 0.15}, {59.35, "Out", versions},
     {59.95, "In", "TakeLargestBy[TransformColumns[versions, \"words per month\" -> Function[Round[#[\"new words\"]/#[\"since previous\"], 0.1]]], \"words per month\", 3]", 0.25},
-    {60.3, "Out", fastest}}, {59, 61}, "Era" -> "Dark2024", "Enter" -> "Wipe", "EnterTime" -> 0.1, "From" -> chat, "Pulse" -> kick];
-v14["Graphics", 60.9, ImageSize -> 480]
+    {60.3, "Out", fastest}}, {59, 61}, "Era" -> "Dark2024", "From" -> chat];
+v14[60.9, ImageSize -> 480]
 ```
 
 And 15.0 learns music. Asked in the chat bar for the melody we are hearing, it writes the bell's phrase as notes, the same notes the score plays, pitch names and lengths:
@@ -751,9 +751,9 @@ The window, and then it flies away:
 ```wl
 v15 = NotebookSession[{{62, "In", bellCode, 0.8},
     {62.8, "Out", u |-> Magnify[scoreAt[bellScore, 2 (62.8 + 4.2 u - at["v15"])], 1.5], 4.2}}, {61, 67},
-    "Era" -> "BigSur2020", "Title" -> "Soundtrack.nb", "Enter" -> "Wipe", "EnterTime" -> 0.1, "From" -> v14, "ChatBar" -> {61.1, "Write the melody we are hearing as a score", 0.75, 62},
-    "Exit" -> "FlyAway", "ExitTime" -> 0.3, "Pulse" -> kick];
-GraphicsRow[v15["Graphics", #, ImageSize -> 400] & /@ {61.7, 64}]
+    "Era" -> "BigSur2020", "Title" -> "Soundtrack.nb", "From" -> v14, "ChatBar" -> {61.1, "Write the melody we are hearing as a score", 0.75, 62},
+    "Exit" -> "FlyAway", "ExitTime" -> 0.3];
+GraphicsRow[v15[#, ImageSize -> 400] & /@ {61.7, 64}]
 ```
 
 The story from 10 to 15, with prints of the Raspberry Pi, the first chat notebooks and the count of functions by version:
@@ -807,13 +807,13 @@ agents = Module[{a0 = at["agents"], shown, lines, thumbs},
         Module[{y = 250}, Table[If[t < a0 + l[[1]], Nothing, {CanvasText[TypedText[l[[2]], (t - a0 - l[[1]]) / If[l[[3]] === "Prompt", 0.25, 0.1]], {132, y},
             CanvasFont["Source Code Pro", If[l[[3]] === "Prompt", 28, 24], If[l[[3]] === "Call", 600, 400]],
             RGBColor[Switch[l[[3]], "Prompt", "#EDE9E0", "Call", "#E8A26B", _, "#8FA3B8"]]], y += If[l[[3]] === "Result", 54, 40]}[[1]]], {l, lines}]]}]],
-     Title["WOLFRAM AS A TOOL FOR AI \[CenterDot] FEBRUARY 2026", {a0 + 0.2, a0 + 2}, Position -> {96, 110}, Alignment -> Left, FontSize -> 20, FontWeight -> 600, FontColor -> red,
+     TitleCard["WOLFRAM AS A TOOL FOR AI \[CenterDot] FEBRUARY 2026", {a0 + 0.2, a0 + 2}, Position -> {96, 110}, Alignment -> Left, FontSize -> 20, FontWeight -> 600, FontColor -> red,
         "Tracking" -> 3, "Enter" -> "Fade", "Exit" -> "Fade", "ExitTime" -> 0.2],
-     Title["AIs now call the language as a tool.", {a0 + 0.2, a0 + 2}, Position -> {96, 930}, Alignment -> Left, FontSize -> 60, FontWeight -> 800, FontColor -> boneC,
+     TitleCard["AIs now call the language as a tool.", {a0 + 0.2, a0 + 2}, Position -> {96, 930}, Alignment -> Left, FontSize -> 60, FontWeight -> 800, FontColor -> boneC,
         "Enter" -> "Fade", "Exit" -> "Fade", "ExitTime" -> 0.2],
-     Title["This film was made that way.", {a0 + 1, a0 + 2}, Position -> {96, 1010}, Alignment -> Left, FontSize -> 44, FontWeight -> 400, FontColor -> RGBColor["#FF3B1F"],
+     TitleCard["This film was made that way.", {a0 + 1, a0 + 2}, Position -> {96, 1010}, Alignment -> Left, FontSize -> 44, FontWeight -> 400, FontColor -> RGBColor["#FF3B1F"],
         "Enter" -> "Fade", "Exit" -> "Fade", "ExitTime" -> 0.2]}];
-Timeline[agents, "Duration" -> 69]["Graphics", 68.2, ImageSize -> 480]
+AnimatedGraphics[agents, "Duration" -> 69][68.2, ImageSize -> 480]
 ```
 
 Then Spikey hops to the middle, grows a face, and high-fives Claude, who pops up from below:
@@ -834,11 +834,11 @@ highFive = Module[{t0 = at["agents"], hit = at["agents", 1.25], su, lean, raise,
     radius = Function[t, (50 + 10 su[t]) (1 - Tween[{t0 + 1.8, t0 + 2}, "InCubic"][t])];
     claudeAt = Function[t, {1740 - 30 lean[t], 1180 - 318 Tween[{t0 + 0.5, t0 + 0.75}, {"OutBack", 1.6}][t] - If[t > hit + 0.1, 18 Abs[Sin[8 Pi (t - hit)]], 0]}];
     {Spikey[{t0 + 0.15, t0 + 2}, Position -> spikeyAt, "Radius" -> radius, "Face" -> True, "Raise" -> raise, "Blink" -> (hit < # < hit + 0.06 &),
-        "Version" -> 15, "Dance" -> 0.4, "Pulse" -> kick, "Enter" -> "Cut"],
+        "Version" -> 15, "Dance" -> 0.4, "Enter" -> "Cut"],
      {t0 + 0.5, t0 + 2} -> Function[t, CanvasOpacity[1 - Tween[{t0 + 1.8, t0 + 2}, "InCubic"][t], claudeMascot[claudeAt[t], 17, raise[t], t]]],
      {hit, hit + 0.35} -> Function[t, With[{s = spikeyAt[t], r = radius[t], c = claudeAt[t], k = raise[t]},
         spark[(s + r {0.95 + 0.25 k, 0.5 - 1.25 k} + c + 17 {-5 - 0.2 k, -0.5 - 2.4 k}) / 2, (t - hit) / 0.35]]]}];
-Timeline[{Backdrop[inkC], highFive}, "Duration" -> 69]["Graphics", at["agents", 1.3], ImageSize -> 480]
+AnimatedGraphics[{Backdrop[inkC], highFive}, "Duration" -> 69][at["agents", 1.3], ImageSize -> 480]
 ```
 
 ## Bars 69 to 77: The Whole Vocabulary
@@ -868,23 +868,23 @@ emphasisSpans = {{2, 4, MemberQ[{"List", "Rule", "Times", "Power", "Set"}, #] &}
 emphasis[t_] := FirstCase[emphasisSpans, {a_, b_, test_} /; in[t, climaxAt + {a, b}] :>
     {test, Tween[climaxAt + {a, a + 0.3}, "OutCubic"][t] (1 - Tween[climaxAt + {b - 0.2, b}, "Linear"][t])}, None];
 wall = WordWall[wallWords, {12, end + 2}, "Presence" -> (Clip[2 (# - climaxAt), {0, 1}] &), "Camera" -> camera, "Emphasis" -> emphasis, wallStyle];
-GraphicsRow[Timeline[{Backdrop[inkC], wall}, "Duration" -> 84]["Graphics", #, ImageSize -> 400] & /@ {climaxAt + 0.5, climaxAt + 2.5, climaxAt + 6.5}]
+GraphicsRow[AnimatedGraphics[{Backdrop[inkC], wall}, "Duration" -> 84][#, ImageSize -> 400] & /@ {climaxAt + 0.5, climaxAt + 2.5, climaxAt + 6.5}]
 ```
 
-The words over time, a line through every release, drawn on a Stage in pixels of the frame:
+The words over time, a line through every release: ordinary graphics in their own coordinates, inset into a rectangle of the frame:
 
 ```wl
 yearOf[d_] := 1986 + QuantityMagnitude[DateDifference[DateObject[{1986, 1, 1}], d, "Year"]];
 growthPoints = MapThread[{1680 (yearOf[#1] - 1986) / 42, 780 #2 / Length[lexicon]} &, {released, Accumulate[Length[#Words] & /@ releases]}];
-growthCurve = Stage[Function[t, Module[{fade = 1 - 0.81 Tween[climaxAt + {1.8, 2.2}, "InCubic"][t], u, path = {{0, 0}}, k = 1},
+growthCurve = AnimatedGraphics[{climaxAt, climaxAt + 8} -> Function[t, Module[{fade = 1 - 0.81 Tween[climaxAt + {1.8, 2.2}, "InCubic"][t], u, path = {{0, 0}}, k = 1},
     While[k <= Length[growthPoints] && (u = Tween[climaxAt + {k - 2, k - 1} / 8, "OutCubic"][t]) > 0,
         AppendTo[path, path[[-1]] + (growthPoints[[k]] - path[[-1]]) u]; If[u < 1, Break[]]; k++];
     {Opacity[0.15 fade, RGBColor["#FF3B1F"]], AbsoluteThickness[26], Line[path], Opacity[0.3 fade, RGBColor["#FF3B1F"]], AbsoluteThickness[14], Line[path],
      Opacity[fade, RGBColor["#FF3B1F"]], AbsoluteThickness[6], Line[path],
      Table[With[{v = Tween[climaxAt + {k - 1, k - 0.36} / 8, {"OutBack", 3}][t]}, If[v <= 0, Nothing,
         {Opacity[fade, boneC], Disk[growthPoints[[k]], 7 v], Text[Style[releases[[k, "Label"]], 20, Bold, FontFamily -> "Source Code Pro"], growthPoints[[k]] + {0, 18}, {0, -1}]}]],
-        {k, Length[growthPoints]}]}]], {climaxAt, climaxAt + 8}, PlotRange -> {{0, 1680}, {0, 780}}, "Screen" -> {120, 180, 1680, 780}];
-Timeline[{Backdrop[inkC], growthCurve}, "Duration" -> 84]["Graphics", climaxAt + 1.9, ImageSize -> 480]
+        {k, Length[growthPoints]}]}]], PlotRange -> {{0, 1680}, {0, 780}}, "Screen" -> {120, 180, 1680, 780}];
+AnimatedGraphics[{Backdrop[inkC], growthCurve}, "Duration" -> 84][climaxAt + 1.9, ImageSize -> 480]
 ```
 
 What it says, in panels on the left, and specimens of real words on the right:
@@ -893,9 +893,9 @@ What it says, in panels on the left, and specimens of real words on the right:
 statement[{t0_, t1_}, big_, small_, hl_ : None] := With[{w = 80 + Max[CanvasTextWidth[big, CanvasFont["Source Sans 3", 64, 800]], CanvasTextWidth[small, CanvasFont["Source Sans 3", 30]]]},
     {{t0, t1} -> Function[t, CanvasRectangle[{70, 180 - 20 (1 - Tween[{t0, t0 + 0.2}, "OutExpo"][t]), w, 250}, inkC, "Radius" -> 6,
         Opacity -> 0.86 Tween[{t0, t0 + 0.2}, "OutExpo"][t] (1 - Tween[{t1 - 0.15, t1}, "InCubic"][t])]],
-     Title[big, {t0, t1}, Position -> {110, 300}, Alignment -> Left, FontSize -> 64, FontWeight -> 800, FontColor -> boneC, "Highlight" -> hl, "HighlightColor" -> RGBColor["#FF3B1F"],
+     TitleCard[big, {t0, t1}, Position -> {110, 300}, Alignment -> Left, FontSize -> 64, FontWeight -> 800, FontColor -> boneC, "Highlight" -> hl, "HighlightColor" -> RGBColor["#FF3B1F"],
         "EnterTime" -> 0.2, "Exit" -> "Fade", "ExitTime" -> 0.15],
-     Title[small, {t0, t1}, Position -> {112, 370}, Alignment -> Left, FontSize -> 30, FontWeight -> 400, FontColor -> RGBColor["#B9BBC2"], "EnterTime" -> 0.2, "Exit" -> "Fade", "ExitTime" -> 0.15]}];
+     TitleCard[small, {t0, t1}, Position -> {112, 370}, Alignment -> Left, FontSize -> 30, FontWeight -> 400, FontColor -> RGBColor["#B9BBC2"], "EnterTime" -> 0.2, "Exit" -> "Fade", "ExitTime" -> 0.15]}];
 card[{t0_, t1_}, title_, body_] := {t0, t1} -> Function[t, With[{u = Tween[{t0 + 0.1, t0 + 0.35}, "OutExpo"][t], dy = 30 (1 - Tween[{t0 + 0.1, t0 + 0.35}, "OutExpo"][t])},
     CanvasOpacity[u (1 - Tween[{t1 - 0.15, t1}, "InCubic"][t]), {CanvasRectangle[{1250, 170 + dy, 590, 740}, inkC, "Radius" -> 8, Opacity -> 0.9],
         CanvasText[ToUpperCase[title], {1286, 226 + dy}, CanvasFont["Source Sans 3", 18, 600], red, "Tracking" -> 3], body[t, {1286, 270 + dy}]}]]];
@@ -924,7 +924,7 @@ climax = With[{c = climaxAt, top = Take[byFrequency, 12], avg = Values[averageLe
                 Alignment -> Center, Opacity -> k], {}]}] &, avg]}]],
     card[c + {6, 7}, "Words that ask", wordColumns[questions, c + 6.1]],
     card[c + {7, 8}, "Words named after people", wordColumns[eponyms, c + 7.1]]}];
-GraphicsRow[Timeline[{Backdrop[inkC], climax}, "Duration" -> 84]["Graphics", #, ImageSize -> 400] & /@ (climaxAt + {0.9, 3, 5.5})]
+GraphicsRow[AnimatedGraphics[{Backdrop[inkC], climax}, "Duration" -> 84][#, ImageSize -> 400] & /@ (climaxAt + {0.9, 3, 5.5})]
 ```
 
 ## Bars 77 to 84: Still Growing
@@ -933,17 +933,17 @@ The page falls away and fades to paper, a fresh notebook deploys the film to the
 
 ```wl
 filmURL = "https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1.mp4";
-outro = {{end, end + 2} -> Function[t, CanvasRectangle[{0, 0, 1920, 1080}, ground[t], Opacity -> Tween[{end, end + 1.2}, "InCubic"][t]]],
+outro = {Backdrop[ground, {end, end + 2}, Opacity -> Tween[{end, end + 1.2}, "InCubic"]],
     NotebookSession[{{end + 1.6, "In", "CopyFile[\"In1.mp4\", CloudObject[\"WolframFilm/In1.mp4\", Permissions -> \"Public\"]]", 0.6},
-        {end + 2.4, "Out", CloudObject[filmURL]}}, {end + 1.4, 84}, "Era" -> "BigSur2020", "Title" -> "Deploy.nb", "Screen" -> {260, 110, 1400, 470}, "EnterTime" -> 0.35, "PushIn" -> 0],
-    Title[commas[Length[lexicon]] <> " words.", {end + 3.75, end + 6.9}, Position -> {960, 720}, FontSize -> 76, FontWeight -> 800, FontColor -> fg, "Enter" -> "Fade", "EnterTime" -> 0.25,
+        {end + 2.4, "Out", CloudObject[filmURL]}}, {end + 1.4, 84}, "Era" -> "BigSur2020", "Title" -> "Deploy.nb", "Screen" -> {260, 110, 1400, 470}, "EnterTime" -> 0.35, "PushIn" -> 0, "Pulse" -> None],
+    TitleCard[commas[Length[lexicon]] <> " words.", {end + 3.75, end + 6.9}, Position -> {960, 720}, FontSize -> 76, FontWeight -> 800, FontColor -> fg, "Enter" -> "Fade", "EnterTime" -> 0.25,
         "Exit" -> "Fade", "ExitTime" -> 0.6],
-    Title["Still growing.", {end + 4.25, end + 6.9}, Position -> {960, 810}, FontSize -> 76, FontWeight -> 300, FontColor -> red, "Enter" -> "Fade", "EnterTime" -> 0.25, "Exit" -> "Fade", "ExitTime" -> 0.6],
-    Title["THE WOLFRAM LANGUAGE  \[CenterDot]  1988 \[Dash] 2026", {end + 5, end + 6.9}, Position -> {960, 930}, FontSize -> 26, FontWeight -> 600, FontColor -> RGBColor["#8B877F"],
+    TitleCard["Still growing.", {end + 4.25, end + 6.9}, Position -> {960, 810}, FontSize -> 76, FontWeight -> 300, FontColor -> red, "Enter" -> "Fade", "EnterTime" -> 0.25, "Exit" -> "Fade", "ExitTime" -> 0.6],
+    TitleCard["THE WOLFRAM LANGUAGE  \[CenterDot]  1988 \[Dash] 2026", {end + 5, end + 6.9}, Position -> {960, 930}, FontSize -> 26, FontWeight -> 600, FontColor -> RGBColor["#8B877F"],
         "Tracking" -> 6, "Enter" -> "Fade", "EnterTime" -> 0.5, "Exit" -> "Fade", "ExitTime" -> 0.6],
-    Spikey[{end + 4.5, 84}, Position -> {960, 980}, "Radius" -> 42, "Version" -> 15, "EnterTime" -> 0.4, "Pulse" -> kick],
-    {end + 6.4, 84} -> Function[t, CanvasRectangle[{0, 0, 1920, 1080}, Black, Opacity -> Clip[(t - end - 6.4) / 0.6, {0, 1}]]]};
-Timeline[{Backdrop[ground, {0, 84}], outro}, "Duration" -> 84]["Graphics", end + 5.8, ImageSize -> 480]
+    Spikey[{end + 4.5, 84}, Position -> {960, 980}, "Radius" -> 42, "Version" -> 15, "EnterTime" -> 0.4],
+    Backdrop[Black, {end + 6.4, 84}, Opacity -> Tween[{end + 6.4, 84}, "Linear"]]};
+AnimatedGraphics[{Backdrop[ground, {0, 84}], outro}, "Duration" -> 84][end + 5.8, ImageSize -> 480]
 ```
 
 ## The Film
@@ -963,14 +963,14 @@ hud = {eraLabel[{12, 16}, "Mathematica 1.0", "June 23, 1988 \[CenterDot] Macinto
     eraLabel[{53, 54}, "Version 13.2", "December 2022 \[CenterDot] astronomy"], eraLabel[{54, 55}, "Paclet Repository", "March 2023 \[CenterDot] whole frameworks"],
     eraLabel[{55, 59}, "Version 13.3", "June 2023 \[CenterDot] chat notebooks"], eraLabel[{59, 61}, "Version 14", "2024 \[Dash] 2025 \[CenterDot] dark mode arrives in 14.3"],
     eraLabel[{61, 67}, "Version 15", "June 16, 2026"],
-    Counter[wordCount, {12, end + 0.5}, "Label" -> "Words in the language", FontColor -> fg, "Exit" -> "Fade", "ExitTime" -> 0.5],
+    NumberCounter[wordCount, {12, end + 0.5}, "Label" -> "Words in the language", FontColor -> fg, "Exit" -> "Fade", "ExitTime" -> 0.5],
     YearRuler[{{4, 1979.85}, {8, 1981.45}, {8.5, 1986.8}, {12, 1988.47}, {16, 1988.9}, {20, 1991.04}, {22, 1996.67}, {24, 1999.38}, {25, 2002.}, {26, 2004.8},
         {28, 2007.33}, {34, 2008.88}, {35, 2010.87}, {37, 2012.9}, {38.5, 2013.87}, {40.5, 2014.52}, {44.85, 2015.5}, {46, 2016.6}, {47, 2017.3}, {47.75, 2018.45},
         {48.25, 2019.45}, {49, 2019.29}, {51, 2020.2}, {51.9, 2021.38}, {53, 2022.95}, {54, 2023.2}, {55, 2023.49}, {59, 2024.03}, {60, 2025.6}, {61, 2026.46},
         {67, 2026.6}, {77, 2026.75}}, {4, end + 0.5},
         "Marks" -> {{1988.47, "1.0"}, {1991.04, "2.0"}, {1996.67, "3.0"}, {1999.38, "4"}, {2003.5, "5"}, {2007.33, "6.0"}, {2008.88, "7"}, {2010.87, "8"}, {2012.9, "9"},
             {2014.52, "10"}, {2016.6, "11"}, {2019.29, "12"}, {2022.95, "13"}, {2024.03, "14"}, {2026.46, "15"}},
-        "Pulse" -> kick, FontColor -> fg, "Exit" -> "Fade", "ExitTime" -> 0.5]};
+        FontColor -> fg, "Exit" -> "Fade", "ExitTime" -> 0.5]};
 ```
 
 The edit: the segments stacked in time, a soft backdrop keeping the narration legible over the wall, the window through its eras, the score underneath, and the typing heard, key by key, from everything the film types:
@@ -978,22 +978,22 @@ The edit: the segments stacked in time, a soft backdrop keeping the narration le
 ```wl
 column = {12, 67} -> Function[t, {CanvasGradient[{1190, 0, 100, 1080}, "Horizontal", ground[t], {{0, 0}, {1, 0.88}}],
     CanvasRectangle[{1290, 0, 630, 1080}, ground[t], Opacity -> 0.88], CanvasGradient[{0, 0, 1920, 170}, "Vertical", ground[t], {{0, 0.9}, {1, 0}}]}];
-film = Timeline[{coldOpen, smp, paper, y1986, name, wall, column, v1, next, v2, v3, v4, v5, v6, v10, v11, chat, v14, v15, prints, characters, grammar,
-    v1Story, nextStory, midStory, lateStory, modernStory, repos, families, breakdown, wlTitle, agents, highFive, climax, outro, hud},
-    "Duration" -> 84, "SecondsPerUnit" -> 2, "Soundtrack" -> score, "Foley" -> True]
+film = AnimatedGraphics[{coldOpen, smp, paper, y1986, name, wall, column, v1, next, v2, v3, v4, v5, v6, v10, v11, chat, v14, v15, prints, characters, grammar,
+    v1Story, nextStory, midStory, lateStory, modernStory, repos, families, breakdown, wlTitle, agents, highFive, climax, outro, hud, score},
+    "CyclesPerSecond" -> 1/2, "Foley" -> True, BaseStyle -> {"Pulse" -> kick}]
 ```
 
 Eighteen moments of it:
 
 ```wl
-GraphicsGrid[Partition[film["Graphics", #, ImageSize -> 400] & /@ {3.2, 7.6, 11.3, 13.3, 17, 19.6, 21.8, 23.8, 30.8, 33.6, 36.9, 40.9,
+GraphicsGrid[Partition[film[#, ImageSize -> 400] & /@ {3.2, 7.6, 11.3, 13.3, 17, 19.6, 21.8, 23.8, 30.8, 33.6, 36.9, 40.9,
     45.9, 50.9, 58.5, 64, 68.3, 81.8}, 3], ImageSize -> 1200]
 ```
 
 Render it, frames in parallel, to a file beside this notebook, and store it in the cloud, public, the way the video player's Store in Cloud (Public) does: a CloudObject copy, which the Video then plays from:
 
 ```wl
-film["Video", ExpandFileName["In1.mp4"]];
+Export["In1.mp4", film];
 video = Video[CopyFile["In1.mp4", CloudObject["WolframFilm/In1.mp4", Permissions -> "Public"], OverwriteTarget -> True]]
 ```
 
