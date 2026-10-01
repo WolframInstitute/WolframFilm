@@ -237,7 +237,7 @@ score = Mixer["Sidechain" -> kick, "Cutoff" -> musicCutoff, "FadeOut" -> 5/4][Tr
 The whole soundtrack, a bar every two seconds (the typing heard in the film is added by the film itself, from what it types):
 
 ```wl
-Audio[score, 84, "CyclesPerSecond" -> 1/2]
+score["Audio", 84, "CyclesPerSecond" -> 1/2]
 ```
 
 ## Bars 0 to 4: The Thesis
