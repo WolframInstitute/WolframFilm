@@ -10,10 +10,11 @@ soundtrack is a symbolic score rendered by a small synth. No generative image/vi
 
 ## Watch
 
-- **Director's cut** (player, chapters, synced commentary, every snippet runnable, English · Русский · 日本語): https://claude.ai/artifact/WtXWEDdZMxrMUgBEdiQi4X
+- **Director's cut** (player, chapters, synced commentary, every snippet runnable, English · Русский · 日本語): https://claude.ai/artifact/7DnTACiGrt9hpVJW6bxxJo
 - English: https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1.mp4
 - Русский: https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1-ru.mp4
 - 日本語: https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1-ja.mp4
+- Notebook (the film as a Wolfram Language essay, WAnim): https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1.nb
 - Source: https://github.com/WolframInstitute/WolframFilm
 
 Made with Claude Opus 5.5 in Claude Code, following the September 2026 trend of films rendered entirely by model-written code:

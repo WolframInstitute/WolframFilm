@@ -5,4 +5,4 @@
   (keeps the playhead, remembered per viewer, linkable as `#ru` / `#ja`)
 - video: `scripts/build-lang.sh L` writes 4 s fragmented-MP4 segments to `out/player/` (English) and `out/player/{ru,ja}/`,
   published as `video/segNNN.mp4` and `video/{ru,ja}/segNNN.mp4` (one publish per language: each is ~53 MB, the limit is 64 MB)
-- Published at https://claude.ai/artifact/WtXWEDdZMxrMUgBEdiQi4X
+- Published at https://claude.ai/artifact/7DnTACiGrt9hpVJW6bxxJo
