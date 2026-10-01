@@ -164,7 +164,7 @@ feynmanVoice = Track[{{feynmanAt, 1.9, feynmanAudio}}];
 The music runs through a low-pass that opens with the century: muffled before 1926, opening on the wave equation, closing for the breakdown, and drying out -- losing its reverb -- as the cat decoheres (the mix itself is at the end, with every part):
 
 ```wl
-musicCutoff[b_] := Which[b < 4, 900, b < 16, 900 + 2600 (b - 4) / 12, in[b, "breakdown"], 600 30^(((b - at["breakdown"]) / 2)^2), True, 18000];
+musicCutoff[b_] := Which[b < 4, 900, b < 16, 900 + 2600 (b - 4) / 12, in[b, "breakdown"], If[b < 39.6, 380, 380 48^(((b - 39.6) / 0.4)^2)], True, 18000];
 Plot[musicCutoff[b], {b, 0, 81}, ScalingFunctions -> "Log", PlotRange -> All, AxesLabel -> {"bar", "Hz"}]
 ```
 
@@ -639,8 +639,8 @@ blochSphere[{cx_, cy_}, r_, th_, ph_, colour_] := {CanvasDisk[{cx, cy}, r, RGBCo
 grover[k_] := With[{th = ArcSin[1 / 4.]}, With[{p = Sin[(2 k + 1) th]^2}, ReplacePart[ConstantArray[(1 - p) / 15, 16], 11 -> p]]];
 computingScene = {
     CaptionText["\[OpenCurlyDoubleQuote]Nature isn\[CloseCurlyQuote]t classical, dammit, and if you want to make a simulation of nature, you\[CloseCurlyQuote]d better make it quantum mechanical.\[CloseCurlyDoubleQuote]",
-        {48, 50}, Position -> {260, 380}, FontSize -> 60, "Width" -> 1400, FontColor -> boneC, "Highlight" -> "quantum"],
-    TitleCard["Richard Feynman, 1981", {49.2, 50}, Position -> {960, 760}, FontSize -> 28, FontWeight -> 400, FontColor -> RGBColor["#8E8B84"], "Enter" -> "Fade", "Exit" -> "Cut"],
+        {48, 49.9}, Position -> {260, 380}, FontSize -> 60, "Width" -> 1400, FontColor -> boneC, "Highlight" -> "quantum", "Exit" -> "Cut"],
+    TitleCard["Richard Feynman, 1981", {49.2, 49.9}, Position -> {960, 760}, FontSize -> 28, FontWeight -> 400, FontColor -> RGBColor["#8E8B84"], "Enter" -> "Fade", "Exit" -> "Cut"],
     {50, 51.5} -> Function[t, Table[blochSphere[{360 + 400 j, 560}, 150, Pi (0.5 + 0.45 Sin[3 t + j]), 4 t + j, Hue[j / 4, 0.7, 0.95]], {j, 0, 3}]],
     say["Qubits: waves you can program.", {50.1, 51.5}, {1100, 880}, "program"],
     {51.5, 54} -> Function[t, With[{k = Clip[Floor[(t - 51.5) / 0.6], {0, 3}], u = Clip[FractionalPart[(t - 51.5) / 0.6] / 0.5, {0, 1}]}, With[{p = (1 - u) grover[Max[0, k - 1]] + u grover[k]},
@@ -736,7 +736,7 @@ score = Mixer["Sidechain" -> kick, "Cutoff" -> musicCutoff, "FadeOut" -> 5/4][Tr
     Instrument["Arp"][arps], Instrument["Bell"][atomBells], Instrument["Lead"][lead],
     Instrument["SoftKick"][coldKicks], Instrument["Hat"][clicksCold], Instrument["Kick"][kick], Instrument["Clap"][claps], Instrument["Hat"][hats], Instrument["OpenHat"][openHats],
     Instrument["Kick"][pairKick], Instrument["Clap"][pairClap],
-    Instrument["Gain" -> 1.6][feynmanVoice], Instrument["Crash"][crashes], Instrument["Riser"][risers], Instrument["Roll"][rolls], Instrument["Impact"][impacts]}]];
+    Instrument["Gain" -> 2.4][feynmanVoice], Instrument["Crash"][crashes], Instrument["Riser"][risers], Instrument["Roll"][rolls], Instrument["Impact"][impacts]}]];
 ```
 
 ## The Film
