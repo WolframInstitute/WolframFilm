@@ -3,50 +3,66 @@ Template: ComputationalEssay
 Name: "ψ — The Quantum Century"
 Author: Nikolay Murzin
 Date: 2026
-Description: "A film about a hundred years of quantum theory, computed and composed entirely in this notebook with WAnim"
-Abstract: "In January 1926 Schrödinger wrote down the equation of a wave that no one had seen: the wave function. This notebook makes a short film about the century since -- the quanta of 1900, the atom's notes, the wave and its clicks, uncertainty, tunneling, entanglement, the world it built and the computers it is building -- in which every picture is solved, sampled or simulated here, and every note is physics too."
-Keywords: [WAnim, quantum mechanics, wave function, Schrödinger equation, hydrogen, double slit, entanglement, Wigner function, film, music]
-Sources: ["[WAnim](https://github.com/sw1sh/WAnim)", "[Wolfram Quantum Framework](https://resources.wolframcloud.com/PacletRepository/resources/Wolfram/QuantumFramework/)", "[International Year of Quantum Science and Technology](https://quantum2025.org/about-iyq-2025/)"]
+Description: "A short documentary about a hundred years of quantum theory, told in the voices of the people who made it, over real experiments and computed pictures, made entirely in this notebook with WAnim"
+Abstract: "In January 1926 Schrödinger wrote down the equation of a wave no one had seen. This notebook makes a five-minute documentary about the century since, narrated only by recordings of the physicists themselves -- Planck, Bohr, de Broglie, Heisenberg, Dirac, Schrödinger, Born, Bell, Aspect, Feynman, Zeilinger -- over film of real experiments and pictures computed here: the blackbody curve, hydrogen's orbitals, a wave packet tunnelling through a wall, the Wigner function of Schrödinger's cat."
+Keywords: [WAnim, documentary, quantum mechanics, wave function, Schrödinger equation, archival film, hydrogen, entanglement]
+Sources: ["[WAnim](https://github.com/sw1sh/WAnim)", "[The film's clips and their sources](https://github.com/WolframInstitute/WolframFilm/blob/main/films/Quantum/docs/CLIPS.md)", "[The facts, checked](https://github.com/WolframInstitute/WolframFilm/blob/main/films/Quantum/docs/SOURCES.md)"]
 Links: ["[What Is a Computational Essay?](https://writings.stephenwolfram.com/2017/11/what-is-a-computational-essay/)"]
 ---
 
-## The Wave and the Click
+## A Film Told by Its Physicists
 
-Quantum theory has two faces.  The wave function ψ is continuous and smooth, and it evolves without surprises; but whenever anything looks, there is a click -- one dot, one outcome, at random, where the wave was bright.  This film is drawn the same way: its pictures are waves, its rhythm is clicks.
+This documentary has no narrator.  Its story is told by the people who made quantum theory, in recordings from 1942 to 2022: a film portrait of Max Planck, Niels Bohr's last lecture, Louis de Broglie on French television, Werner Heisenberg in a Canadian interview, Erwin Schrödinger and Max Born on German radio, John Bell and Alain Aspect on film, Richard Feynman's Messenger lectures, Anton Zeilinger's Nobel lecture.  Between their words the pictures are real experiments -- electrons arriving one by one, glowing steel, ultraviolet light discharging a zinc plate, electron diffraction rings, cloud-chamber tracks, a quantum processor -- and computed ones, the physics they describe solved in this notebook.
 
-The film is made with WAnim, a film is an AnimatedGraphics, and the discrete quantum systems near the end come from the Wolfram Quantum Framework:
+The film is made with WAnim; its archival clips play with ArchiveClip, which puts a film's picture in the frame and its voice in the soundtrack, the music ducked beneath:
 
 ```wl
 PacletInstall["WolframInstitute/WAnim"]; PacletInstall["Wolfram/QuantumFramework"];
 Needs["WolframInstitute`WAnim`"]; Needs["Wolfram`QuantumFramework`"];
 ```
 
-The film counts in bars of 120 BPM, two seconds each; these are its sections:
+The clips are cut from their sources (listed, with their rights, in the film's CLIPS.md) and kept beside the film in the cloud:
 
 ```wl
-sections = <|"cold" -> {0, 4}, "planck" -> {4, 8}, "atoms" -> {8, 12}, "rules" -> {12, 16}, "psi" -> {16, 22}, "born" -> {22, 26},
-    "uncertainty" -> {26, 30}, "walls" -> {30, 34}, "entangle" -> {34, 38}, "breakdown" -> {38, 40}, "built" -> {40, 48},
-    "computing" -> {48, 54}, "decoherence" -> {54, 58}, "chaos" -> {58, 62}, "climax" -> {62, 74}, "outro" -> {74, 81}|>;
-at[k_, o_ : 0] := sections[k][[1]] + o;
-in[b_, {a_, z_}] := a <= b < z;
-in[b_, k_String] := in[b, sections[k]];
-inAny[b_, spans_List] := AnyTrue[spans, in[b, #] &];
-end = at["outro"]; duration = 81;
+archive[name_String] := "https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/Quantum/archive/" <> name;
+image[name_String] := Import[archive[name]];
 ```
 
-## Paper and Dark
+Time in this film is in seconds.
 
-Before the wave equation the film is ink on paper, as physics was; from January 1926 it is light on dark, where ψ glows:
+## The Look
+
+Light on dark, as a documentary is; Wolfram red for the year and the speaker's name; Manim blue and phase colour for the physics:
 
 ```wl
-{paperC, inkC, boneC, red, blue} = RGBColor /@ {"#F4F1EA", "#0E0F11", "#EDE9E0", "#DD1100", "#58C4DD"};
-dark[t_] := Which[t < 15.75, 0, t < 16.25, Easing["InOutCubic"][(t - 15.75) / 0.5], True, 1];
-ground = Blend[{paperC, inkC}, dark[#]] &; fg = Blend[{inkC, boneC}, dark[#]] &; soft = Blend[{RGBColor["#6E6A62"], RGBColor["#8E8B84"]}, dark[#]] &;
-serif[size_, italic_ : False] := CanvasFont["Source Serif 4", size, 400, italic];
+{inkC, boneC, red, blue, grey} = RGBColor /@ {"#0B0C0E", "#EDE9E0", "#DD1100", "#58C4DD", "#8E8B84"};
 sans[size_, weight_ : 600] := CanvasFont["Source Sans 3", size, weight];
+serif[size_, italic_ : False] := CanvasFont["Source Serif 4", size, 400, italic];
 ```
 
-A complex number is drawn as physicists draw it: its size as brightness, its phase as hue.  A wave along a line is a ribbon of thin columns, each as tall as |ψ| and coloured by its phase:
+Every voice is an ArchiveClip filling the frame, shown only while the film looks at its speaker -- "Show" -- and subtitled while it speaks, its speaker named the first time it is seen; footage is the same, silent, its moment stretched or squeezed onto its span:
+
+```wl
+voice[name_, t0_, {in_, out_}, show_, credit_, subs_] := ArchiveClip[archive[name <> ".mp4"], {t0, t0 + out - in}, "From" -> in, "To" -> out,
+    "Style" -> "Full", "Show" -> Replace[show, None -> {}], "Credit" -> credit, "Subtitle" -> subs, "Zoom" -> 0.03, "Duck" -> 0.15];
+footage[name_, {t0_, t1_}, {in_, out_}, zoom_ : 0.04] := ArchiveClip[archive[name <> ".mp4"], {t0, t1}, "From" -> in, "To" -> out, "Style" -> "Full",
+    "Sound" -> False, "Zoom" -> zoom, "Enter" -> "Cut", "Exit" -> "Cut"];
+```
+
+A still photograph or a page is shown the same way, pushing in slowly; the year and place sit in the top corner; a computed shot is a function of time on the dark ground:
+
+```wl
+still[img_, {t0_, t1_}, zoom_ : 0.06] := {t0, t1} -> Function[t, With[{d = ImageDimensions[img], z = 1 + zoom (t - t0) / (t1 - t0)},
+    With[{s = z Min[1920 / d[[1]], 1080 / d[[2]]]}, {CanvasRectangle[{0, 0, 1920, 1080}, inkC],
+        CanvasClip[{0, 0, 1920, 1080}, CanvasImage[img, {960 - s d[[1]] / 2, 540 - s d[[2]] / 2, s d[[1]], s d[[2]]}]]}]]];
+year[{t0_, t1_}, y_, place_] := {TitleCard[y, {t0, t1}, Position -> {96, 96}, Alignment -> Left, FontSize -> 44, FontWeight -> 700, FontColor -> red, "Enter" -> "Fade", "Exit" -> "Fade"],
+    TitleCard[place, {t0, t1}, Position -> {96, 142}, Alignment -> Left, FontSize -> 26, FontWeight -> 400, FontColor -> boneC, "Enter" -> "Fade", "Exit" -> "Fade"]};
+shot[{t0_, t1_}, f_] := {t0, t1} -> Function[t, {CanvasRectangle[{0, 0, 1920, 1080}, inkC], f[t]}];
+```
+
+## The Wave, Computed
+
+A complex number drawn as physicists draw it -- its size as brightness, its phase as hue -- and a wave along a line as a ribbon of thin columns:
 
 ```wl
 phaseColour[z_, a_ : 1] := Hue[Mod[Arg[z] / (2 Pi), 1], 0.78, 0.35 + 0.65 a];
@@ -58,31 +74,78 @@ phaseImage[z_ ? MatrixQ, gamma_ : 0.6] := With[{a = Abs[z] / Max[Abs[z]]},
     ColorConvert[Image[Transpose[{Mod[Arg[z] / (2 Pi), 1], ConstantArray[0.8, Dimensions[z]], a^gamma}, {3, 1, 2}], ColorSpace -> "HSB"], "RGB"]];
 ```
 
-A free particle, as Schrödinger's equation moves it: a Gaussian packet travelling and spreading, in closed form (ħ = m = 1):
+A free particle as Schrödinger's equation moves it: a Gaussian packet travelling and spreading, in closed form (ħ = m = 1):
 
 ```wl
 packet[x_, t_, k_ : 4, a_ : 1, x0_ : 0] := (2 a / Pi)^(1/4) / Sqrt[1 + 2 I a t] Exp[(-a (x - x0)^2 + I k (x - x0) - I k^2 t / 2) / (1 + 2 I a t)];
 xs = Subdivide[-6., 18., 360];
-AnimatedGraphics[{Backdrop[Black], {0, 2} -> Function[t, waveRibbon[packet[xs, 1.6 t], {160, 760, 1600, 520}, 1, 1]]}, "Duration" -> 2]
+AnimatedGraphics[{Backdrop[inkC], {0, 2} -> Function[t, waveRibbon[packet[xs, t], {160, 760, 1600, 520}, 1]]}, "Duration" -> 2][1, ImageSize -> 480]
 ```
 
-## From the Archive
+## 0:00 — Clicks
 
-The people and pages of the story, from public archives, kept in the cloud beside the film (the originals' credits are in the references): Helgoland as it looked around 1900, Heisenberg in 1926, the first page of Schrödinger's paper, the page of Born's with the footnote that made |ψ|² a probability, the Solvay conference of 1927, and Feynman in 1964:
+Electrons sent through two slits one at a time, filmed as they land (Bach, Pope, Liou and Batelaan, 2013): each arrives in one place, at random, and together they draw the interference of a wave.  Beside them, the same experiment computed: six thousand landing places sampled from the two-slit pattern:
 
 ```wl
-archive[name_] := Import["https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/Quantum/archive/" <> name];
-helgoland = archive["helgoland.jpg"]; heisenberg1926 = archive["heisenberg1926.jpg"];
-schrodingerPage = archive["schrodinger1926.jpg"]; solvay = archive["solvay1927.jpg"];
-bornFootnote = ImageTake[archive["born1926-p865.jpg"], {1830, 2130}, {110, 1370}];
-feynmanClip = "https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/Quantum/archive/feynman-nobody.mp4";
-feynmanFrames = Import[feynmanClip, "ImageList"]; feynmanAudio = Import[feynmanClip, "Audio"];
-{Length[feynmanFrames], Duration[feynmanAudio], bornFootnote}
+slitIntensity[x_] := Cos[2.6 x]^2 Sinc[0.55 x]^2;
+landing = BlockRandom[SeedRandom[1989]; With[{grid = Subdivide[-7., 7., 4000]},
+    Transpose[{RandomChoice[slitIntensity /@ grid -> grid, 6000] + RandomReal[{-0.002, 0.002}, 6000], RandomReal[{-1, 1}, 6000] + RandomVariate[NormalDistribution[0, 0.12], 6000]}]]];
+screenDots[n_, {x0_, y0_, w_, h_}, r_ : 1.7] := Table[CanvasDisk[{x0 + w (landing[[k, 1]] + 7) / 14, y0 + h / 2 + 0.45 h landing[[k, 2]]}, r, RGBColor["#9FE6FF"], Opacity -> 0.8], {k, Min[n, 6000]}];
+Histogram[landing[[All, 1]], 120, Axes -> False, ImageSize -> 400]
 ```
 
-## The Score
+Feynman, in 1964, on what a detector hears: clicks.
 
-The harmony walks Am, F, Dm, E, and its roots are hydrogen's: the atom's four visible lines, Balmer's series, sound A, D, E and F when Hα is tuned to A.  The Rydberg formula gives their frequencies:
+```wl
+coldOpen = {footage["f-electrons", {0, 13.6}, {0, 72}, 0.08],
+    voice["v-feynman-clicks", 2, {0.2, 11.2}, {{4.6, 7.6}}, {"Richard Feynman", "Messenger Lectures, Cornell, 1964"},
+        {{0, 11, "\[Ellipsis]are clicks.  Click, click, click, click\[Ellipsis]  Lumps.  Absolutely lumps."}}],
+    shot[{13.6, 18.5}, Function[t, {screenDots[Round[6000 Clip[(t - 13.6) / 3, {0, 1}]^0.6], {260, 300, 1400, 480}, 1.7]}]],
+    TitleCard["\[Psi]", {14.2, 18.4}, Position -> {960, 880}, FontSize -> 120, FontWeight -> 400, FontFamily -> "Source Serif 4", FontSlant -> "Italic", FontColor -> boneC, "Enter" -> "Fade", "Exit" -> "Fade"],
+    TitleCard["THE QUANTUM CENTURY", {14.6, 18.4}, Position -> {960, 990}, FontSize -> 30, FontWeight -> 600, FontColor -> red, "Tracking" -> 8, "Enter" -> "Fade", "Exit" -> "Fade"]};
+```
+
+## 0:18 — 1900: Planck
+
+Planck, in a film portrait made for his 85th year, remembers the hypothesis he did not want: radiation made of quanta of definite size.  Bohr, in 1962, at his last lecture, dates the change to it.  The picture: steel heating in a forge, and the law Planck found for its glow beside the classical one, which runs to infinity:
+
+```wl
+c2 = 1.4388 10^7;
+planck[l_, T_] := 1 / (l^5 (Exp[c2 / (l T)] - 1));
+rayleigh[l_, T_] := T / (c2 l^4);
+plotRect = {260, 240, 1100, 600};
+curvePoints[f_, T_] := With[{peak = planck[2.898 10^6 / T, T]}, Table[{plotRect[[1]] + plotRect[[3]] (l - 100) / 2400, plotRect[[2]] + plotRect[[4]] (1 - 0.85 f[l, T] / peak)}, {l, 100, 2500, 6}]];
+blackbody[t0_][t_] := With[{T = 5000, u1 = Clip[(t - t0 - 0.3) / 1.4, {0, 1}], u2 = Clip[(t - t0 - 2) / 2, {0, 1}], TT = 1800 + 4200 Clip[(t - t0) / 6, {0, 1}]}, {
+    CanvasLine[{{plotRect[[1]], plotRect[[2]] + plotRect[[4]]}, {plotRect[[1]] + plotRect[[3]], plotRect[[2]] + plotRect[[4]]}}, grey, "Thickness" -> 2],
+    Table[CanvasRectangle[{plotRect[[1]] + plotRect[[3]] (l - 100) / 2400, plotRect[[2]] + plotRect[[4]] + 8, plotRect[[3]] 5 / 2400 + 0.5, 20}, ColorData["VisibleSpectrum"][l]], {l, 380, 750, 5}],
+    CanvasClip[plotRect, {CanvasLine[Take[curvePoints[rayleigh, T], Max[2, Round[u1 401]]], grey, "Thickness" -> 4],
+        If[u2 > 0, CanvasLine[Take[curvePoints[planck, T], Max[2, Round[u2 401]]], red, "Thickness" -> 6], {}]}],
+    If[u1 > 0.5, CanvasText["classical physics: infinite", {plotRect[[1]] + 60, plotRect[[2]] + 50}, sans[30, 400], grey], {}],
+    If[u2 > 0.5, CanvasText["Planck, 1900", {plotRect[[1]] + 330, plotRect[[2]] + 130}, sans[34], red], {}],
+    CanvasDisk[{1560, 540}, 150, ColorData["BlackBodySpectrum"][TT], Opacity -> 0.22], CanvasDisk[{1560, 540}, 100, ColorData["BlackBodySpectrum"][TT]],
+    CanvasText[ToString[Round[TT, 100]] <> " K", {1505, 720}, sans[30, 400], grey]}];
+planckPart = {footage["f-forge", {22.5, 27}, {2, 10}],
+    shot[{27, 31.5}, blackbody[27]],
+    voice["v-planck", 18.5, {10, 23}, {{18.5, 22.5}}, {"Max Planck", "Film portrait, 1942"},
+        {{0, 10, "At first I accepted this hypothesis only reluctantly, because it contradicted every idea of classical atomism."}, {10, 13, "But there was no other way."}}],
+    shot[{35.5, 44}, blackbody[35.5]], footage["f-forge", {44, 52.9}, {16, 30}],
+    voice["v-bohr-planck", 31.5, {0.5, 21.9}, {{31.5, 35.5}}, {"Niels Bohr", "Lindau, 1962 \[CenterDot] his last lecture"},
+        {{0, 21.4, "The great change came with the discovery of the universal quantum of action, in the first year of this century, by Planck."}}],
+    year[{18.5, 52.9}, "1900", "Max Planck \[CenterDot] Berlin"]};
+```
+
+## 0:53 — 1905 to 1913: Light Quanta, and the Atom
+
+Bohr again: Einstein explained the photoelectric effect by a transfer of a light quantum.  The 1961 film of the Physical Science Study Committee shows it: ultraviolet light discharging a zinc plate, its electroscope's leaf falling:
+
+```wl
+photoPart = {footage["f-photoelectric", {56, 63}, {60, 67}, 0.03], footage["f-photoelectric", {63, 70}, {100, 107}, 0.03],
+    voice["v-bohr-einstein", 52.9, {0.5, 17.6}, {{52.9, 56}}, {"Niels Bohr", "Lindau, 1962"},
+        {{0, 17.1, "Einstein tried to explain the individual photoeffect by assuming that we had to do with a transfer of a light quantum."}}],
+    year[{52.9, 70}, "1905", "Albert Einstein \[CenterDot] Bern"]};
+```
+
+Hydrogen glows at four visible wavelengths and no others.  Bohr's atom of 1913 explained them: the electron keeps to orbits of radius ∝ n², and each line is a fall to the second.  The Rydberg formula gives them, and the music, for a moment, plays them -- the atom's own chord, Hα tuned to A:
 
 ```wl
 balmer = Table[1/4 - 1/m^2, {m, 3, 6}];
@@ -90,215 +153,41 @@ balmerNm = 1 / (1.0967758 10^7 balmer) 10^9
 balmerPitch = N[57 + 12 Log2[balmer / First[balmer]]]
 ```
 
-The four lines, in tune with the atom, are the chord the film keeps returning to; the progression rounds them to the scale:
-
 ```wl
-chordAt[b_] := {{57, 60, 64}, {53, 57, 60}, {50, 53, 57}, {52, 56, 59}}[[Mod[Floor[b], 4] + 1]];
-rootAt[b_] := {45, 41, 38, 40}[[Mod[Floor[b], 4] + 1]];
-rnd[k_] := BlockRandom[SeedRandom[k]; RandomReal[]];
-chordAt /@ Range[0, 3]
+stripRect = {160, 760, 1600, 120}; lineX[l_] := stripRect[[1]] + stripRect[[3]] (l - 380) / 340;
+bohrCentre = {960, 400}; orbitR[n_] := 9 n^2; fallAt[k_] := 74 + k / 2;
+atomShot = shot[{74, 80}, Function[t, {
+    CanvasRectangle[stripRect, RGBColor[0.07, 0.07, 0.08], "Radius" -> 4],
+    Table[CanvasRectangle[{lineX[l], stripRect[[2]], stripRect[[3]] 3 / 340 + 0.5, stripRect[[4]]}, ColorData["VisibleSpectrum"][l], Opacity -> 0.13], {l, 380, 720, 3}],
+    Table[With[{l = balmerNm[[k + 1]], u = Clip[(t - fallAt[k]) / 0.12, {0, 1}]}, If[u > 0, {
+        CanvasRectangle[{lineX[l] - 4, stripRect[[2]], 8, stripRect[[4]]}, ColorData["VisibleSpectrum"][l], Opacity -> u],
+        CanvasRectangle[{lineX[l] - 14, stripRect[[2]], 28, stripRect[[4]]}, ColorData["VisibleSpectrum"][l], Opacity -> 0.25 u],
+        CanvasText["H" <> {"\[Alpha]", "\[Beta]", "\[Gamma]", "\[Delta]"}[[k + 1]] <> "  " <> ToString[Round[l]] <> " nm", {lineX[l] - 50, stripRect[[2]] + stripRect[[4]] + 46 + If[k == 3, 34, 0]}, sans[26, 400], boneC, Opacity -> u]}, {}]], {k, 0, 3}],
+    Table[CanvasDisk[bohrCentre, orbitR[n], grey, "Stroke" -> 1.5, Opacity -> 0.5], {n, 1, 6}], CanvasDisk[bohrCentre, 9, red],
+    With[{k = Clip[Floor[2 (t - 74)], {0, 3}]}, With[{u = Clip[(t - fallAt[k]) / 0.35, {0, 1}], m = k + 3},
+        With[{r = orbitR[m] + (orbitR[2] - orbitR[m]) Easing["InOutCubic"][u], ang = 5 t}, {CanvasDisk[bohrCentre + r {Cos[ang], Sin[ang]}, 9, boneC],
+            If[0 < u < 1, CanvasLine[Table[bohrCentre + (r + 40 + 260 u + s) {Cos[ang], Sin[ang]} + 8 Sin[s / 6] {-Sin[ang], Cos[ang]}, {s, 0, 120, 4}],
+                ColorData["VisibleSpectrum"][balmerNm[[k + 1]]], "Thickness" -> 4], {}]}]]]}]];
+atomPart = {footage["f-spectra", {70, 74}, {30, 34}], atomShot, year[{70, 80}, "1913", "Niels Bohr \[CenterDot] Copenhagen"]};
 ```
 
-The clicks.  A qubit in an equal superposition, measured on every sixteenth note: the Wolfram Quantum Framework samples the outcomes, so the hats play where the qubit came out 1 -- the Born rule as a groove:
+## 1:20 — 1924 to 1927: Matter Is a Wave
+
+De Broglie, on French television in 1967: the idea that every particle is accompanied by a wave.  Lester Germer, in the same PSSC series, at the apparatus where he and Davisson saw electrons diffract like waves in 1927, and the rings electrons make through a crystal:
 
 ```wl
-clicks = BlockRandom[SeedRandom[1926]; Normal[QuantumMeasurementOperator[][QuantumState["Plus"]]["SimulatedMeasurement", 16 duration]] /. QuditName[x_, ___] :> x];
-clicks = Flatten[clicks /. {s_String :> ToExpression[s]}];
-Take[clicks, 32]
+deBrogliePart = {footage["f-germer", {83.5, 87}, {10, 13.5}], footage["f-rings", {87, 90.3}, {60, 63.3}],
+    voice["v-debroglie", 80, {6, 16.3}, {{80, 83.5}}, {"Louis de Broglie", "Les Actualit\[EAcute]s Fran\[CCedilla]aises, 1967"},
+        {{0, 4.5, "After all these studies, I had the idea that one had to extend"}, {4.5, 10.3, "to all material particles, electrons in particular, the idea that the particle is accompanied by a wave."}}],
+    year[{80, 90.3}, "1924", "Louis de Broglie \[CenterDot] Paris"]};
 ```
 
-Two particles in a Bell state, measured together: each outcome random, the pair always equal.  Kick and clap play on the same random sixteenths:
+## 1:30 — 1925: Helgoland
+
+Heisenberg, in English, half a century later: hay fever sent him to an island in June 1925, and there he found quantum mechanics -- position and momentum as arrays that do not commute.  Truncated to the first rows of the harmonic oscillator, *X P* − *P X* is *i* down the diagonal (ħ = 1):
 
 ```wl
-pairs = BlockRandom[SeedRandom[1935]; Normal[QuantumMeasurementOperator[{1, 2}][QuantumState["PhiPlus"]]["SimulatedMeasurement", 16 duration]] /. QuditName[x_, ___] :> x];
-pairs = pairs /. {s_String :> Characters[s]} /. {d_String :> ToExpression[d]};
-Take[pairs, 16]
-```
-
-A particle in a box has energies n²; n² mod 7, for n = 1 to 7, is 1, 4, 2, 2, 4, 1, 0 -- a palindrome, as the box's wave returns on itself.  The arpeggio walks the scale by it:
-
-```wl
-boxSteps = Mod[Range[7]^2, 7]
-scale = {57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 79, 81};
-```
-
-The drums, the bass, the pad, the arpeggio and the atom's bells.  Four on the floor from 1926 on, out for the breakdown; hats on the qubit's clicks; the entangled pair from 1935; the bass on the root, pumping in the drops:
-
-```wl
-drums[b_] := 16 <= b < end && ! in[b, "breakdown"];
-drops = {{16, 22}, {40, 48}, {62, 74}};
-kick = Track[Append[{#, 1/4, "bd"} & /@ Select[Range[16, end - 1/4, 1/4], drums[Floor[#]] &], {end, 1/4, "bd"}]];
-coldKicks = Track[{#, 1/4, "bd", 0.75} & /@ Range[12, 15.5, 1]];
-hats = Track[{#, 1/16, "hh", 0.45 + 0.35 rnd[16 #]} & /@ Select[Range[8, end - 1/16, 1/16], (drums[Floor[#]] || in[#, {8, 16}]) && clicks[[16 # + 1]] == 1 &]];
-openHats = Track[{#, 1/8, "oh", 0.4} & /@ Select[Range[16, end - 1/16, 1/16], Mod[16 #, 4] == 2 && drums[Floor[#]] && inAny[Floor[#], drops] &]];
-claps = Track[{#, 1/4, "cp", 0.8} & /@ Select[Flatten[Table[b + {1/4, 3/4}, {b, 16, end - 1}]], drums[Floor[#]] &]];
-pairKick = Track[{#, 1/16, "bd", 0.55} & /@ Select[Range[at["entangle"], end - 1/16, 1/16], drums[Floor[#]] && pairs[[16 # + 1, 1]] == 1 && Mod[16 #, 4] != 0 &]];
-pairClap = Track[{#, 1/16, "cp", 0.4} & /@ Select[Range[at["entangle"], end - 1/16, 1/16], drums[Floor[#]] && pairs[[16 # + 1, 2]] == 1 && Mod[16 #, 4] != 0 &]];
-bass = Track[Table[With[{b = s / 8}, Which[! drums[Floor[b]], Nothing,
-    inAny[Floor[b], drops], If[OddQ[s], {b, 1/8, rootAt[b] + If[Mod[s, 4] == 3, 12, 0], 0.9}, Nothing],
-    EvenQ[s], {b, 1/8, rootAt[b], 0.8}, True, Nothing]], {s, 8 16, 8 end - 1}]];
-pad = Track[Join[Flatten[Table[{b, 1, #, If[b < 16, 0.5, 0.6]} & /@ chordAt[b], {b, 4, end - 1}], 1], {end, 6, #, 0.85} & /@ Append[chordAt[0], 69]]];
-arps = Track[Flatten[Table[With[{deg = boxSteps[[Mod[s, 7] + 1]]}, {s / 16, 1/16, scale[[deg + 1 + 2 Mod[Floor[s / 16], 4]]], 0.35 + 0.25 rnd[s]}],
-    {s, 16 at["built"], 16 at["computing"] - 1}], 0]];
-atomBells = Track[Join[
-    Table[{at["atoms"] + k / 2, 2.5, balmerPitch[[k + 1]] + 12, 0.8}, {k, 0, 3}],
-    Table[{at["atoms", 2] + k / 4, 1/4, balmerPitch[[Mod[k, 4] + 1]] + 24, 0.5}, {k, 0, 7}],
-    Table[{end + k / 2, 3, balmerPitch[[k + 1]] + 12, 0.7}, {k, 0, 3}]]];
-TrackView["Punchcard", "Cycles" -> 1][Track[TrackShift[-34] /@ {kick, hats, pairKick, pairClap}]]
-```
-
-The tunes: a hook for the wave function's drop, answered in the climax; the seams: crashes on the sections, risers into the drops:
-
-```wl
-hook = {{0, 2, 69}, {2, 1, 72}, {3, 1, 76}, {4, 2, 74}, {6, 2, 72}, {8, 2, 77}, {10, 1, 76}, {11, 1, 74}, {12, 3, 76}, {15, 1, 68}};
-phrase[start_, notes_, vel_, k_ : 0] := {start + #1 / 4, #2 / 4, #3 + k, vel} & @@@ notes;
-lead = Track[Join[phrase[at["psi", 2], hook, 0.75], phrase[at["climax"], hook, 0.8], phrase[at["climax", 4], hook, 0.8, 5], phrase[at["climax", 8], hook, 0.85, 7]]];
-crashes = Track[Join[{{16, 2, "cr", 1}, {40, 2, "cr", 1}, {62, 2, "cr", 1}, {end, 2, "cr", 0.9}}, {at[#], 2, "cr", 0.5} & /@ {"born", "uncertainty", "walls", "entangle", "computing", "decoherence", "chaos"}]];
-risers = Track[{{14, 2, 60, 1}, {at["breakdown"], 1.9, 60, 1.1}, {60, 2, 60, 1}}];
-rolls = Track[{{15, 1, "sd", 0.8}, {at["breakdown", 1], 0.875, "sd", 1}, {61, 1, "sd", 0.9}}];
-impacts = Track[{{16, 2, 60, 1.1}, {40, 2, 60, 1}, {62, 2, 60, 1.2}, {end, 2, 60, 1}}];
-feynmanAt = 38.2;
-feynmanVoice = Track[{{feynmanAt, 1.9, feynmanAudio}}];
-```
-
-The music runs through a low-pass that opens with the century: muffled before 1926, opening on the wave equation, closing for the breakdown, and drying out -- losing its reverb -- as the cat decoheres (the mix itself is at the end, with every part):
-
-```wl
-musicCutoff[b_] := Which[b < 4, 900, b < 16, 900 + 2600 (b - 4) / 12, in[b, "breakdown"], If[b < 39.6, 380, 380 48^(((b - 39.6) / 0.4)^2)], True, 18000];
-Plot[musicCutoff[b], {b, 0, 81}, ScalingFunctions -> "Log", PlotRange -> All, AxesLabel -> {"bar", "Hz"}]
-```
-
-
-## Bars 0 to 4: One at a Time
-
-Two slits, and particles sent through them one at a time.  Each lands somewhere at random; together they draw the interference of a wave that went through both.  The pattern, and six thousand landing places sampled from it:
-
-```wl
-slitIntensity[x_] := Cos[2.6 x]^2 Sinc[0.55 x]^2;
-landing = BlockRandom[SeedRandom[1989]; With[{grid = Subdivide[-7., 7., 4000]},
-    Transpose[{RandomChoice[slitIntensity /@ grid -> grid, 6000] + RandomReal[{-0.002, 0.002}, 6000], RandomReal[{-1, 1}, 6000] + RandomVariate[NormalDistribution[0, 0.12], 6000]}]]];
-Histogram[landing[[All, 1]], 120, Axes -> False, ImageSize -> 400]
-```
-
-The first two dozen arrive on sixteenth notes, one click each; then they rain:
-
-```wl
-arrival[k_] := If[k <= 24, 0.5 + (k - 1) / 16, 2 + 1.75 ((k - 24) / 5976)^(1/2.2)];
-screenRect = {260, 300, 1400, 480};
-dotAt[{x_, y_}] := {screenRect[[1]] + screenRect[[3]] (x + 7) / 14, screenRect[[2]] + screenRect[[4]] / 2 + 200 y};
-coldOpen = {Backdrop[RGBColor["#050506"], {0, 4}],
-    {0, 4} -> Function[t, With[{n = LengthWhile[Range[6000], arrival[#] <= t &]},
-        {CanvasRectangle[screenRect, RGBColor[0.1, 0.11, 0.13], "Radius" -> 6],
-         Table[CanvasDisk[dotAt[landing[[k]]], If[k <= 24, 4, 1.7], Blend[{White, RGBColor["#9FE6FF"]}, Clip[(t - arrival[k]) 4, {0, 1}]],
-            Opacity -> If[k <= 24, 1, 0.75]], {k, n}]}]],
-    TitleCard["One particle at a time.", {0.6, 3.85}, Position -> {960, 900}, FontSize -> 54, FontColor -> boneC, "Enter" -> "Fade", "Exit" -> "Fade"]};
-clicksCold = Track[Table[{arrival[k], 1/16, "hh", 0.9}, {k, 24}]];
-AnimatedGraphics[coldOpen, "Duration" -> 4][3.9, ImageSize -> 480]
-```
-
-## Labels and the Ruler
-
-Each moment is labelled like a page of history -- the year and place in red capitals, the idea in large type -- and a ruler of years runs along the bottom:
-
-```wl
-eraLabel[{t0_, t1_}, name_, sub_] := {TitleCard[ToUpperCase[sub], {t0, t1}, Position -> {96, 76}, Alignment -> Left, FontSize -> 18, FontWeight -> 600, FontColor -> red, "Tracking" -> 3, "Enter" -> "Fade", "Exit" -> "Cut"],
-    TitleCard[name, {t0, t1}, Position -> {96, 124}, Alignment -> Left, FontSize -> 46, FontColor -> fg, "Enter" -> "Fade", "Exit" -> "Cut"]};
-say[text_, span_, pos_ : {1250, 300}, hl_ : None, size_ : 52] := CaptionText[text, span, Position -> pos, FontSize -> size, "Highlight" -> hl, FontColor -> fg];
-formula[text_, span_, pos_, size_ : 96, colour_ : fg] := TitleCard[text, span, Position -> pos, FontSize -> size, FontWeight -> 400, FontFamily -> "Source Serif 4", FontSlant -> "Italic", FontColor -> colour, "Enter" -> "Fade", "Exit" -> "Fade"];
-```
-
-## Bars 4 to 8: 1900, the Quantum
-
-A glowing body's light, by wavelength.  Classical physics predicts the Rayleigh-Jeans curve, which runs to infinity at short wavelengths -- the ultraviolet catastrophe; Planck's law, with its quantum of action, bends down.  The two agree where the wavelength is long (λ in nm, *c*₂ = *hc*/*k*):
-
-```wl
-c2 = 1.4388 10^7;
-planck[l_, T_] := 1 / (l^5 (Exp[c2 / (l T)] - 1));
-rayleigh[l_, T_] := T / (c2 l^4);
-LogLogPlot[{planck[l, 5000], rayleigh[l, 5000]}, {l, 100, 5000}, PlotLegends -> {"Planck", "Rayleigh-Jeans"}]
-```
-
-Drawn on a sheet: the classical curve first, escaping the frame, then Planck's, over the visible spectrum; beside it a body heating up, its colour the black body's:
-
-```wl
-plotRect = {170, 250, 1000, 560};
-curvePoints[f_, T_] := With[{peak = planck[2.898 10^6 / T, T]}, Table[{plotRect[[1]] + plotRect[[3]] (l - 100) / 2400, plotRect[[2]] + plotRect[[4]] (1 - 0.85 f[l, T] / peak)}, {l, 100, 2500, 6}]];
-planckScene = {Backdrop[ground, {4, 81}],
-    {4, 8} -> Function[t, With[{T = 5000, u1 = Clip[(t - 4.4) / 0.9, {0, 1}], u2 = Clip[(t - 5.4) / 1.1, {0, 1}]}, {
-        CanvasLine[{{plotRect[[1]], plotRect[[2]] + plotRect[[4]]}, {plotRect[[1]] + plotRect[[3]], plotRect[[2]] + plotRect[[4]]}}, fg[t], "Thickness" -> 2],
-        CanvasLine[{{plotRect[[1]], plotRect[[2]]}, {plotRect[[1]], plotRect[[2]] + plotRect[[4]]}}, fg[t], "Thickness" -> 2],
-        Table[CanvasRectangle[{plotRect[[1]] + plotRect[[3]] (l - 100) / 2400, plotRect[[2]] + plotRect[[4]] + 8, plotRect[[3]] 5 / 2400 + 0.5, 22}, ColorData["VisibleSpectrum"][l]], {l, 380, 750, 5}],
-        CanvasText["wavelength", {plotRect[[1]] + plotRect[[3]] - 150, plotRect[[2]] + plotRect[[4]] + 64}, sans[24, 400], soft[t]],
-        CanvasClip[plotRect, {
-            CanvasLine[Take[curvePoints[rayleigh, T], Max[2, Round[u1 Length[curvePoints[rayleigh, T]]]]], soft[t], "Thickness" -> 4],
-            If[u2 > 0, CanvasLine[Take[curvePoints[planck, T], Max[2, Round[u2 401]]], red, "Thickness" -> 6], {}]}],
-        If[u1 > 0.4, CanvasText["classical: infinite", {plotRect[[1]] + 40, plotRect[[2]] + 40}, sans[30], soft[t]], {}],
-        If[u2 > 0.5, CanvasText["Planck, 1900", {plotRect[[1]] + 330, plotRect[[2]] + 120}, sans[34], red], {}],
-        With[{TT = 1500 + 4500 Clip[(t - 4) / 3.5, {0, 1}]}, {
-            CanvasDisk[{1500, 760}, 120, ColorData["BlackBodySpectrum"][TT], Opacity -> 0.25], CanvasDisk[{1500, 760}, 80, ColorData["BlackBodySpectrum"][TT]],
-            CanvasText[ToString[Round[TT, 100]] <> " K", {1440, 930}, sans[30], soft[t]]}]}]],
-    formula["E = h\[Nu]", {4.8, 8}, {1500, 470}, 150],
-    eraLabel[{4, 8}, "The quantum", "1900 \[CenterDot] Max Planck \[CenterDot] Berlin"]};
-AnimatedGraphics[planckScene, "Duration" -> 8][7.5, ImageSize -> 480]
-```
-
-## Bars 8 to 12: 1913, the Atom's Notes
-
-Hydrogen glows at four visible wavelengths and no others.  Bohr's atom explains them: the electron keeps to orbits of radius ∝ *n*², and each line is a fall from an outer orbit to the second.  The lines appear as they sound, the atom's chord:
-
-```wl
-nmColour[l_] := ColorData["VisibleSpectrum"][l];
-stripRect = {170, 720, 1580, 120};
-lineX[l_] := stripRect[[1]] + stripRect[[3]] (l - 380) / 340;
-bohrCentre = {470, 400}; orbitR[n_] := 9 n^2;
-fallAt[k_] := at["atoms"] + k / 2;
-atomScene = {
-    {8, 12} -> Function[t, {
-        CanvasRectangle[stripRect, RGBColor[0.07, 0.07, 0.08], "Radius" -> 4],
-        Table[CanvasRectangle[{lineX[l], stripRect[[2]], stripRect[[3]] 3 / 340 + 0.5, stripRect[[4]]}, nmColour[l], Opacity -> 0.13], {l, 380, 720, 3}],
-        Table[With[{l = balmerNm[[k + 1]], u = Clip[(t - fallAt[k]) / 0.12, {0, 1}]}, If[u > 0, {
-            CanvasRectangle[{lineX[l] - 4, stripRect[[2]], 8, stripRect[[4]]}, nmColour[l], Opacity -> u],
-            CanvasRectangle[{lineX[l] - 14, stripRect[[2]], 28, stripRect[[4]]}, nmColour[l], Opacity -> 0.25 u],
-            CanvasText["H" <> {"\[Alpha]", "\[Beta]", "\[Gamma]", "\[Delta]"}[[k + 1]] <> "  " <> ToString[Round[l]] <> " nm", {lineX[l] - 50, stripRect[[2]] + stripRect[[4]] + 46 + If[k == 3, 34, 0]}, sans[26], fg[t], Opacity -> u]}, {}]], {k, 0, 3}],
-        Table[CanvasDisk[bohrCentre, orbitR[n], soft[t], "Stroke" -> 1.5, Opacity -> 0.6], {n, 1, 6}],
-        CanvasDisk[bohrCentre, 9, red],
-        (* the electron falls from orbit k + 3 to orbit 2 at each line's moment *)
-        With[{k = Clip[Floor[2 (t - 8)], {0, 3}]}, With[{u = Clip[(t - fallAt[k]) / 0.35, {0, 1}], m = k + 3},
-            With[{r = orbitR[m] + (orbitR[2] - orbitR[m]) Easing["InOutCubic"][u], ang = 5 t}, {
-                CanvasDisk[bohrCentre + r {Cos[ang], Sin[ang]}, 9, fg[t]],
-                If[0 < u < 1, CanvasLine[Table[bohrCentre + (r + 40 + 260 u + s) {Cos[ang], Sin[ang]} + 8 Sin[s / 6] {-Sin[ang], Cos[ang]}, {s, 0, 120, 4}], nmColour[balmerNm[[k + 1]]], "Thickness" -> 4], {}]}]]]}],
-    formula["1/\[Lambda] = R (1/2² \[Minus] 1/n²)", {8.5, 12}, {1350, 380}, 72],
-    say["Atoms only sing certain notes.", {9.5, 12}, {1100, 520}, "notes"],
-    eraLabel[{8, 12}, "The atom\[CloseCurlyQuote]s notes", "1913 \[CenterDot] Niels Bohr \[CenterDot] Copenhagen"]};
-AnimatedGraphics[{Backdrop[paperC], atomScene}, "Duration" -> 12][11.5, ImageSize -> 480]
-```
-
-## Bars 12 to 16: Strange Rules
-
-Silver atoms through a magnet split into exactly two beams -- up or down, nothing between (Stern and Gerlach, 1922).  The classical expectation, a smear, is drawn faintly behind:
-
-```wl
-sgAtoms = BlockRandom[SeedRandom[1922]; Table[{12 + RandomReal[{0, 1.3}], RandomChoice[{-1, 1}], RandomVariate[NormalDistribution[0, 14]]}, {160}]];
-sgPath[{start_, side_, jitter_}, t_] := With[{u = (t - start) / 0.45}, Which[u < 0, None, u <= 1,
-    With[{x = 300 + 1200 u}, {x, 540 + jitter + If[x < 820, 0, side 120 ((x - 820) / 680)^2]}], True, {1500 - Abs[jitter] / 3, 540 + jitter + side 120}]];
-sgScene = {
-    {12, 14} -> Function[t, {
-        CanvasRectangle[{1500, 340, 14, 400}, fg[t]],
-        CanvasRectangle[{1514, 420, 40, 240}, soft[t], Opacity -> 0.18],
-        CanvasPolygon[{{820, 470}, {1020, 470}, {980, 520}, {860, 520}}, soft[t]], CanvasRectangle[{820, 570, 200, 60}, soft[t]],
-        CanvasText["N", {905, 505}, sans[28], paperC], CanvasText["S", {908, 612}, sans[28], paperC],
-        CanvasDisk[{290, 540}, 16, fg[t]],
-        Table[With[{p = sgPath[a, t]}, If[p === None, {}, CanvasDisk[p, 5, If[a[[2]] > 0, red, blue]]]], {a, sgAtoms}]}],
-    say["Up or down. Nothing between.", {12.3, 14}, {1050, 830}, "Nothing"],
-    eraLabel[{12, 14}, "Two answers", "1922 \[CenterDot] Stern and Gerlach \[CenterDot] Frankfurt"]};
-AnimatedGraphics[{Backdrop[paperC], sgScene}, "Duration" -> 14][13.6, ImageSize -> 480]
-```
-
-Then de Broglie's matter waves, a particle that is also a wave, λ = *h*/*p*; and Heisenberg's matrices.  On Helgoland in June 1925 he found that position and momentum must be arrays that do not commute.  Truncated to the first rows of the harmonic oscillator, *X P* − *P X* is *i* down the diagonal (ħ = 1):
-
-```wl
-nmax = 6;
-aOp = SparseArray[{i_, j_} /; j == i + 1 :> Sqrt[i], {nmax, nmax}];
+nmax = 6; aOp = SparseArray[{i_, j_} /; j == i + 1 :> Sqrt[i], {nmax, nmax}];
 X = (aOp + Transpose[aOp]) / Sqrt[2]; P = I (Transpose[aOp] - aOp) / Sqrt[2];
 (X . P - P . X)[[;; 4, ;; 4]] // MatrixForm
 ```
@@ -306,58 +195,46 @@ X = (aOp + Transpose[aOp]) / Sqrt[2]; P = I (Transpose[aOp] - aOp) / Sqrt[2];
 ```wl
 decimal[x_] := If[Round[x] == x, ToString[Round[x]], TextString[Round[x, 0.01]]];
 showNumber[z_] := With[{re = Re[N[z]], im = Im[N[z]]}, Which[Abs[re] < 0.005 && Abs[im] < 0.005, "0", Abs[im] < 0.005, decimal[re], Abs[re] < 0.005, If[Abs[im - 1] < 0.005, "i", decimal[im] <> "i"], True, decimal[re] <> "+" <> decimal[im] <> "i"]];
-heisenbergScene = {
-    {14, 15} -> Function[t, {waveRibbon[packet[xs, 2 (t - 14), 6, 1.5, -2], {200, 640, 1500, 300}, 1.2, Clip[(t - 14) 6, {0, 1}]],
-        CanvasDisk[{560 + 1300 (t - 14) / 1, 640 - 210}, 10, fg[t], Opacity -> Clip[1 - 6 (t - 14), {0, 1}]]}],
-    formula["\[Lambda] = h / p", {14, 15}, {960, 330}, 110],
-    eraLabel[{14, 15}, "Matter is a wave", "1924 \[CenterDot] Louis de Broglie \[CenterDot] Paris"],
-    {15, 16} -> Function[t, With[{u = Clip[(t - 15) 3, {0, 1}]}, {
-        CanvasText["X P", {170, 350}, serif[56, True], fg[t]], CanvasText["P X", {820, 350}, serif[56, True], fg[t]],
-        CanvasOpacity[u, {Table[CanvasText[showNumber[(X . P)[[i, j]]], {170 + 150 (j - 1), 440 + 60 (i - 1)}, CanvasFont["Source Code Pro", 30, 400], fg[t]], {i, 4}, {j, 4}],
-            Table[CanvasText[showNumber[(P . X)[[i, j]]], {820 + 150 (j - 1), 440 + 60 (i - 1)}, CanvasFont["Source Code Pro", 30, 400], fg[t]], {i, 4}, {j, 4}]}]}]],
-    formula["pq \[Minus] qp = h/2\[Pi]i", {15.3, 16}, {1520, 330}, 84, red],
-    PhotoPrint[helgoland, "Helgoland, as it looked around 1900", {15, 16}, Position -> {1330, 480}, "Size" -> {340, 255}, "Tilt" -> -2, "Kicker" -> "Library of Congress"],
-    PhotoPrint[heisenberg1926, "Heisenberg in 1926", {15.1, 16}, Position -> {1700, 460}, "Size" -> {190, 252}, "Tilt" -> 2.5, "Kicker" -> "Photo: Friedrich Hund"],
-    eraLabel[{15, 16}, "What does not commute", "June 1925 \[CenterDot] Werner Heisenberg \[CenterDot] Helgoland"]};
-AnimatedGraphics[{Backdrop[paperC], heisenbergScene}, "Duration" -> 16][15.8, ImageSize -> 480]
+matrixShot[t0_] := Function[t, With[{u = Clip[(t - t0) 1.5, {0, 1}], v = Clip[(t - t0 - 2) 1.5, {0, 1}]}, {
+    CanvasText["X P", {260, 330}, serif[60, True], boneC, Opacity -> u], CanvasText["P X", {1020, 330}, serif[60, True], boneC, Opacity -> u],
+    Table[CanvasText[showNumber[(X . P)[[i, j]]], {260 + 160 (j - 1), 440 + 70 (i - 1)}, CanvasFont["Source Code Pro", 34, 400], boneC, Opacity -> u], {i, 4}, {j, 4}],
+    Table[CanvasText[showNumber[(P . X)[[i, j]]], {1020 + 160 (j - 1), 440 + 70 (i - 1)}, CanvasFont["Source Code Pro", 34, 400], boneC, Opacity -> u], {i, 4}, {j, 4}],
+    CanvasText["X P \[NotEqual] P X", {760, 860}, serif[72, True], red, Opacity -> v]}]];
+helgolandPart = {still[image["helgoland.jpg"], {94.5, 101}], still[image["heisenberg1926.jpg"], {101, 105}], shot[{105, 111.8}, matrixShot[105]],
+    (* the interview's own title names him *)
+    voice["v-heisenberg-helgoland", 90.3, {9.9, 31.4}, {{90.3, 94.5}}, None,
+        {{0, 6.6, "It just so happened that I became a little bit ill,"}, {6.6, 12, "so I had to spend a holiday on an island, in order to be free from hay fever,"},
+         {12, 16, "and there I had very good time to think about the questions."}, {16, 21.5, "It was there that I really came to this scheme of quantum mechanics."}}],
+    year[{90.3, 111.8}, "1925", "Werner Heisenberg \[CenterDot] Helgoland"]};
 ```
 
-## Bars 16 to 22: 1926, ψ
-
-The equation, as Schrödinger first printed it in *Annalen der Physik* -- received 27 January 1926, a hundred years ago:
+Dirac, at Lindau in 1976, on reading Heisenberg's paper:
 
 ```wl
-schrodinger = {formula["\[CapitalDelta]\[Psi] + (8\[Pi]²m / h²) (E \[Minus] V) \[Psi] = 0", {16.1, 17.4}, {700, 470}, 84, boneC],
-    PhotoPrint[schrodingerPage, "Quantisierung als Eigenwertproblem, first page", {16.15, 17.4}, Position -> {1330, 120}, "Size" -> {460, 708}, "Tilt" -> 1.5, "Kicker" -> "Annalen der Physik 79 \[CenterDot] 1926"],
-    TitleCard["Annalen der Physik \[CenterDot] received 27 January 1926", {16.4, 17.4}, Position -> {700, 600}, FontSize -> 30, FontWeight -> 400, FontColor -> RGBColor["#8E8B84"], "Enter" -> "Fade", "Exit" -> "Fade"],
-    TitleCard["100 years", {16.25, 17.35}, Position -> {700, 820}, FontSize -> 64, FontWeight -> 700, FontColor -> red, "Tracking" -> 6, "Enter" -> "Rise", "Exit" -> "Fade"],
-    eraLabel[{16, 22}, "\[Psi]", "1926 \[CenterDot] Erwin Schr\[ODoubleDot]dinger \[CenterDot] Z\[UDoubleDot]rich"]};
+diracPart = {voice["v-dirac", 111.8, {0.36, 13.6}, All, {"Paul Dirac", "Lindau, 1976"},
+        {{0, 10.4, "Well, it was quite a revelation to me when this discovery of Heisenberg was set up,"}, {10.4, 13.3, "and it showed how wrong I was previously."}}],
+    year[{111.8, 125}, "1925", "Paul Dirac \[CenterDot] Cambridge"]};
 ```
 
-ψ itself: a packet of possibility, travelling and spreading as the equation says -- its phase turning through the colours as it goes:
+## 2:05 — 1926: ψ
 
-```wl
-psiScene = {{17.4, 19} -> Function[t, With[{u = t - 17.4}, {
-        CanvasLine[{{160, 760}, {1760, 760}}, RGBColor[0.3, 0.3, 0.32], "Thickness" -> 2],
-        waveRibbon[packet[xs, 2.2 u, 4, 1], {160, 760, 1600, 520}, 1, Clip[4 u, {0, 1}]]}]],
-    say["A wave of possibility.", {17.6, 19}, {1180, 240}, "possibility"]};
-AnimatedGraphics[{Backdrop[inkC], psiScene}, "Duration" -> 19][18.5, ImageSize -> 480]
-```
-
-Bound, it can only stand: the harmonic oscillator's standing waves, each on its energy, each turning its phase at its own frequency, *E* = (*n* + ½)ħω.  These are the bass's even steps:
+The music rises.  The first page of Schrödinger's paper, received by the Annalen der Physik on 27 January 1926 -- a hundred years ago -- and ψ: a packet of possibility, travelling and spreading as his equation says; bound, it can only stand, the harmonic oscillator's standing waves, each turning its phase at its own frequency:
 
 ```wl
 oscillator[n_, x_] := 1 / Sqrt[2^n n! Sqrt[Pi]] HermiteH[n, x] Exp[-x^2 / 2];
 oxs = Subdivide[-5., 5., 220];
-oscillatorScene = {{19, 20.5} -> Function[t, With[{u = t - 19}, {
-        CanvasLine[Table[{960 + 120 x, 900 - 120 x^2 / 2 0.95}, {x, -4.2, 4.2, 0.1}], RGBColor[0.4, 0.4, 0.42], "Thickness" -> 3],
-        Table[With[{lvl = 900 - 120 (n + 1/2) 0.95}, {CanvasLine[{{360, lvl}, {1560, lvl}}, RGBColor[0.25, 0.25, 0.27], "Thickness" -> 1],
-            waveRibbon[oscillator[n, oxs] Exp[-I (n + 1/2) 9 u], {360, lvl, 1200, 100}, 1.4, Clip[6 u - n / 2, {0, 1}]]}], {n, 0, 5}]}]],
-    say["Bound, it can only stand.", {19.2, 20.5}, {1250, 170}, "stand"]};
-AnimatedGraphics[{Backdrop[inkC], oscillatorScene}, "Duration" -> 21][20.2, ImageSize -> 480]
+psiPart = {still[image["schrodinger1926.jpg"], {125, 129.5}, 0.12],
+    TitleCard["100 years", {125.6, 129.4}, Position -> {1500, 900}, FontSize -> 64, FontWeight -> 700, FontColor -> red, "Tracking" -> 6, "Enter" -> "Rise", "Exit" -> "Fade"],
+    shot[{129.5, 134.5}, Function[t, {CanvasLine[{{160, 760}, {1760, 760}}, RGBColor[0.3, 0.3, 0.32], "Thickness" -> 2],
+        waveRibbon[packet[xs, 0.9 (t - 129.5), 4, 1], {160, 760, 1600, 520}, 1, Clip[2 (t - 129.5), {0, 1}]]}]],
+    shot[{134.5, 140}, Function[t, With[{u = t - 134.5}, {
+        CanvasLine[Table[{960 + 120 x, 940 - 120 x^2 / 2 0.95}, {x, -4.2, 4.2, 0.1}], RGBColor[0.4, 0.4, 0.42], "Thickness" -> 3],
+        Table[With[{lvl = 940 - 120 (n + 1/2) 0.95}, {CanvasLine[{{360, lvl}, {1560, lvl}}, RGBColor[0.25, 0.25, 0.27], "Thickness" -> 1],
+            waveRibbon[oscillator[n, oxs] Exp[-I (n + 1/2) 4 u], {360, lvl, 1200, 100}, 1.4, Clip[2 u - n / 3, {0, 1}]]}], {n, 0, 5}]}]]],
+    year[{125, 140}, "1926", "Erwin Schr\[ODoubleDot]dinger \[CenterDot] Z\[UDoubleDot]rich"]};
 ```
 
-And in the atom, its standing waves are the orbitals.  A slice through each (*n*, *l*, *m*) of hydrogen, phase as colour -- the two signs of a real orbital are red and cyan:
+Schrödinger, on radio in 1952: everything, absolutely everything, is at once particle and field.  In the atom its standing waves are the orbitals -- a slice through each of hydrogen's, phase as colour:
 
 ```wl
 hydrogen[n_, l_, m_, x_, z_] := With[{r = Sqrt[x^2 + z^2] + 10^-9}, (2 r / n)^l Exp[-r / n] LaguerreL[n - l - 1, 2 l + 1, 2 r / n] Re[SphericalHarmonicY[l, m, ArcCos[z / r], 0]]];
@@ -369,61 +246,56 @@ GraphicsGrid[Partition[orbitals, 6], ImageSize -> 900]
 ```
 
 ```wl
-orbitalScene = {{20.5, 22} -> Function[t, Table[With[{u = Clip[(t - 20.5 - (k - 1) / 16) 6, {0, 1}], col = Mod[k - 1, 6], row = Quotient[k - 1, 6]}, If[u <= 0, {},
-        {CanvasImage[orbitals[[k]], {210 + 255 col, 250 + 300 row, 240, 240}, Opacity -> u],
-         CanvasText[orbitalName[orbitalList[[k]]], {215 + 255 col, 520 + 300 row}, sans[24, 400], RGBColor["#8E8B84"], Opacity -> u]}]], {k, Length[orbitals]}]],
-    say["In the atom, the waves are orbitals.", {20.6, 22}, {1250, 900}, "orbitals", 44]};
-AnimatedGraphics[{Backdrop[inkC], orbitalScene}, "Duration" -> 22][21.9, ImageSize -> 480]
+orbitalShot[t0_] := Function[t, Table[With[{u = Clip[(t - t0 - (k - 1) / 4) 3, {0, 1}], col = Mod[k - 1, 6], row = Quotient[k - 1, 6]}, If[u <= 0, {},
+    {CanvasImage[orbitals[[k]], {170 + 270 col, 190 + 330 row, 260, 260}, Opacity -> u],
+     CanvasText[orbitalName[orbitalList[[k]]], {175 + 270 col, 480 + 330 row}, sans[24, 400], grey, Opacity -> u]}]], {k, Length[orbitals]}]];
+schrodingerPart = {shot[{144, 152.8}, orbitalShot[144]],
+    voice["v-schrodinger", 140, {0, 12.8}, {{140, 144}}, {"Erwin Schr\[ODoubleDot]dinger", "Radio talk, 1952"},
+        {{0, 12.8, "The view now secured is rather that everything, absolutely everything, is at once particle and field."}}]};
 ```
 
-## Bars 22 to 26: 1926, Born
+## 2:33 — Born: Chance
 
-Max Born, June 1926: |ψ|² is a probability.  Where the wave is bright, the click is likely.  Four thousand electrons measured in one orbital, each landing at random where |ψ|² says, building its picture dot by dot:
+Max Born, interviewed on the day of his Nobel Prize in 1954: today we can predict only with what probability this or that will happen.  |ψ|² is that probability -- an idea he first put in a footnote, added in proof.  Five thousand electrons measured in one orbital, each landing where |ψ|² is bright:
 
 ```wl
-bornOrbital = {4, 3, 1}; bornPx = 400; bornExt = 2.2 4^2 + 4;
+bornPx = 400; bornExt = 2.2 4^2 + 4;
 bornDensity = N @ Table[hydrogen[4, 3, 1, x, z]^2, {z, bornExt, -bornExt, -2 bornExt / (bornPx - 1)}, {x, -bornExt, bornExt, 2 bornExt / (bornPx - 1)}];
-bornDots = BlockRandom[SeedRandom[1926]; With[{cells = RandomChoice[Flatten[bornDensity] -> Range[bornPx^2], 4000]},
+bornDots = BlockRandom[SeedRandom[1926]; With[{cells = RandomChoice[Flatten[bornDensity] -> Range[bornPx^2], 5000]},
     ({Mod[# - 1, bornPx], Quotient[# - 1, bornPx]} + RandomReal[{0, 1}, 2]) & /@ cells]];
-bornArrival[k_] := at["born"] + 0.25 + 3.5 (k / 4000)^0.7;
-bornScene = {{22, 26} -> Function[t, With[{n = LengthWhile[Range[4000], bornArrival[#] <= t &]}, {
-        CanvasImage[orbitals[[9]], {200, 160, 780, 780}, Opacity -> 0.1],
-        Table[CanvasDisk[{200, 160} + 780 bornDots[[k]] / bornPx, 2.2, RGBColor["#9FE6FF"], Opacity -> 0.8], {k, n}]}]],
-    formula["P = |\[Psi]|²", {22.2, 26}, {1450, 380}, 120, boneC],
-    say["The wave says where the click is likely.", {22.6, 26}, {1180, 560}, "click"],
-    PhotoPrint[bornFootnote, "\[OpenCurlyDoubleQuote]Added in proof: on closer consideration, the probability is proportional to the square\[CloseCurlyDoubleQuote]", {23.4, 26}, Position -> {1100, 760}, "Size" -> {720, 172}, "Tilt" -> -1, "Kicker" -> "A footnote \[CenterDot] Zeitschrift f\[UDoubleDot]r Physik 37 \[CenterDot] 1926"],
-    eraLabel[{22, 26}, "Chance", "June 1926 \[CenterDot] Max Born \[CenterDot] G\[ODoubleDot]ttingen"]};
-AnimatedGraphics[{Backdrop[inkC], bornScene}, "Duration" -> 26][25.5, ImageSize -> 480]
+bornShot[t0_, t1_] := Function[t, With[{n = Round[5000 Clip[(t - t0) / (t1 - t0), {0, 1}]^0.8]}, {
+    CanvasImage[orbitals[[9]], {560, 140, 800, 800}, Opacity -> 0.12],
+    Table[CanvasDisk[{560, 140} + 800 bornDots[[k]] / bornPx, 2.3, RGBColor["#9FE6FF"], Opacity -> 0.8], {k, n}]}]];
+bornFootnote = ImageTake[image["born1926-p865.jpg"], {1830, 2130}, {110, 1370}];
+bornPart = {shot[{156.5, 166.8}, bornShot[156.5, 177.8]], still[bornFootnote, {166.8, 172}, 0.05], shot[{172, 177.8}, bornShot[156.5, 177.8]],
+    voice["v-born-probability", 152.8, {0, 14}, {{152.8, 156.5}}, {"Max Born", "Interview, 1954 \[CenterDot] the day of his Nobel Prize"},
+        {{0, 8, "Today, in an atomic experiment, we can predict with what probability this or that will happen."}, {8, 14, "But with complete certainty we can say what will happen only in very few cases."}}],
+    voice["v-born-dice", 166.8, {0, 11}, None, None,
+        {{0, 7, "He believed in fixed laws, not in a statistical description of nature."}, {7, 11, "\[OpenCurlyDoubleQuote]God does not play dice,\[CloseCurlyDoubleQuote] said Einstein."}}],
+    year[{152.8, 177.8}, "1926", "Max Born \[CenterDot] G\[ODoubleDot]ttingen"]};
 ```
 
-## Bars 26 to 30: 1927, Uncertainty
+## 2:58 — 1927: Uncertainty
 
-A packet squeezed in position spreads in momentum: the two are Fourier transforms of each other, and their widths can never both be small, Δ*x* Δ*p* ≥ ħ/2:
+Heisenberg at Lindau in 1953: position or velocity, sharp -- never both.  A packet squeezed in position spreads in momentum; the two are Fourier transforms of each other:
 
 ```wl
 pxs = Subdivide[-6., 6., 240];
-squeeze[t_] := 0.35 + 0.28 (1 + Sin[Pi (t - at["uncertainty"])]);
-uncertaintyScene = {{26, 28.6} -> Function[t, With[{s = squeeze[t]}, {
-        CanvasText["position", {250, 330}, sans[30], RGBColor["#8E8B84"]], CanvasText["momentum", {1030, 330}, sans[30], RGBColor["#8E8B84"]],
-        CanvasLine[{{200, 760}, {860, 760}}, RGBColor[0.3, 0.3, 0.32], "Thickness" -> 2], CanvasLine[{{980, 760}, {1640, 760}}, RGBColor[0.3, 0.3, 0.32], "Thickness" -> 2],
-        waveRibbon[Exp[-pxs^2 / (4 s^2) + 3 I pxs] / Sqrt[s], {200, 760, 660, 330}, 0.75, 1],
-        waveRibbon[Exp[-pxs^2 s^2 - 0.5 I pxs] Sqrt[s] 1.4, {980, 760, 660, 330}, 0.75, 1]}]],
-    formula["\[CapitalDelta]x \[CapitalDelta]p \[GreaterEqual] \[HBar]/2", {26.2, 28.6}, {1500, 470}, 96, boneC],
-    say["Pin it down here, and it spreads there.", {26.4, 28.6}, {1180, 860}, "spreads"],
-    eraLabel[{26, 28.6}, "Uncertainty", "1927 \[CenterDot] Werner Heisenberg \[CenterDot] Copenhagen"]};
-AnimatedGraphics[{Backdrop[inkC], uncertaintyScene}, "Duration" -> 29][27.4, ImageSize -> 480]
+uncertaintyShot = shot[{183, 199.2}, Function[t, With[{s = 0.35 + 0.28 (1 + Sin[0.8 (t - 183)])}, {
+    CanvasText["position", {300, 300}, sans[32, 400], grey], CanvasText["momentum", {1080, 300}, sans[32, 400], grey],
+    CanvasLine[{{250, 800}, {910, 800}}, RGBColor[0.3, 0.3, 0.32], "Thickness" -> 2], CanvasLine[{{1030, 800}, {1690, 800}}, RGBColor[0.3, 0.3, 0.32], "Thickness" -> 2],
+    waveRibbon[Exp[-pxs^2 / (4 s^2) + 3 I pxs] / Sqrt[s], {250, 800, 660, 380}, 0.75, 1],
+    waveRibbon[Exp[-pxs^2 s^2 - 0.5 I pxs] Sqrt[s] 1.4, {1030, 800, 660, 380}, 0.75, 1]}]]];
+uncertaintyPart = {uncertaintyShot,
+    voice["v-heisenberg-uncertainty", 177.8, {0, 21.4}, {{177.8, 183}}, {"Werner Heisenberg", "Lindau, 1953"},
+        {{0, 8.9, "In quantum theory it turned out that one cannot know, for a particle,"}, {8.9, 13.9, "its position and velocity both exactly at once."},
+         {13.9, 18.5, "Either you can fix the position very sharply, and then the velocity is very indeterminate,"}, {18.5, 21.4, "or the velocity sharply, and then the position is known very inaccurately."}}],
+    year[{177.8, 199.2}, "1927", "Werner Heisenberg \[CenterDot] Copenhagen"]};
 ```
 
-October 1927, Brussels: the fifth Solvay conference, on electrons and photons, where the new mechanics was argued over -- twenty-nine physicists, seventeen of them Nobel laureates:
+## 3:19 — Through Walls
 
-```wl
-solvayScene = {PhotoPrint[solvay, "Fifth Solvay Conference, Brussels, October 1927: 29 physicists, 17 Nobel laureates", {28.6, 30}, Position -> {410, 160}, "Size" -> {1100, 796}, "Tilt" -> -1, "Kicker" -> "Photo: Benjamin Couprie"],
-    eraLabel[{28.6, 30}, "Electrons and photons", "October 1927 \[CenterDot] Solvay \[CenterDot] Brussels"]};
-```
-
-## Bars 30 to 34: 1928, Through Walls
-
-A packet runs at a barrier higher than its energy.  Classically it bounces; quantum mechanically part of it leaks through -- Gamow's explanation of alpha decay.  Schrödinger's equation, solved step by step by the split-step Fourier method:
+No voice: the music, alpha particles streaking through a cloud chamber, and why they get out of the nucleus at all.  A packet runs at a barrier higher than its energy; part of it leaks through -- tunnelling, Gamow's explanation of alpha decay in 1928 -- solved here step by step by the split-step Fourier method:
 
 ```wl
 tunnel = Module[{n = 1024, xg = Subdivide[-40., 60., 1023], dx, kg, V, psi, dt = 0.02, frames = {}},
@@ -432,117 +304,31 @@ tunnel = Module[{n = 1024, xg = Subdivide[-40., 60., 1023], dx, kg, V, psi, dt =
     psi = packet[xg, 0, 2, 0.035, -16];
     Do[If[Mod[step, 8] == 0, AppendTo[frames, psi]];
         psi = Exp[-I V dt / 2] psi; psi = InverseFourier[Exp[-I kg^2 dt / 2] Fourier[psi]]; psi = Exp[-I V dt / 2] psi, {step, 0, 1039}];
-    <|"x" -> xg, "V" -> V, "Frames" -> frames|>];
-Length[tunnel["Frames"]]
+    <|"x" -> xg, "Frames" -> frames|>];
+tunnelView = {150, 700}; barrierX = 120 + 1680 (First[FirstPosition[tunnel["x"], _ ? (# >= 0 &)]] - tunnelView[[1]]) / (tunnelView[[2]] - tunnelView[[1]]);
+tunnelShot = shot[{203.5, 207.5}, Function[t, With[{f = tunnel["Frames"][[Clip[Round[1 + 129 (t - 203.5) / 4], {1, 130}]]]}, {
+    CanvasLine[{{120, 780}, {1800, 780}}, RGBColor[0.3, 0.3, 0.32], "Thickness" -> 2],
+    CanvasRectangle[{barrierX, 480, 1680 1.2 / ((tunnelView[[2]] - tunnelView[[1]]) 100 / 1023), 300}, RGBColor[0.55, 0.55, 0.58], Opacity -> 0.55],
+    waveRibbon[f[[tunnelView[[1]] ;; tunnelView[[2]]]], {120, 780, 1680, 500}, 1.05, 1]}]]];
+wallsPart = {footage["f-alpha", {199.2, 203.5}, {6, 10.3}], tunnelShot, footage["f-cosmic", {207.5, 211}, {20, 23.5}],
+    year[{199.2, 211}, "1928", "George Gamow \[CenterDot] alpha decay"]};
 ```
 
-```wl
-tunnelView = {150, 700}; barrierX = 120 + 1680 (Position[tunnel["x"], _?(# >= 0 &), 1, 1][[1, 1]] - tunnelView[[1]]) / (tunnelView[[2]] - tunnelView[[1]]);
-tunnelScene = {{30, 32.6} -> Function[t, With[{f = tunnel["Frames"][[Clip[Round[1 + 129 (t - 30) / 2.6], {1, 130}]]]}, {
-        CanvasLine[{{120, 780}, {1800, 780}}, RGBColor[0.3, 0.3, 0.32], "Thickness" -> 2],
-        CanvasRectangle[{barrierX, 780 - 300, 1680 1.2 / ((tunnelView[[2]] - tunnelView[[1]]) 100 / 1023), 300}, RGBColor[0.55, 0.55, 0.58], Opacity -> 0.55],
-        waveRibbon[f[[tunnelView[[1]] ;; tunnelView[[2]]]], {120, 780, 1680, 500}, 1.05, 1]}]],
-    say["Through a wall it cannot climb.", {30.3, 32.6}, {1180, 250}, "cannot"],
-    eraLabel[{30, 32.6}, "Tunneling", "1928 \[CenterDot] George Gamow"]};
-AnimatedGraphics[{Backdrop[inkC], tunnelScene}, "Duration" -> 33][31.9, ImageSize -> 480]
-```
+## 3:31 — 1935 to 1982: Entanglement
 
-Dirac's equation, the same year, made the electron relativistic; its negative energies led him in 1931 to predict a mirror image of it, of opposite charge -- antimatter, found in 1932 as tracks curling the wrong way in a magnetic field:
-
-```wl
-spiral[sign_, t_] := Table[{960, 620} + sign {240, 0} + 240 Exp[-0.11 th] {-sign Cos[th], -Sin[th]}, {th, 0, 6 Pi Min[1, t], 0.03}];
-diracScene = {{32.6, 34} -> Function[t, With[{u = 3 (t - 32.6)}, {
-        CanvasLine[{{960, 1000}, {960, 620}}, RGBColor[0.5, 0.5, 0.5], "Thickness" -> 2, Opacity -> 0.6],
-        CanvasLine[spiral[1, Max[0.05, u]], blue, "Thickness" -> 4], CanvasLine[spiral[-1, Max[0.05, u]], red, "Thickness" -> 4],
-        CanvasText["e\[Minus]", {1480, 640}, sans[44], blue, Opacity -> Clip[u - 1, {0, 1}]], CanvasText["e+", {400, 640}, sans[44], red, Opacity -> Clip[u - 1, {0, 1}]]}]],
-    formula["(i\[Gamma]\[Mu]\[PartialD]\[Mu] \[Minus] m) \[Psi] = 0", {32.7, 34}, {960, 230}, 96, boneC],
-    say["Every particle has a mirror.", {32.9, 34}, {1250, 860}, "mirror"],
-    eraLabel[{32.6, 34}, "Antimatter", "1928 \[CenterDot] Dirac \[CenterDot] 1932 \[CenterDot] the positron"]};
-AnimatedGraphics[{Backdrop[inkC], diracScene}, "Duration" -> 34][33.8, ImageSize -> 480]
-```
-
-## Bars 34 to 38: 1935, Entanglement
-
-Einstein, Podolsky and Rosen asked whether quantum mechanics could be complete.  Schrödinger answered with a cat in a box, alive and dead at once, and a name for what binds two systems into one: *Verschränkung*, entanglement.  The cat as a Wigner function -- quasi-probability over position and momentum -- with two blobs, alive and dead, and between them fringes going negative, which no classical probability can do:
+John Bell, on BBC television in 1986, with his socks: correlations are no puzzle if the socks are there before you look -- but a mystery if looking at one makes the other blue.  The picture: a real source of entangled photon pairs, a cone of down-converted light; Schrödinger's cat as a Wigner function, alive and dead at once, its fringes between them going negative:
 
 ```wl
 wigner[x_, p_, a_, fringe_] := (Exp[-(x - a)^2 - p^2] + Exp[-(x + a)^2 - p^2] + 2 fringe Exp[-x^2 - p^2] Cos[2 a p]) / (2 Pi (1 + fringe Exp[-a^2]));
 wignerColour = Function[{x, p, w}, Blend[{{-0.12, red}, {-0.02, RGBColor[0.55, 0.12, 0.08]}, {0, RGBColor[0.2, 0.22, 0.26]}, {0.12, blue}, {0.3, White}}, w]];
 wignerFrame[fringe_, angle_] := Rasterize[Plot3D[wigner[x, p, 2.2, fringe], {x, -4.5, 4.5}, {p, -3, 3}, PlotRange -> {-0.16, 0.34}, BoxRatios -> {1.5, 1, 0.75}, Mesh -> None, PlotPoints -> 80,
     ColorFunction -> wignerColour, ColorFunctionScaling -> False, Boxed -> False, Axes -> False, Lighting -> "Neutral", ViewPoint -> {1.7 Cos[angle], 1.7 Sin[angle], 1.0},
-    SphericalRegion -> True, Background -> None, ImageSize -> 1100], "Image", Background -> None];
-catFrames = Table[wignerFrame[1, -1.2 + 0.5 k / 23], {k, 0, 23}];
-decoherenceFrames = Table[wignerFrame[Exp[-3 k / 23] (1 - k / 23)^0.3, -0.7 + 0.5 k / 23], {k, 0, 23}];
+    SphericalRegion -> True, Background -> None, ImageSize -> 1300], "Image", Background -> None];
+catFrames = Table[wignerFrame[1, -1.2 + 0.6 k / 29], {k, 0, 29}];
 First[catFrames]
 ```
 
-```wl
-detector[{x_, y_}, on_, label_] := {CanvasDisk[{x, y}, 70, RGBColor[0.18, 0.18, 0.2]], CanvasDisk[{x, y}, 54, If[on, red, blue]],
-    CanvasText[If[on, "1", "0"], {x - 12, y + 16}, sans[44, 700], inkC],
-    If[on, CanvasDisk[{x, y}, 110, red, Opacity -> 0.18], {}], CanvasText[label, {x - 12, y + 130}, sans[34], RGBColor["#8E8B84"]]};
-entangleScene = {
-    {34, 35.3} -> Function[t, {CanvasOpacity[Clip[3 (t - 34), {0, 1}], {
-        CanvasText["Can Quantum-Mechanical Description of Physical", {300, 420}, serif[54], boneC],
-        CanvasText["Reality Be Considered Complete?", {300, 490}, serif[54], boneC],
-        CanvasText["A. Einstein, B. Podolsky and N. Rosen \[CenterDot] Physical Review \[CenterDot] 15 May 1935", {300, 580}, serif[30, True], RGBColor["#8E8B84"]]}]}],
-    {35.3, 37} -> Function[t, CanvasImage[catFrames[[Clip[1 + Floor[23 (t - 35.3) / 1.7], {1, 24}]]], {160, 130, 1100, 825}]],
-    say["Alive and dead, at once.", {35.4, 37}, {1250, 420}, "at once"],
-    TitleCard["negative: no classical probability", {35.8, 37}, Position -> {1250, 620}, Alignment -> Left, FontSize -> 30, FontWeight -> 400, FontColor -> red, "Enter" -> "Fade", "Exit" -> "Cut"],
-    {37, 38} -> Function[t, With[{k = Floor[16 t] + 1}, {
-        CanvasLine[{{560, 540}, {1360, 540}}, RGBColor[0.3, 0.3, 0.32], "Thickness" -> 2], CanvasDisk[{960, 540}, 10, boneC],
-        detector[{420, 540}, pairs[[k, 1]] == 1, "A"], detector[{1500, 540}, pairs[[k, 2]] == 1, "B"]}]],
-    say["Far apart. Always agreeing.", {37.05, 38}, {700, 820}, "Always"],
-    eraLabel[{34, 38}, "Entanglement", "1935 \[CenterDot] Einstein, Podolsky, Rosen \[CenterDot] Schr\[ODoubleDot]dinger"]};
-AnimatedGraphics[{Backdrop[inkC], entangleScene}, "Duration" -> 38][36.4, ImageSize -> 480]
-```
-
-## Bars 38 to 40: Every Path at Once
-
-Feynman, 1948: a particle goes from A to B along every path at once, each contributing an arrow turned by its action.  Far from the classical path the arrows spin and cancel; near it they agree.  Their sum, arrow after arrow, is Cornu's spiral, winding into the answer.  And Feynman himself, in 1964, on film:
-
-```wl
-paths = BlockRandom[SeedRandom[1948]; Table[With[{w = Accumulate[RandomVariate[NormalDistribution[0, 1], 80]]}, With[{bridge = w - Range[80] / 80 Last[w]}, (k / 40.) bridge / Max[Abs[bridge]]]], {k, 1, 40}]];
-pathAction[y_] := Total[Differences[y]^2] 600;
-cornu = Table[{FresnelC[s], FresnelS[s]}, {s, -3.5, 3.5, 0.01}];
-pathScene = {{38, 40} -> Function[t, With[{u = Clip[(t - 38.05) / 1.2, {0, 1}]}, {
-        Table[With[{y = paths[[k]]}, CanvasLine[Table[{200 + 900 (j - 1) / 79, 540 + 150 y[[j]] Sin[Pi (j - 1) / 79]^0.5}, {j, 80}], Hue[Mod[pathAction[y], 1], 0.8, 0.9], "Thickness" -> 2,
-            Opacity -> 0.5 Clip[3 u - k / 40, {0, 1}]]], {k, 40}],
-        CanvasLine[{{200, 540}, {1100, 540}}, boneC, "Thickness" -> 5, Opacity -> u],
-        CanvasDisk[{200, 540}, 12, boneC], CanvasDisk[{1100, 540}, 12, boneC], CanvasText["A", {180, 610}, sans[36], boneC], CanvasText["B", {1085, 610}, sans[36], boneC],
-        CanvasLine[{560, 860} + 220 # - {110, 110} & /@ Take[cornu, Max[2, Round[u Length[cornu]]]], red, "Thickness" -> 3]}]],
-    (* Feynman, on film, saying it *)
-    {feynmanAt - 0.1, 40} -> Function[t, With[{k = Clip[1 + Floor[Length[feynmanFrames] (t - feynmanAt) 2 / 3.8], {1, Length[feynmanFrames]}], a = Clip[(t - feynmanAt + 0.1) 6, {0, 1}]}, {
-        CanvasRectangle[{1190, 210, 640, 506}, RGBColor["#EDE9E0"], Opacity -> a],
-        CanvasImage[feynmanFrames[[k]], {1210, 230, 600, 460}, Opacity -> a],
-        CanvasText["Richard Feynman \[CenterDot] Messenger Lectures, Cornell, November 1964", {1210, 760}, sans[24, 400], RGBColor["#8E8B84"], Opacity -> a]}]],
-    TitleCard["\[OpenCurlyDoubleQuote]I think I can safely say that nobody understands quantum mechanics.\[CloseCurlyDoubleQuote]", {38.85, 40}, Position -> {960, 1000}, FontSize -> 40, FontWeight -> 400, FontFamily -> "Source Serif 4", FontSlant -> "Italic", FontColor -> boneC, "Enter" -> "Fade", "Exit" -> "Cut"],
-    eraLabel[{38, 40}, "Every path at once", "1948 \[CenterDot] Richard Feynman"]};
-AnimatedGraphics[{Backdrop[inkC], pathScene}, "Duration" -> 40][39.6, ImageSize -> 480]
-```
-
-## Bars 40 to 48: The World It Built
-
-One bar each for what quantum mechanics became.  Electrons in a crystal can only have energies in bands -- the Kronig-Penney model -- and the gaps between them are why a transistor switches:
-
-```wl
-kpBand[e_] := With[{al = Sqrt[2 e]}, Cos[al] + 3 Sin[al] / al];
-bandPoints = Select[Table[{e, kpBand[e]}, {e, 0.05, 60, 0.03}], Abs[#[[2]]] <= 1 &];
-bandScene[{t0_, t1_}] := {t0, t1} -> Function[t, With[{u = Clip[(t - t0) / 0.6, {0, 1}]}, {
-    CanvasLine[{{560, 160}, {560, 960}}, RGBColor[0.3, 0.3, 0.32], "Thickness" -> 2], CanvasLine[{{560, 960}, {1360, 960}}, RGBColor[0.3, 0.3, 0.32], "Thickness" -> 2],
-    Table[With[{k = ArcCos[p[[2]]], y = 960 - 780 p[[1]] / 60}, If[960 - y < 780 u, {CanvasDisk[{960 + 380 k / Pi, y}, 3, blue], CanvasDisk[{960 - 380 k / Pi, y}, 3, blue]}, {}]], {p, bandPoints}],
-    CanvasText["energy", {580, 190}, sans[28], RGBColor["#8E8B84"]], CanvasText["gap", {1380, 960 - 780 9 / 60}, sans[30], red, Opacity -> u]}]];
-```
-
-Laser light: many waves, their phases at random, add to noise; in step, they add up -- coherence:
-
-```wl
-laserPhases = BlockRandom[SeedRandom[1960]; RandomReal[{0, 2 Pi}, 12]];
-laserScene[{t0_, t1_}] := {t0, t1} -> Function[t, With[{u = Easing["InOutCubic"][Clip[(t - t0 - 0.2) / 0.6, {0, 1}]]}, {
-    Table[CanvasLine[Table[{200 + x 60, 380 + 14 j + 26 Sin[x + (1 - u) laserPhases[[j]] - 6 t]}, {x, 0, 25, 0.15}], Hue[0, 0.7, 0.9], "Thickness" -> 2, Opacity -> 0.45], {j, 12}],
-    CanvasLine[Table[{200 + x 60, 800 + 8 Total[Sin[x + (1 - u) laserPhases - 6 t]]}, {x, 0, 25, 0.08}], red, "Thickness" -> 5]}]];
-```
-
-Bell's inequality: any world of hidden, local facts keeps a certain sum of correlations at or under 2; quantum mechanics reaches 2√2, and experiments since Aspect's (1982) agree with it.  For a Bell state measured along the optimal directions:
+Then Alain Aspect, in 1985, three years after his experiment: Bell's inequalities violated, so the photon's polarisation was not there before it was measured.  The bound any local world keeps, 2, and what quantum mechanics reaches, 2√2, computed for a Bell state measured along the optimal directions:
 
 ```wl
 pauli = PauliMatrix /@ {1, 3};
@@ -553,200 +339,128 @@ chsh = corr[0, Pi / 4] + corr[0, -Pi / 4] + corr[Pi / 2, Pi / 4] - corr[Pi / 2, 
 ```
 
 ```wl
-bellScene[{t0_, t1_}] := {t0, t1} -> Function[t, With[{v = 2 Sqrt[2] Easing["OutCubic"][Clip[(t - t0 - 0.15) / 0.7, {0, 1}]]}, {
-    CanvasRectangle[{360, 500, 1200, 60}, RGBColor[0.18, 0.18, 0.2], "Radius" -> 30],
-    CanvasRectangle[{360, 500, 1200 v / 3, 60}, If[v > 2, red, blue], "Radius" -> 30],
-    CanvasLine[{{360 + 1200 2 / 3, 460}, {360 + 1200 2 / 3, 600}}, boneC, "Thickness" -> 4],
-    CanvasText["classical limit 2", {360 + 800 - 120, 440}, sans[30], RGBColor["#8E8B84"]],
-    CanvasText[If[v > 2.8, "2\[Sqrt]2 = 2.83", TextString[Round[v, 0.01]]], {360 + 1200 v / 3 - 60, 660}, sans[44], boneC]}]];
+bellShot = shot[{228, 234}, Function[t, With[{v = chsh Easing["OutCubic"][Clip[(t - 228.3) / 2.5, {0, 1}]]}, {
+    CanvasRectangle[{360, 500, 1200, 64}, RGBColor[0.18, 0.18, 0.2], "Radius" -> 32], CanvasRectangle[{360, 500, 1200 v / 3, 64}, If[v > 2, red, blue], "Radius" -> 32],
+    CanvasLine[{{360 + 1200 2 / 3, 460}, {360 + 1200 2 / 3, 604}}, boneC, "Thickness" -> 4],
+    CanvasText["any local world: at most 2", {360 + 800 - 170, 440}, sans[32, 400], grey],
+    CanvasText[If[v > 2.8, "quantum: 2\[Sqrt]2 = 2.83", TextString[Round[v, 0.01]]], {360 + 1200 v / 3 - 160, 670}, sans[46], boneC]}]]];
+entanglePart = {footage["f-spdc", {215, 219}, {0, 4}], shot[{219, 224.1}, Function[t, CanvasImage[catFrames[[Clip[1 + Floor[29 (t - 219) / 5.1], {1, 30}]]], {310, 60, 1300, 975}]]],
+    voice["v-bell-socks", 211, {0.4, 13.5}, {{211, 215}}, {"John Bell", "BBC, 1986"},
+        {{0, 6.8, "So correlations like that are not a puzzle, provided you admit the socks are really there before you look at them."},
+         {6.8, 13.1, "It's a mystery if looking at one sock makes the other one blue at the same time."}}],
+    bellShot, footage["f-spdc", {234, 240.9}, {1.2, 8}],
+    voice["v-aspect", 224.1, {0, 16.8}, {{224.1, 228}}, {"Alain Aspect", "Atomic Physics and Reality, 1985"},
+        {{0, 6, "And we have found experimental results violating Bell's inequalities."}, {6, 16.8, "So we are compelled to reject the idea that the polarisation of the photon was already existing just after the emission."}}],
+    year[{211, 240.9}, "1935 \[Dash] 1982", "Einstein, Podolsky, Rosen \[CenterDot] Bell \[CenterDot] Aspect"]};
 ```
 
-Hofstadter's butterfly: an electron on a lattice in a magnetic field.  For each flux *p*/*q* through a cell, Harper's equation has *q* energies; plotted against the flux they make a fractal:
+## 4:01 — Nobody Understands
+
+Feynman, 1964.  And while he warns against asking how it can be like that, his own picture of it: a particle goes from A to B along every path at once, each an arrow turned by its action; far from the classical path they spin and cancel, near it they agree:
 
 ```wl
-butterfly = Flatten[Table[If[CoprimeQ[p, q], With[{al = p / q}, {al, #} & /@ Eigenvalues[N @ SparseArray[{{i_, i_} :> 2 Cos[2 Pi al i], {i_, j_} /; Abs[i - j] == 1 || Abs[i - j] == q - 1 :> 1.}, {q, q}]]], Nothing],
-    {q, 1, 48}, {p, 0, q}], 2];
-butterflyImage = Rasterize[Graphics[{RGBColor["#9FE6FF"], PointSize[0.0016], Point[butterfly]}, PlotRange -> {{0, 1}, {-4, 4}}, AspectRatio -> 0.75, Background -> Black, ImageSize -> 1000], "Image"];
-butterflyImage
+paths = BlockRandom[SeedRandom[1948]; Table[With[{w = Accumulate[RandomVariate[NormalDistribution[0, 1], 80]]}, With[{bridge = w - Range[80] / 80 Last[w]}, (k / 40.) bridge / Max[Abs[bridge]]]], {k, 1, 40}]];
+pathAction[y_] := Total[Differences[y]^2] 600;
+cornu = Table[{FresnelC[s], FresnelS[s]}, {s, -3.5, 3.5, 0.01}];
+pathShot = shot[{249, 257.5}, Function[t, With[{u = Clip[(t - 249.2) / 4, {0, 1}]}, {
+    Table[With[{y = paths[[k]]}, CanvasLine[Table[{260 + 1000 (j - 1) / 79, 480 + 170 y[[j]] Sin[Pi (j - 1) / 79]^0.5}, {j, 80}], Hue[Mod[pathAction[y], 1], 0.8, 0.9], "Thickness" -> 2,
+        Opacity -> 0.5 Clip[3 u - k / 40, {0, 1}]]], {k, 40}],
+    CanvasLine[{{260, 480}, {1260, 480}}, boneC, "Thickness" -> 5, Opacity -> u],
+    CanvasDisk[{260, 480}, 12, boneC], CanvasDisk[{1260, 480}, 12, boneC], CanvasText["A", {240, 550}, sans[36], boneC], CanvasText["B", {1245, 550}, sans[36], boneC],
+    CanvasLine[{1560, 480} + 280 # - {140, 140} & /@ Take[cornu, Max[2, Round[u Length[cornu]]]], red, "Thickness" -> 3]}]]];
+feynmanPart = {voice["v-feynman-nobody", 240.9, {0, 4.9}, All, {"Richard Feynman", "Messenger Lectures, Cornell, 1964"},
+        {{0, 4.9, "On the other hand, I think I can safely say that nobody understands quantum mechanics."}}],
+    pathShot, voice["v-feynman-drain", 245.8, {0, 11.7}, {{245.8, 249}}, None,
+        {{0, 4.5, "Don't keep saying to yourself, if you can possibly avoid it, \[OpenCurlyDoubleQuote]But how can it be like that?\[CloseCurlyDoubleQuote]"},
+         {4.5, 9.8, "Because you'll get down the drain, into a blind alley from which nobody has yet escaped."}, {9.8, 11.7, "Nobody knows how it can be like that."}}],
+    year[{240.9, 257.5}, "1948", "Richard Feynman \[CenterDot] every path at once"]};
 ```
 
+## 4:17 — The World It Built
+
+What it became: laser light (a US Information Agency film), the magnetic resonance of spins in a living body, atoms cooled until they share one wave (NASA's Cold Atom Lab), and machines that compute with ψ -- Google's Sycamore and an IBM quantum computer being built:
+
 ```wl
-butterflyScene[{t0_, t1_}] := {t0, t1} -> Function[t, With[{u = Clip[(t - t0) / 0.7, {0, 1}]},
-    CanvasClip[{460, 160, 1000 u, 760}, CanvasImage[butterflyImage, {460, 160, 1000, 750}]]]];
+builtPart = {footage["f-laser", {261, 266}, {64, 69}], footage["f-mri", {266, 270}, {0, 4}], footage["f-sycamore", {270, 273.4}, {48, 51.4}],
+    voice["v-nasa-bec", 257.5, {0.4, 16.3}, {{257.5, 261}}, {"Jim Kohel", "NASA Cold Atom Lab"},
+        {{0, 5.4, "These wispy clouds of atoms behave in very strange ways."}, {5.4, 9.4, "They're no longer distinguishable as individual particles."},
+         {9.4, 15.9, "You really have to describe it more like atoms acting collectively, as a wave."}}],
+    footage["f-ibm-build", {277, 281.6}, {0, 21}, 0.02],
+    voice["v-martinis", 273.4, {0, 8.2}, {{273.4, 277}}, {"John Martinis", "Google, 2019"},
+        {{0, 8.2, "The classical bit stores information as a zero or one, and a quantum bit can be both zero and one at the same time."}}],
+    year[{257.5, 281.6}, "1960 \[Dash] 2026", "lasers \[CenterDot] MRI \[CenterDot] atoms as one wave \[CenterDot] quantum computers"]};
 ```
 
-The quantum Hall effect: a sheet of electrons in a strong field conducts in exact steps of *e*²/*h*, flat to parts in a billion:
+## 4:42 — Nobody Knows
+
+Anton Zeilinger, in his Nobel lecture of 2022, on the two slits: the fringes arise only if nothing at all can say which way the particle went -- not even God.  The screen from the beginning, completing:
 
 ```wl
-hall[b_] := Total[Table[0.5 (1 + Tanh[18 (1 / b - k - 0.5)]), {k, 1, 6}]];
-hallScene[{t0_, t1_}] := {t0, t1} -> Function[t, With[{u = Clip[(t - t0) / 0.75, {0, 1}]}, {
-    CanvasLine[Table[{360 + 1200 (b - 0.12) / 1.0, 900 - 110 hall[b]}, {b, 0.12, 0.12 + u, 0.002}], blue, "Thickness" -> 5],
-    CanvasLine[Table[{360 + 1200 (b - 0.12) / 1.0, 960 - 60 Total[Table[Exp[-(18 (1 / b - k - 0.5))^2], {k, 1, 6}]]}, {b, 0.12, 0.12 + u, 0.002}], red, "Thickness" -> 3],
-    CanvasText["h/e\.b2 \[Times] 1/n", {380, 200}, serif[44, True], boneC], CanvasText["magnetic field", {1300, 1010}, sans[28], RGBColor["#8E8B84"]]}]];
+zeilingerPart = {footage["f-electrons", {286, 296}, {40, 72}, 0.05],
+    voice["v-zeilinger", 281.6, {0, 14.4}, {{281.6, 286}}, {"Anton Zeilinger", "Nobel lecture, 2022"},
+        {{0, 7.4, "The fringes back there only arise if you can say nothing about which path they went."}, {7.4, 14.4, "They themselves don't know it, nobody in the universe knows it, and I say even God doesn't know it."}}],
+    year[{281.6, 296}, "2022", "Nobel Prize \[CenterDot] Aspect, Clauser, Zeilinger"]};
 ```
 
-A Bose-Einstein condensate: cooled to billionths of a degree, thousands of atoms fall into one wave -- a spike rising out of the thermal cloud:
+## 4:56 — Outro
+
+ψ alone, drifting; the century; the credits:
 
 ```wl
-becScene[{t0_, t1_}] := {t0, t1} -> Function[t, With[{u = Clip[(t - t0) / 0.8, {0, 1}]}, With[{w = 1 - 0.5 u, c = 6 u^2}, {
-    CanvasPolygon[Join[{{360, 900}}, Table[{960 + 600 v / 3, 900 - 500 ((1 - 0.6 u) Exp[-v^2 / (2 w^2)] + c Exp[-v^2 / 0.012] / 7)}, {v, -3, 3, 0.01}], {{1560, 900}}], blue, Opacity -> 0.85],
-    CanvasText["velocity", {1450, 960}, sans[28], RGBColor["#8E8B84"]]}]]];
+credits = {"Voices", "Max Planck (film portrait, 1942) \[CenterDot] Niels Bohr (Lindau Nobel Laureate Meetings, 1962)",
+    "Louis de Broglie (INA, 1967) \[CenterDot] Werner Heisenberg (CBC, early 1970s; Lindau, 1953) \[CenterDot] Paul Dirac (Lindau, 1976)",
+    "Erwin Schr\[ODoubleDot]dinger (SWR, 1952) \[CenterDot] Max Born (rbb, 1954; BR, 1965) \[CenterDot] John Bell (BBC / Open University, 1986)",
+    "Alain Aspect (Jorlunde Film, 1985) \[CenterDot] Richard Feynman (BBC / Cornell Messenger Lectures, 1964)",
+    "Jim Kohel (NASA) \[CenterDot] John Martinis (Google, CC BY) \[CenterDot] Anton Zeilinger (Nobel Prize Outreach, 2022)", "",
+    "Footage", "Bach, Pope, Liou, Batelaan 2013 (CC BY) \[CenterDot] PSSC films, 1961\[Dash]62 \[CenterDot] Wikimedia Commons contributors (CC BY / BY-SA)",
+    "US Information Agency \[CenterDot] NASA \[CenterDot] IBM Research \[CenterDot] Google Quantum AI \[CenterDot] Denys Bondar \[CenterDot] Hirsch, Frahm, Sorge et al.",
+    "Library of Congress \[CenterDot] Friedrich Hund \[CenterDot] Internet Archive", "",
+    "Short quotations of copyrighted recordings, for a non-commercial educational film", "Computed and composed in Wolfram Language with WAnim"};
+creditFont[s_] := If[MemberQ[{"Voices", "Footage"}, s], sans[34], sans[26, 400]];
+outroPart = {shot[{296, 312}, Function[t, waveRibbon[packet[xs, 0.35 (t - 296), 3, 0.7, 2], {160, 640, 1600, 400}, 1, Clip[1 - (t - 302) / 1.2, {0, 1}]]]],
+    TitleCard["1926 \[Dash] 2026", {296.5, 302.3}, Position -> {960, 300}, FontSize -> 96, FontColor -> boneC, "Enter" -> "Rise", "Exit" -> "Fade"],
+    {302.5, 312} -> Function[t, With[{y0 = 1100 - 150 (t - 302.5)}, CanvasOpacity[Clip[(t - 302.5) 3, {0, 1}] Clip[(312 - t) 2, {0, 1}],
+        MapIndexed[If[#1 === "", {}, CanvasText[#1, {960 - CanvasTextWidth[#1, creditFont[#1]] / 2, y0 + 52 #2[[1]]}, creditFont[#1],
+            If[MemberQ[{"Voices", "Footage"}, #1], red, boneC]]] &, credits]]]]};
 ```
 
-Spins precessing in a magnetic field ring like bells, and the ring tells where they are -- nuclear magnetic resonance, and from it MRI:
+## The Score
+
+The music sits beneath the voices -- ducked under each -- and comes forward three times: hydrogen's chord, the wave equation, the end.  Its harmony walks Am, F, Dm, E, a chord every four seconds:
 
 ```wl
-mriScene[{t0_, t1_}] := {t0, t1} -> Function[t, With[{u = t - t0}, {
-    CanvasDisk[{560, 540}, 230, RGBColor[0.3, 0.3, 0.32], "Stroke" -> 2],
-    Table[With[{ph = 9 u + 2 Pi j / 6}, CanvasLine[{{560, 540} + {(60 + 30 j) Cos[ph], 0.35 (60 + 30 j) Sin[ph] - 140}, {560, 540}}, Hue[j / 6, 0.7, 0.95], "Thickness" -> 4]], {j, 6}],
-    CanvasLine[Table[{900 + 700 s, 540 - 200 Cos[40 s] Exp[-3 s]}, {s, 0, Min[1, u], 0.002}], red, "Thickness" -> 3]}]];
-```
-
-A particle in a box, starting as a narrow packet, weaves a carpet of interference over time -- position across, time down -- and at the revival time 4/π returns exactly to where it began.  A quarter of that time:
-
-```wl
-carpet = Module[{nmax = 60, x = Subdivide[0., 1., 499], c, modes, T = 4 / Pi},
-    (* the packet's coefficients in the box's modes, in closed form for a narrow Gaussian *)
-    c = Table[Sqrt[2] 0.02 Sqrt[2 Pi] Sin[n Pi 0.3] Exp[-(n Pi 0.02)^2 / 2], {n, nmax}];
-    modes = Table[Sqrt[2] Sin[n Pi x], {n, nmax}];
-    (* a quarter of the revival time, finely enough that the fastest mode never skips a turn *)
-    Image[Rescale[Table[Abs[(c Exp[-I Range[nmax]^2 Pi^2 t / 2]) . modes]^2, {t, 0, T / 4, T / 6399}]]^0.45]];
-carpetImage = Colorize[carpet, ColorFunction -> (Blend[{Black, RGBColor["#1d4e8f"], RGBColor["#9FE6FF"], White}, #] &)]
-```
-
-```wl
-carpetScene[{t0_, t1_}] := {t0, t1} -> Function[t, With[{u = Clip[(t - t0) / 0.9, {0, 1}]},
-    CanvasClip[{460, 140, 1000, 800 u}, CanvasImage[carpetImage, {460, 140, 1000, 800}]]]];
-```
-
-```wl
-built = {bandScene[{40, 41}], laserScene[{41, 42}], bellScene[{42, 43}], butterflyScene[{43, 44}], hallScene[{44, 45}], becScene[{45, 46}], mriScene[{46, 47}], carpetScene[{47, 48}],
-    eraLabel[{40, 41}, "Bands", "1947 \[CenterDot] the transistor"], eraLabel[{41, 42}, "Light in step", "1960 \[CenterDot] the laser"],
-    eraLabel[{42, 43}, "No local world", "1964 \[CenterDot] John Bell \[CenterDot] 1982 \[CenterDot] Alain Aspect"], eraLabel[{43, 44}, "A fractal spectrum", "1976 \[CenterDot] Douglas Hofstadter"],
-    eraLabel[{44, 45}, "Exact steps", "1980 \[CenterDot] Klaus von Klitzing"], eraLabel[{45, 46}, "One wave of atoms", "1995 \[CenterDot] Bose-Einstein condensate"],
-    eraLabel[{46, 47}, "Spins that ring", "1946 \[CenterDot] NMR \[CenterDot] 1973 \[CenterDot] MRI"], eraLabel[{47, 48}, "The quantum carpet", "a particle in a box"]};
-```
-
-## Bars 48 to 54: Computing with ψ
-
-Feynman again, in 1981: to simulate nature, you need a computer that is itself quantum:
-
-```wl
-blochSphere[{cx_, cy_}, r_, th_, ph_, colour_] := {CanvasDisk[{cx, cy}, r, RGBColor[0.3, 0.3, 0.32], "Stroke" -> 2],
-    CanvasLine[Table[{cx + r Cos[s], cy + 0.3 r Sin[s]}, {s, 0, 2 Pi, 0.1}], RGBColor[0.3, 0.3, 0.32], "Thickness" -> 1.5],
-    CanvasLine[{{cx, cy}, {cx + r Sin[th] Cos[ph], cy - r Cos[th] + 0.3 r Sin[th] Sin[ph]}}, colour, "Thickness" -> 6],
-    CanvasDisk[{cx + r Sin[th] Cos[ph], cy - r Cos[th] + 0.3 r Sin[th] Sin[ph]}, 10, colour]};
-grover[k_] := With[{th = ArcSin[1 / 4.]}, With[{p = Sin[(2 k + 1) th]^2}, ReplacePart[ConstantArray[(1 - p) / 15, 16], 11 -> p]]];
-computingScene = {
-    CaptionText["\[OpenCurlyDoubleQuote]Nature isn\[CloseCurlyQuote]t classical, dammit, and if you want to make a simulation of nature, you\[CloseCurlyQuote]d better make it quantum mechanical.\[CloseCurlyDoubleQuote]",
-        {48, 49.9}, Position -> {260, 380}, FontSize -> 60, "Width" -> 1400, FontColor -> boneC, "Highlight" -> "quantum", "Exit" -> "Cut"],
-    TitleCard["Richard Feynman, 1981", {49.2, 49.9}, Position -> {960, 760}, FontSize -> 28, FontWeight -> 400, FontColor -> RGBColor["#8E8B84"], "Enter" -> "Fade", "Exit" -> "Cut"],
-    {50, 51.5} -> Function[t, Table[blochSphere[{360 + 400 j, 560}, 150, Pi (0.5 + 0.45 Sin[3 t + j]), 4 t + j, Hue[j / 4, 0.7, 0.95]], {j, 0, 3}]],
-    say["Qubits: waves you can program.", {50.1, 51.5}, {1100, 880}, "program"],
-    {51.5, 54} -> Function[t, With[{k = Clip[Floor[(t - 51.5) / 0.6], {0, 3}], u = Clip[FractionalPart[(t - 51.5) / 0.6] / 0.5, {0, 1}]}, With[{p = (1 - u) grover[Max[0, k - 1]] + u grover[k]},
-        Table[CanvasRectangle[{360 + 75 (j - 1), 900 - 700 p[[j]], 60, 700 p[[j]]}, If[j == 11, red, blue]], {j, 16}]]]],
-    say["Grover, 1996: a search that interferes its way to the answer.", {51.6, 54}, {1280, 200}, "answer", 40],
-    eraLabel[{48, 54}, "Computing with \[Psi]", "1981 \[CenterDot] Feynman \[CenterDot] 1994 \[CenterDot] Shor \[CenterDot] 1996 \[CenterDot] Grover"]};
-AnimatedGraphics[{Backdrop[inkC], computingScene}, "Duration" -> 54][53.5, ImageSize -> 480]
-```
-
-## Bars 54 to 58: Decoherence
-
-The cat again.  Touching the world -- air, light, anything that keeps a record -- the fringes fade, and what is left is a classical either-or: the quantum becomes the everyday:
-
-```wl
-decoherenceScene = {{54, 58} -> Function[t, CanvasImage[decoherenceFrames[[Clip[1 + Floor[23 (t - 54) / 3.4], {1, 24}]]], {160, 130, 1100, 825}]],
-    say["Touch the world, and the fringes fade.", {54.3, 58}, {1250, 420}, "fade"],
-    eraLabel[{54, 58}, "Decoherence", "1970 \[CenterDot] H. Dieter Zeh \[CenterDot] 1981 \[CenterDot] Wojciech Zurek"]};
-```
-
-## Bars 58 to 62: Chaos and Its Scars
-
-A billiard shaped like a stadium makes a ball's motion chaotic.  Its quantum standing waves, solved as eigenfunctions of the Laplacian, are mostly speckle -- yet some are scarred along the classical orbits, as Heller found in 1984:
-
-```wl
-stadium = RegionUnion[Rectangle[{-1, -1}, {1, 1}], Disk[{-1, 0}, 1], Disk[{1, 0}, 1]];
-{stadiumValues, stadiumModes} = NDEigensystem[{-Laplacian[u[x, y], {x, y}], DirichletCondition[u[x, y] == 0, True]}, u[x, y], {x, y} \[Element] stadium, 140,
-    Method -> {"PDEDiscretization" -> {"FiniteElement", "MeshOptions" -> {"MaxCellMeasure" -> 0.0004}}}];
-stadiumInside = RegionMember[stadium];
-stadiumImage[k_] := With[{f = Head[stadiumModes[[k]]], grid = Table[{xx, yy}, {yy, 1, -1, -0.008}, {xx, -2, 2, 0.008}]},
-    With[{pts = Flatten[grid, 1]}, Image[Rescale[Partition[Quiet[MapThread[If[#2, #1^2, 0.] &, {f @@ Transpose[pts], stadiumInside[pts]}]], Length[First[grid]]]]^0.5]]];
-scarPicks = {98, 112, 127, 139};
-scars = Colorize[stadiumImage[#], ColorFunction -> (Blend[{Black, RGBColor["#1d4e8f"], RGBColor["#9FE6FF"], White}, #] &)] & /@ scarPicks;
-GraphicsRow[scars, ImageSize -> 1200]
-```
-
-```wl
-chaosScene = {{58, 62} -> Function[t, With[{k = Clip[1 + Floor[(t - 58) / 1], {1, 4}]}, {CanvasImage[scars[[k]], {360, 240, 1200, 600}]}]],
-    say["Chaos, and inside it, the memory of an orbit.", {58.3, 62}, {1250, 920}, "memory", 42],
-    eraLabel[{58, 62}, "Scars", "1984 \[CenterDot] Eric Heller"]};
-```
-
-## Bars 62 to 74: The Quantum Century
-
-Everything at once: the century's pictures dealt out on the beat around the screen from the beginning, its fringes now dense; then one atom, large, filling with clicks:
-
-```wl
-wall = {orbitals[[3]], orbitals[[8]], carpetImage, butterflyImage, catFrames[[12]], scars[[2]], orbitals[[11]], orbitals[[6]]};
-pulse = TrackPulse[kick, 14];
-climaxOrbital = orbitalImage[{5, 3, 1}, 700];
-climaxDensity = N @ Table[hydrogen[5, 3, 1, x, z]^2, {z, 59, -59, -118 / 399}, {x, -59, 59, 118 / 399}];
-climaxDots = BlockRandom[SeedRandom[2026]; With[{cells = RandomChoice[Flatten[climaxDensity] -> Range[400^2], 9000]}, ({Mod[# - 1, 400], Quotient[# - 1, 400]} + RandomReal[{0, 1}, 2]) & /@ cells]];
-climaxScene = {
-    (* the century's pictures, dealt on the beat, breathing with the kick, drifting in *)
-    {62, 68.2} -> Function[t, With[{z = 1 + 0.05 (t - 62) / 6 + 0.025 pulse[t], fade = Clip[(68.2 - t) / 0.25, {0, 1}]},
-        CanvasOpacity[fade, CanvasTransform[CanvasTranslate[{960, 540}] . CanvasScale[z] . CanvasTranslate[{-960, -540}], {
-            Table[With[{u = Clip[(t - 62 - (j - 1) / 4) 4, {0, 1}], pos = {{60, 60}, {520, 60}, {980, 60}, {1440, 60}, {60, 700}, {520, 700}, {980, 700}, {1440, 700}}[[j]]},
-                If[u > 0, CanvasImage[wall[[j]], {pos[[1]], pos[[2]] + 30 (1 - u), 420, 320}, Opacity -> 0.9 u], {}]], {j, Length[wall]}],
-            With[{n = Min[6000, Round[6000 Clip[(t - 63) / 4.5, {0, 1}]]]}, {CanvasRectangle[{260, 400, 1400, 280}, RGBColor[0.06, 0.06, 0.07], Opacity -> 0.92],
-                Table[CanvasDisk[{260 + 1400 (landing[[k, 1]] + 7) / 14, 540 + 120 landing[[k, 2]]}, 1.6, RGBColor["#9FE6FF"], Opacity -> 0.8], {k, n}]}]}]]]],
-    (* then one atom, large, filling with clicks *)
-    {68, 74} -> Function[t, With[{u = Clip[(t - 68) / 0.5, {0, 1}], n = Round[9000 Clip[(t - 68.2) / 4.5, {0, 1}]^0.8], s = 1 + 0.02 pulse[t]},
-        CanvasOpacity[u Clip[(74 - t) / 0.4, {0, 1}], CanvasTransform[CanvasTranslate[{960, 500}] . CanvasScale[s] . CanvasTranslate[{-960, -500}], {
-            CanvasImage[climaxOrbital, {610, 150, 700, 700}, Opacity -> 0.35],
-            Table[CanvasDisk[{610, 150} + 700 climaxDots[[k]] / 400, 1.8, RGBColor["#9FE6FF"], Opacity -> 0.75], {k, n}]}]]]],
-    TitleCard["A hundred years of \[Psi].", {69, 73.8}, Position -> {960, 960}, FontSize -> 60, FontColor -> boneC, "Enter" -> "Rise", "Exit" -> "Fade"]};
-```
-
-## Bars 74 to 81: Outro
-
-ψ alone, drifting:
-
-```wl
-outroScene = {{74, 81} -> Function[t, With[{u = t - 74}, {waveRibbon[packet[xs, 0.8 u, 3, 0.7, 2], {160, 700, 1600, 420}, 1, Clip[1 - (u - 5.5) / 1.2, {0, 1}]]}]],
-    TitleCard["1926 \[Dash] 2026", {74.4, 80.3}, Position -> {960, 300}, FontSize -> 90, FontColor -> boneC, "Enter" -> "Rise", "Exit" -> "Fade"],
-    TitleCard["Nobody understands it.", {75.5, 80.3}, Position -> {960, 860}, FontSize -> 50, FontColor -> RGBColor["#8E8B84"], "Enter" -> "Fade", "Exit" -> "Fade"],
-    TitleCard["Everything runs on it.", {77, 80.3}, Position -> {960, 940}, FontSize -> 50, FontColor -> red, "Enter" -> "Fade", "Exit" -> "Fade"]};
-```
-
-## The Ruler of Years
-
-```wl
-hud = YearRuler[{{4, 1900}, {8, 1913}, {12, 1922}, {14, 1924}, {15, 1925}, {16, 1926}, {22, 1926.5}, {26, 1927}, {30, 1928}, {34, 1935}, {38, 1948},
-        {40, 1947}, {41, 1960}, {42, 1964}, {43, 1976}, {44, 1980}, {45, 1995}, {46, 1973}, {47, 1990}, {48, 1981}, {51.5, 1996}, {54, 2000}, {58, 1984}, {62, 2026}, {74, 2026}}, {4, end},
-    "Marks" -> {{1900, "1900"}, {1926, "1926"}, {1950, "1950"}, {1975, "1975"}, {2000, "2000"}, {2026, "2026"}}, FontColor -> fg, "Exit" -> "Fade", "ExitTime" -> 0.5];
-```
-
-## The Mix
-
-Every part on its instrument, mixed: the music ducks under the kick, runs through the century's low-pass, and fades at the end:
-
-```wl
-score = Mixer["Sidechain" -> kick, "Cutoff" -> musicCutoff, "FadeOut" -> 5/4][Track[{Instrument["Pad"][pad], Instrument["Bass"][bass],
-    Instrument["Arp"][arps], Instrument["Bell"][atomBells], Instrument["Lead"][lead],
-    Instrument["SoftKick"][coldKicks], Instrument["Hat"][clicksCold], Instrument["Kick"][kick], Instrument["Clap"][claps], Instrument["Hat"][hats], Instrument["OpenHat"][openHats],
-    Instrument["Kick"][pairKick], Instrument["Clap"][pairClap],
-    Instrument["Gain" -> 2.4][feynmanVoice], Instrument["Crash"][crashes], Instrument["Riser"][risers], Instrument["Roll"][rolls], Instrument["Impact"][impacts]}]];
+chordAt[s_] := {{57, 60, 64}, {53, 57, 60}, {50, 53, 57}, {52, 56, 59}}[[Mod[Floor[s / 4], 4] + 1]];
+rootAt[s_] := {45, 41, 38, 40}[[Mod[Floor[s / 4], 4] + 1]];
+rises = {{70, 80}, {125, 140}, {199.2, 211}, {296, 312}};
+rising[s_] := AnyTrue[rises, #[[1]] <= s < #[[2]] &];
+pad = Track[Flatten[Table[{s, 4, #, If[rising[s], 0.75, 0.42]} & /@ chordAt[s], {s, 16, 308, 4}], 1]];
+bass = Track[Table[{s, 2, rootAt[s], If[rising[s], 0.85, 0.5]}, {s, 18, 310, 2}]];
+pulse = Track[{#, 1/4, "bd", 0.7} & /@ Join[Range[125, 139.5, 1], Range[199.2, 210.5, 1], Range[296, 303, 1]]];
+hats = Track[{#, 1/8, "hh", 0.35} & /@ Join[Range[125.5, 139.5, 0.5], Range[199.7, 210.7, 0.5]]];
+clicks = Track[{#, 1/16, "hh", 0.8} & /@ BlockRandom[SeedRandom[1964]; Sort[RandomReal[{0.2, 13.4}, 40]]]];
+hook = {{0, 2, 69}, {2, 1, 72}, {3, 1, 76}, {4, 2, 74}, {6, 2, 72}, {8, 2, 77}, {10, 1, 76}, {11, 1, 74}, {12, 3, 76}};
+lead = Track[Join[{129.5 + #1 / 2, #2 / 2, #3, 0.7} & @@@ hook, {297 + #1 / 2, #2 / 2, #3, 0.6} & @@@ hook]];
+atomBells = Track[Join[Table[{74 + k / 2, 3, balmerPitch[[k + 1]] + 12, 0.85}, {k, 0, 3}], Table[{304 + k / 2, 4, balmerPitch[[k + 1]] + 12, 0.6}, {k, 0, 3}]]];
+crashes = Track[{#, 2, "cr", 0.6} & /@ {70, 125, 199.2, 296}];
+risers = Track[{{122, 3, 60, 0.9}, {196.5, 2.7, 60, 0.8}}];
+score = Mixer["FadeOut" -> 3][Track[{Instrument["Pad"][pad], Instrument["Bass"][bass], Instrument["SoftKick"][pulse], Instrument["Hat"][hats], Instrument["Hat"][clicks],
+    Instrument["Lead"][lead], Instrument["Bell"][atomBells], Instrument["Crash"][crashes], Instrument["Riser"][risers]}]];
+TrackView["PianoRoll", "Cycles" -> 16][TrackShift[-124][Track[{pad, lead}]]]
 ```
 
 ## The Film
 
-The edit: the sections stacked in time over their grounds, the ruler of years beneath, and the score:
+The edit: every part over the dark ground, the score beneath, five minutes at twenty-four frames a second:
 
 ```wl
-film = AnimatedGraphics[{coldOpen, planckScene, atomScene, sgScene, heisenbergScene, Backdrop[ground, {16, 81}], schrodinger, psiScene, oscillatorScene, orbitalScene, bornScene,
-    uncertaintyScene, solvayScene, tunnelScene, diracScene, entangleScene, pathScene, built, computingScene, decoherenceScene, chaosScene, climaxScene, outroScene, hud, score},
-    "Duration" -> duration, "CyclesPerSecond" -> 1/2, BaseStyle -> {"Pulse" -> kick}]
+film = AnimatedGraphics[{Backdrop[inkC], coldOpen, planckPart, photoPart, atomPart, deBrogliePart, helgolandPart, diracPart, psiPart, schrodingerPart, bornPart,
+    uncertaintyPart, wallsPart, entanglePart, feynmanPart, builtPart, zeilingerPart, outroPart, score}, "Duration" -> 312, "CyclesPerSecond" -> 1, FrameRate -> 24]
+```
+
+Twelve moments of it:
+
+```wl
+GraphicsGrid[Partition[film[#, ImageSize -> 400] & /@ {5, 16, 29, 60, 77, 85, 107, 132, 150, 188, 220, 300}, 3], ImageSize -> 1200]
 ```
 
 Render it, frames in parallel, and store it in the cloud, public:
@@ -758,24 +472,16 @@ video = Video[CopyFile["Quantum.mp4", CloudObject["WolframFilm/Quantum.mp4", Per
 
 ## References
 
-[1] [WAnim](https://github.com/sw1sh/WAnim), the paclet the film is made with; the [Wolfram Quantum Framework](https://resources.wolframcloud.com/PacletRepository/resources/Wolfram/QuantumFramework/) for the qubits
+[1] Every clip used, its source, moment, transcript and rights: [CLIPS.md](https://github.com/WolframInstitute/WolframFilm/blob/main/films/Quantum/docs/CLIPS.md); every date and paper: [SOURCES.md](https://github.com/WolframInstitute/WolframFilm/blob/main/films/Quantum/docs/SOURCES.md)
 
-[2] Every date and citation, checked against the papers: [the film's sources](https://github.com/WolframInstitute/WolframFilm/blob/main/films/Quantum/docs/SOURCES.md)
+[2] R. Bach, D. Pope, S.-H. Liou, H. Batelaan, [Controlled double-slit electron diffraction](https://doi.org/10.1088/1367-2630/15/3/033018), New Journal of Physics 15, 033018 (2013)
 
-[3] E. Schrödinger, [Quantisierung als Eigenwertproblem](https://doi.org/10.1002/andp.19263840404), Annalen der Physik 79, 361 (1926)
+[3] E. Schrödinger, [Quantisierung als Eigenwertproblem](https://doi.org/10.1002/andp.19263840404), Annalen der Physik 79, 361 (1926); M. Born, [Zur Quantenmechanik der Stoßvorgänge](https://doi.org/10.1007/BF01397477), Zeitschrift für Physik 37, 863 (1926)
 
-[4] M. Born, [Zur Quantenmechanik der Stoßvorgänge](https://doi.org/10.1007/BF01397477), Zeitschrift für Physik 37, 863 (1926)
+[4] W. Heisenberg, [Über quantentheoretische Umdeutung](https://doi.org/10.1007/BF01328377), Zeitschrift für Physik 33, 879 (1925); [Über den anschaulichen Inhalt](https://doi.org/10.1007/BF01397280), Zeitschrift für Physik 43, 172 (1927)
 
-[5] W. Heisenberg, [Über quantentheoretische Umdeutung kinematischer und mechanischer Beziehungen](https://doi.org/10.1007/BF01328377), Zeitschrift für Physik 33, 879 (1925)
+[5] J. S. Bell, [On the Einstein Podolsky Rosen paradox](https://doi.org/10.1103/PhysicsPhysiqueFizika.1.195), Physics 1, 195 (1964); A. Aspect, J. Dalibard, G. Roger, [Experimental Test of Bell's Inequalities Using Time-Varying Analyzers](https://doi.org/10.1103/PhysRevLett.49.1804), PRL 49, 1804 (1982)
 
-[6] A. Einstein, B. Podolsky, N. Rosen, [Can Quantum-Mechanical Description of Physical Reality Be Considered Complete?](https://doi.org/10.1103/PhysRev.47.777), Physical Review 47, 777 (1935)
+[6] R. P. Feynman, [The Character of Physical Law](https://archive.org/details/the-messenger-lectures), Messenger Lectures, Cornell, 1964; [Space-Time Approach to Non-Relativistic Quantum Mechanics](https://doi.org/10.1103/RevModPhys.20.367), RMP 20, 367 (1948)
 
-[7] R. P. Feynman, [Simulating Physics with Computers](https://doi.org/10.1007/BF02650179), International Journal of Theoretical Physics 21, 467 (1982); [The Character of Physical Law](https://archive.org/details/the-messenger-lectures), Messenger Lectures, Cornell, 1964 (BBC)
-
-[8] A. Tonomura et al., [Demonstration of single-electron buildup of an interference pattern](https://doi.org/10.1119/1.16104), American Journal of Physics 57, 117 (1989)
-
-[9] E. J. Heller, [Bound-State Eigenfunctions of Classically Chaotic Hamiltonian Systems: Scars of Periodic Orbits](https://doi.org/10.1103/PhysRevLett.53.1515), Physical Review Letters 53, 1515 (1984)
-
-[10] Archive images: [Helgoland, c. 1900](https://commons.wikimedia.org/wiki/File:Study_of_the_west_side,_Helgoland,_Germany-LCCN2002713866.jpg) (Library of Congress, public domain); [Heisenberg, 1926](https://commons.wikimedia.org/wiki/File:Heisenberg,Werner_1926.jpeg) (Friedrich Hund, CC BY 3.0); the [Annalen](https://archive.org/details/sim_annalen-der-physik_annalen-der-physik_1926_79) and [Zeitschrift für Physik](https://archive.org/details/sim_zeitschrift-fuer-physik-a-atoms-and-nuclei_zeitschrift-fuer-physik_1926_37) scans (Internet Archive); [Solvay 1927](https://commons.wikimedia.org/wiki/File:Solvay_conference_1927.jpg) (Benjamin Couprie)
-
-[11] [The International Year of Quantum Science and Technology](https://quantum2025.org/about-iyq-2025/)
+[7] [The Nobel Prize in Physics 2022](https://www.nobelprize.org/prizes/physics/2022/summary/); [The International Year of Quantum Science and Technology](https://quantum2025.org/about-iyq-2025/)
