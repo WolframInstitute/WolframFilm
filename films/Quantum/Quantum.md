@@ -66,6 +66,20 @@ xs = Subdivide[-6., 18., 360];
 AnimatedGraphics[{Backdrop[Black], {0, 2} -> Function[t, waveRibbon[packet[xs, 1.6 t], {160, 760, 1600, 520}, 1, 1]]}, "Duration" -> 2]
 ```
 
+## From the Archive
+
+The people and pages of the story, from public archives, kept in the cloud beside the film (the originals' credits are in the references): Helgoland as it looked around 1900, Heisenberg in 1926, the first page of Schrödinger's paper, the page of Born's with the footnote that made |ψ|² a probability, the Solvay conference of 1927, and Feynman in 1964:
+
+```wl
+archive[name_] := Import["https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/Quantum/archive/" <> name];
+helgoland = archive["helgoland.jpg"]; heisenberg1926 = archive["heisenberg1926.jpg"];
+schrodingerPage = archive["schrodinger1926.jpg"]; solvay = archive["solvay1927.jpg"];
+bornFootnote = ImageTake[archive["born1926-p865.jpg"], {1830, 2130}, {110, 1370}];
+feynmanClip = "https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/Quantum/archive/feynman-nobody.mp4";
+feynmanFrames = Import[feynmanClip, "ImageList"]; feynmanAudio = Import[feynmanClip, "Audio"];
+{Length[feynmanFrames], Duration[feynmanAudio], bornFootnote}
+```
+
 ## The Score
 
 The harmony walks Am, F, Dm, E, and its roots are hydrogen's: the atom's four visible lines, Balmer's series, sound A, D, E and F when Hα is tuned to A.  The Rydberg formula gives their frequencies:
@@ -143,6 +157,8 @@ crashes = Track[Join[{{16, 2, "cr", 1}, {40, 2, "cr", 1}, {62, 2, "cr", 1}, {end
 risers = Track[{{14, 2, 60, 1}, {at["breakdown"], 1.9, 60, 1.1}, {60, 2, 60, 1}}];
 rolls = Track[{{15, 1, "sd", 0.8}, {at["breakdown", 1], 0.875, "sd", 1}, {61, 1, "sd", 0.9}}];
 impacts = Track[{{16, 2, 60, 1.1}, {40, 2, 60, 1}, {62, 2, 60, 1.2}, {end, 2, 60, 1}}];
+feynmanAt = 38.2;
+feynmanVoice = Track[{{feynmanAt, 1.9, feynmanAudio}}];
 ```
 
 The music runs through a low-pass that opens with the century: muffled before 1926, opening on the wave equation, closing for the breakdown, and drying out -- losing its reverb -- as the cat decoheres (the mix itself is at the end, with every part):
@@ -299,7 +315,9 @@ heisenbergScene = {
         CanvasText["X P", {170, 350}, serif[56, True], fg[t]], CanvasText["P X", {820, 350}, serif[56, True], fg[t]],
         CanvasOpacity[u, {Table[CanvasText[showNumber[(X . P)[[i, j]]], {170 + 150 (j - 1), 440 + 60 (i - 1)}, CanvasFont["Source Code Pro", 30, 400], fg[t]], {i, 4}, {j, 4}],
             Table[CanvasText[showNumber[(P . X)[[i, j]]], {820 + 150 (j - 1), 440 + 60 (i - 1)}, CanvasFont["Source Code Pro", 30, 400], fg[t]], {i, 4}, {j, 4}]}]}]],
-    formula["pq \[Minus] qp = h/2\[Pi]i", {15.3, 16}, {1520, 520}, 84, red],
+    formula["pq \[Minus] qp = h/2\[Pi]i", {15.3, 16}, {1520, 330}, 84, red],
+    PhotoPrint[helgoland, "Helgoland, as it looked around 1900", {15, 16}, Position -> {1330, 480}, "Size" -> {340, 255}, "Tilt" -> -2, "Kicker" -> "Library of Congress"],
+    PhotoPrint[heisenberg1926, "Heisenberg in 1926", {15.1, 16}, Position -> {1700, 460}, "Size" -> {190, 252}, "Tilt" -> 2.5, "Kicker" -> "Photo: Friedrich Hund"],
     eraLabel[{15, 16}, "What does not commute", "June 1925 \[CenterDot] Werner Heisenberg \[CenterDot] Helgoland"]};
 AnimatedGraphics[{Backdrop[paperC], heisenbergScene}, "Duration" -> 16][15.8, ImageSize -> 480]
 ```
@@ -309,9 +327,10 @@ AnimatedGraphics[{Backdrop[paperC], heisenbergScene}, "Duration" -> 16][15.8, Im
 The equation, as Schrödinger first printed it in *Annalen der Physik* -- received 27 January 1926, a hundred years ago:
 
 ```wl
-schrodinger = {formula["\[CapitalDelta]\[Psi] + (8\[Pi]²m / h²) (E \[Minus] V) \[Psi] = 0", {16.1, 17.4}, {960, 470}, 104, boneC],
-    TitleCard["Annalen der Physik \[CenterDot] received 27 January 1926", {16.4, 17.4}, Position -> {960, 600}, FontSize -> 30, FontWeight -> 400, FontColor -> RGBColor["#8E8B84"], "Enter" -> "Fade", "Exit" -> "Fade"],
-    TitleCard["100 years", {16.25, 17.35}, Position -> {960, 820}, FontSize -> 64, FontWeight -> 700, FontColor -> red, "Tracking" -> 6, "Enter" -> "Rise", "Exit" -> "Fade"],
+schrodinger = {formula["\[CapitalDelta]\[Psi] + (8\[Pi]²m / h²) (E \[Minus] V) \[Psi] = 0", {16.1, 17.4}, {700, 470}, 84, boneC],
+    PhotoPrint[schrodingerPage, "Quantisierung als Eigenwertproblem, first page", {16.15, 17.4}, Position -> {1330, 120}, "Size" -> {460, 708}, "Tilt" -> 1.5, "Kicker" -> "Annalen der Physik 79 \[CenterDot] 1926"],
+    TitleCard["Annalen der Physik \[CenterDot] received 27 January 1926", {16.4, 17.4}, Position -> {700, 600}, FontSize -> 30, FontWeight -> 400, FontColor -> RGBColor["#8E8B84"], "Enter" -> "Fade", "Exit" -> "Fade"],
+    TitleCard["100 years", {16.25, 17.35}, Position -> {700, 820}, FontSize -> 64, FontWeight -> 700, FontColor -> red, "Tracking" -> 6, "Enter" -> "Rise", "Exit" -> "Fade"],
     eraLabel[{16, 22}, "\[Psi]", "1926 \[CenterDot] Erwin Schr\[ODoubleDot]dinger \[CenterDot] Z\[UDoubleDot]rich"]};
 ```
 
@@ -372,6 +391,7 @@ bornScene = {{22, 26} -> Function[t, With[{n = LengthWhile[Range[4000], bornArri
         Table[CanvasDisk[{200, 160} + 780 bornDots[[k]] / bornPx, 2.2, RGBColor["#9FE6FF"], Opacity -> 0.8], {k, n}]}]],
     formula["P = |\[Psi]|²", {22.2, 26}, {1450, 380}, 120, boneC],
     say["The wave says where the click is likely.", {22.6, 26}, {1180, 560}, "click"],
+    PhotoPrint[bornFootnote, "\[OpenCurlyDoubleQuote]Added in proof: on closer consideration, the probability is proportional to the square\[CloseCurlyDoubleQuote]", {23.4, 26}, Position -> {1100, 760}, "Size" -> {720, 172}, "Tilt" -> -1, "Kicker" -> "A footnote \[CenterDot] Zeitschrift f\[UDoubleDot]r Physik 37 \[CenterDot] 1926"],
     eraLabel[{22, 26}, "Chance", "June 1926 \[CenterDot] Max Born \[CenterDot] G\[ODoubleDot]ttingen"]};
 AnimatedGraphics[{Backdrop[inkC], bornScene}, "Duration" -> 26][25.5, ImageSize -> 480]
 ```
@@ -392,6 +412,13 @@ uncertaintyScene = {{26, 28.6} -> Function[t, With[{s = squeeze[t]}, {
     say["Pin it down here, and it spreads there.", {26.4, 28.6}, {1180, 860}, "spreads"],
     eraLabel[{26, 28.6}, "Uncertainty", "1927 \[CenterDot] Werner Heisenberg \[CenterDot] Copenhagen"]};
 AnimatedGraphics[{Backdrop[inkC], uncertaintyScene}, "Duration" -> 29][27.4, ImageSize -> 480]
+```
+
+October 1927, Brussels: the fifth Solvay conference, on electrons and photons, where the new mechanics was argued over -- twenty-nine physicists, seventeen of them Nobel laureates:
+
+```wl
+solvayScene = {PhotoPrint[solvay, "Fifth Solvay Conference, Brussels, October 1927: 29 physicists, 17 Nobel laureates", {28.6, 30}, Position -> {410, 160}, "Size" -> {1100, 796}, "Tilt" -> -1, "Kicker" -> "Photo: Benjamin Couprie"],
+    eraLabel[{28.6, 30}, "Electrons and photons", "October 1927 \[CenterDot] Solvay \[CenterDot] Brussels"]};
 ```
 
 ## Bars 30 to 34: 1928, Through Walls
@@ -420,7 +447,7 @@ tunnelScene = {{30, 32.6} -> Function[t, With[{f = tunnel["Frames"][[Clip[Round[
 AnimatedGraphics[{Backdrop[inkC], tunnelScene}, "Duration" -> 33][31.9, ImageSize -> 480]
 ```
 
-Dirac's equation, the same year, made the electron relativistic -- and demanded a mirror image of it, of opposite charge: antimatter, found in 1932 as tracks curling the wrong way in a magnetic field:
+Dirac's equation, the same year, made the electron relativistic; its negative energies led him in 1931 to predict a mirror image of it, of opposite charge -- antimatter, found in 1932 as tracks curling the wrong way in a magnetic field:
 
 ```wl
 spiral[sign_, t_] := Table[{960, 620} + sign {240, 0} + 240 Exp[-0.11 th] {-sign Cos[th], -Sin[th]}, {th, 0, 6 Pi Min[1, t], 0.03}];
@@ -430,7 +457,7 @@ diracScene = {{32.6, 34} -> Function[t, With[{u = 3 (t - 32.6)}, {
         CanvasText["e\[Minus]", {1480, 640}, sans[44], blue, Opacity -> Clip[u - 1, {0, 1}]], CanvasText["e+", {400, 640}, sans[44], red, Opacity -> Clip[u - 1, {0, 1}]]}]],
     formula["(i\[Gamma]\[Mu]\[PartialD]\[Mu] \[Minus] m) \[Psi] = 0", {32.7, 34}, {960, 230}, 96, boneC],
     say["Every particle has a mirror.", {32.9, 34}, {1250, 860}, "mirror"],
-    eraLabel[{32.6, 34}, "Antimatter", "1928 \[CenterDot] Paul Dirac \[CenterDot] Cambridge"]};
+    eraLabel[{32.6, 34}, "Antimatter", "1928 \[CenterDot] Dirac \[CenterDot] 1932 \[CenterDot] the positron"]};
 AnimatedGraphics[{Backdrop[inkC], diracScene}, "Duration" -> 34][33.8, ImageSize -> 480]
 ```
 
@@ -471,7 +498,7 @@ AnimatedGraphics[{Backdrop[inkC], entangleScene}, "Duration" -> 38][36.4, ImageS
 
 ## Bars 38 to 40: Every Path at Once
 
-Feynman, 1948: a particle goes from A to B along every path at once, each contributing an arrow turned by its action.  Far from the classical path the arrows spin and cancel; near it they agree.  Their sum, arrow after arrow, is Cornu's spiral, winding into the answer:
+Feynman, 1948: a particle goes from A to B along every path at once, each contributing an arrow turned by its action.  Far from the classical path the arrows spin and cancel; near it they agree.  Their sum, arrow after arrow, is Cornu's spiral, winding into the answer.  And Feynman himself, in 1964, on film:
 
 ```wl
 paths = BlockRandom[SeedRandom[1948]; Table[With[{w = Accumulate[RandomVariate[NormalDistribution[0, 1], 80]]}, With[{bridge = w - Range[80] / 80 Last[w]}, (k / 40.) bridge / Max[Abs[bridge]]]], {k, 1, 40}]];
@@ -482,9 +509,13 @@ pathScene = {{38, 40} -> Function[t, With[{u = Clip[(t - 38.05) / 1.2, {0, 1}]},
             Opacity -> 0.5 Clip[3 u - k / 40, {0, 1}]]], {k, 40}],
         CanvasLine[{{200, 540}, {1100, 540}}, boneC, "Thickness" -> 5, Opacity -> u],
         CanvasDisk[{200, 540}, 12, boneC], CanvasDisk[{1100, 540}, 12, boneC], CanvasText["A", {180, 610}, sans[36], boneC], CanvasText["B", {1085, 610}, sans[36], boneC],
-        CanvasLine[{1500, 520} + 300 # - {150, 150} & /@ Take[cornu, Max[2, Round[u Length[cornu]]]], red, "Thickness" -> 3]}]],
-    TitleCard["\[OpenCurlyDoubleQuote]I think I can safely say that nobody understands quantum mechanics.\[CloseCurlyDoubleQuote]", {38.9, 40}, Position -> {960, 900}, FontSize -> 40, FontWeight -> 400, FontFamily -> "Source Serif 4", FontSlant -> "Italic", FontColor -> boneC, "Enter" -> "Fade", "Exit" -> "Cut"],
-    TitleCard["Richard Feynman, 1964", {39.2, 40}, Position -> {960, 970}, FontSize -> 26, FontWeight -> 400, FontColor -> RGBColor["#8E8B84"], "Enter" -> "Fade", "Exit" -> "Cut"],
+        CanvasLine[{560, 860} + 220 # - {110, 110} & /@ Take[cornu, Max[2, Round[u Length[cornu]]]], red, "Thickness" -> 3]}]],
+    (* Feynman, on film, saying it *)
+    {feynmanAt - 0.1, 40} -> Function[t, With[{k = Clip[1 + Floor[Length[feynmanFrames] (t - feynmanAt) 2 / 3.8], {1, Length[feynmanFrames]}], a = Clip[(t - feynmanAt + 0.1) 6, {0, 1}]}, {
+        CanvasRectangle[{1190, 210, 640, 506}, RGBColor["#EDE9E0"], Opacity -> a],
+        CanvasImage[feynmanFrames[[k]], {1210, 230, 600, 460}, Opacity -> a],
+        CanvasText["Richard Feynman \[CenterDot] Messenger Lectures, Cornell, November 1964", {1210, 760}, sans[24, 400], RGBColor["#8E8B84"], Opacity -> a]}]],
+    TitleCard["\[OpenCurlyDoubleQuote]I think I can safely say that nobody understands quantum mechanics.\[CloseCurlyDoubleQuote]", {38.85, 40}, Position -> {960, 1000}, FontSize -> 40, FontWeight -> 400, FontFamily -> "Source Serif 4", FontSlant -> "Italic", FontColor -> boneC, "Enter" -> "Fade", "Exit" -> "Cut"],
     eraLabel[{38, 40}, "Every path at once", "1948 \[CenterDot] Richard Feynman"]};
 AnimatedGraphics[{Backdrop[inkC], pathScene}, "Duration" -> 40][39.6, ImageSize -> 480]
 ```
@@ -705,7 +736,7 @@ score = Mixer["Sidechain" -> kick, "Cutoff" -> musicCutoff, "FadeOut" -> 5/4][Tr
     Instrument["Arp"][arps], Instrument["Bell"][atomBells], Instrument["Lead"][lead],
     Instrument["SoftKick"][coldKicks], Instrument["Hat"][clicksCold], Instrument["Kick"][kick], Instrument["Clap"][claps], Instrument["Hat"][hats], Instrument["OpenHat"][openHats],
     Instrument["Kick"][pairKick], Instrument["Clap"][pairClap],
-    Instrument["Crash"][crashes], Instrument["Riser"][risers], Instrument["Roll"][rolls], Instrument["Impact"][impacts]}]];
+    Instrument["Gain" -> 1.6][feynmanVoice], Instrument["Crash"][crashes], Instrument["Riser"][risers], Instrument["Roll"][rolls], Instrument["Impact"][impacts]}]];
 ```
 
 ## The Film
@@ -714,7 +745,7 @@ The edit: the sections stacked in time over their grounds, the ruler of years be
 
 ```wl
 film = AnimatedGraphics[{coldOpen, planckScene, atomScene, sgScene, heisenbergScene, Backdrop[ground, {16, 81}], schrodinger, psiScene, oscillatorScene, orbitalScene, bornScene,
-    uncertaintyScene, tunnelScene, diracScene, entangleScene, pathScene, built, computingScene, decoherenceScene, chaosScene, climaxScene, outroScene, hud, score},
+    uncertaintyScene, solvayScene, tunnelScene, diracScene, entangleScene, pathScene, built, computingScene, decoherenceScene, chaosScene, climaxScene, outroScene, hud, score},
     "Duration" -> duration, "CyclesPerSecond" -> 1/2, BaseStyle -> {"Pulse" -> kick}]
 ```
 
@@ -724,3 +755,27 @@ Render it, frames in parallel, and store it in the cloud, public:
 Export["Quantum.mp4", film];
 video = Video[CopyFile["Quantum.mp4", CloudObject["WolframFilm/Quantum.mp4", Permissions -> "Public"], OverwriteTarget -> True]]
 ```
+
+## References
+
+[1] [WAnim](https://github.com/sw1sh/WAnim), the paclet the film is made with; the [Wolfram Quantum Framework](https://resources.wolframcloud.com/PacletRepository/resources/Wolfram/QuantumFramework/) for the qubits
+
+[2] Every date and citation, checked against the papers: [the film's sources](https://github.com/WolframInstitute/WolframFilm/blob/main/films/Quantum/docs/SOURCES.md)
+
+[3] E. Schrödinger, [Quantisierung als Eigenwertproblem](https://doi.org/10.1002/andp.19263840404), Annalen der Physik 79, 361 (1926)
+
+[4] M. Born, [Zur Quantenmechanik der Stoßvorgänge](https://doi.org/10.1007/BF01397477), Zeitschrift für Physik 37, 863 (1926)
+
+[5] W. Heisenberg, [Über quantentheoretische Umdeutung kinematischer und mechanischer Beziehungen](https://doi.org/10.1007/BF01328377), Zeitschrift für Physik 33, 879 (1925)
+
+[6] A. Einstein, B. Podolsky, N. Rosen, [Can Quantum-Mechanical Description of Physical Reality Be Considered Complete?](https://doi.org/10.1103/PhysRev.47.777), Physical Review 47, 777 (1935)
+
+[7] R. P. Feynman, [Simulating Physics with Computers](https://doi.org/10.1007/BF02650179), International Journal of Theoretical Physics 21, 467 (1982); [The Character of Physical Law](https://archive.org/details/the-messenger-lectures), Messenger Lectures, Cornell, 1964 (BBC)
+
+[8] A. Tonomura et al., [Demonstration of single-electron buildup of an interference pattern](https://doi.org/10.1119/1.16104), American Journal of Physics 57, 117 (1989)
+
+[9] E. J. Heller, [Bound-State Eigenfunctions of Classically Chaotic Hamiltonian Systems: Scars of Periodic Orbits](https://doi.org/10.1103/PhysRevLett.53.1515), Physical Review Letters 53, 1515 (1984)
+
+[10] Archive images: [Helgoland, c. 1900](https://commons.wikimedia.org/wiki/File:Study_of_the_west_side,_Helgoland,_Germany-LCCN2002713866.jpg) (Library of Congress, public domain); [Heisenberg, 1926](https://commons.wikimedia.org/wiki/File:Heisenberg,Werner_1926.jpeg) (Friedrich Hund, CC BY 3.0); the [Annalen](https://archive.org/details/sim_annalen-der-physik_annalen-der-physik_1926_79) and [Zeitschrift für Physik](https://archive.org/details/sim_zeitschrift-fuer-physik-a-atoms-and-nuclei_zeitschrift-fuer-physik_1926_37) scans (Internet Archive); [Solvay 1927](https://commons.wikimedia.org/wiki/File:Solvay_conference_1927.jpg) (Benjamin Couprie)
+
+[11] [The International Year of Quantum Science and Technology](https://quantum2025.org/about-iyq-2025/)

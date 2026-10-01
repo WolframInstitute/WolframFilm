@@ -8,3 +8,4 @@ films/*/*.mp4
 # local only: the first cut's renders, reference screenshots
 films/*/renders/
 films/*/docs/ui/
+films/*/archive/

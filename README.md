@@ -9,6 +9,7 @@ the notebook and its video to the Wolfram Cloud.  No generative image, video or 
 | Film | | Notebook |
 | --- | --- | --- |
 | [In1](films/In1) | *In[1]:= -- the life of a language*: the Wolfram Language's vocabulary, 1988 to 2026, in one notebook window through the eras | [In1.nb](https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1.nb) |
+| [Quantum](films/Quantum) | *ψ -- the quantum century*: a hundred years of quantum theory, the wave and the click, every note a measurement | [Quantum.nb](https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/Quantum.nb) |
 
 ## Layout
 

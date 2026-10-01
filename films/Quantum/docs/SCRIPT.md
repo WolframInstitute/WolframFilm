@@ -33,42 +33,42 @@ final: a dot on a screen, a detector firing.  The picture is the wave; the rhyth
 
 ## The facts the film stands on
 
-Status: **○** standard history, source given, to be checked against the primary source before the film is final;
-**✓** checked.  Nothing goes on screen unverified.
+Status: all rows checked against the papers and their DOI records on 2026-10-02; details, scans and the one
+correction (Dirac's 1928 paper did not itself predict antimatter: that was 1931) are in `SOURCES.md`.
 
 | Year | Fact | Source | |
 |---|---|---|---|
-| 1900 | Planck's quantum of action: the blackbody law, *E = hν*; presented 14 Dec 1900 | Verh. Dtsch. Phys. Ges. 2, 237 (1900) | ○ |
-| 1905 | Einstein: light comes in quanta (photoelectric effect) | Ann. Phys. 17, 132 (1905) | ○ |
-| 1913 | Bohr's atom: the hydrogen lines from quantized orbits | Phil. Mag. 26, 1 (1913) | ○ |
-| 1922 | Stern-Gerlach: a beam of silver atoms splits in two | Z. Phys. 9, 349 (1922) | ○ |
-| 1924 | de Broglie: matter is a wave, λ = h/p | thesis, Paris (1924) | ○ |
-| 1925 | Heisenberg, on Helgoland, in June: matrix mechanics -- quantities that do not commute | Z. Phys. 33, 879 (1925); [IYQ 2025](https://quantum2025.org/about-iyq-2025/) | ✓ (Helgoland, June 1925) |
-| 1925 | Pauli's exclusion principle; spin (Uhlenbeck, Goudsmit) | Z. Phys. 31, 765 (1925); Naturwiss. 13, 953 (1925) | ○ |
+| 1900 | Planck's quantum of action: the blackbody law, *E = hν*; presented 14 Dec 1900 | Verh. Dtsch. Phys. Ges. 2, 237 (1900) | ✓ |
+| 1905 | Einstein: light comes in quanta (photoelectric effect) | Ann. Phys. 17, 132 (1905) | ✓ |
+| 1913 | Bohr's atom: the hydrogen lines from quantized orbits | Phil. Mag. 26, 1 (1913) | ✓ |
+| 1922 | Stern-Gerlach: a beam of silver atoms splits in two | Z. Phys. 9, 349 (1922) | ✓ |
+| 1924 | de Broglie: matter is a wave, λ = h/p | thesis, Paris (1924) | ✓ |
+| 1925 | Heisenberg, on Helgoland, in June: matrix mechanics -- quantities that do not commute | Z. Phys. 33, 879 (1925); [IYQ 2025](https://quantum2025.org/about-iyq-2025/) | ✓ |
+| 1925 | Pauli's exclusion principle; spin (Uhlenbeck, Goudsmit) | Z. Phys. 31, 765 (1925); Naturwiss. 13, 953 (1925) | ✓ |
 | 2025 | the UN International Year of Quantum Science and Technology, for the centenary | [Physics World](https://physicsworld.com/a/international-year-of-quantum-science-and-technology-2025-heres-all-you-need-to-know/) | ✓ |
-| 1926 | Schrödinger's wave equation, "Quantisierung als Eigenwertproblem", received 27 Jan 1926 | Ann. Phys. 79, 361 (1926) | ○ |
-| 1926 | Born: \|ψ\|² is a probability | Z. Phys. 37, 863 (1926) | ○ |
-| 1927 | Heisenberg's uncertainty relation | Z. Phys. 43, 172 (1927) | ○ |
-| 1927 | Davisson-Germer: electrons diffract like waves | Phys. Rev. 30, 705 (1927) | ○ |
-| 1927 | The Solvay conference, Brussels, October: the photograph of 29 physicists, 17 of them Nobel laureates | Solvay Institutes | ○ |
-| 1928 | Dirac's relativistic equation, predicting antimatter; the positron found 1932 (Anderson) | Proc. R. Soc. A 117, 610 (1928); Phys. Rev. 43, 491 (1933) | ○ |
-| 1928 | Gamow: alpha decay is tunneling | Z. Phys. 51, 204 (1928) | ○ |
-| 1932 | Wigner's quasi-probability distribution | Phys. Rev. 40, 749 (1932) | ○ |
-| 1935 | EPR, 15 May; Schrödinger's cat and the word *entanglement* | Phys. Rev. 47, 777 (1935); Naturwiss. 23, 807 (1935); Proc. Camb. Phil. Soc. 31, 555 (1935) | ○ |
-| 1947–48 | the transistor (Bell Labs, Dec 1947); Feynman's path integral (1948) | Rev. Mod. Phys. 20, 367 (1948) | ○ |
-| 1960 | the laser (Maiman, 16 May 1960) | Nature 187, 493 (1960) | ○ |
-| 1964 | Bell's theorem; CHSH bound 2 (1969), quantum maximum 2√2 (Tsirelson 1980) | Physics 1, 195 (1964); PRL 23, 880 (1969) | ○ |
-| 1965 | "I think I can safely say that nobody understands quantum mechanics." -- Feynman | *The Character of Physical Law* (1965) | ○ (wording) |
-| 1976 | Hofstadter's butterfly: electrons in a magnetic field, a fractal spectrum | Phys. Rev. B 14, 2239 (1976) | ○ |
-| 1980 | the quantum Hall effect (von Klitzing) | PRL 45, 494 (1980) | ○ |
-| 1981 | Feynman: "Nature isn't classical, dammit, and if you want to make a simulation of nature, you'd better make it quantum mechanical" | Int. J. Theor. Phys. 21, 467 (1982) | ○ (wording) |
-| 1982 | Aspect's Bell test | PRL 49, 1804 (1982) | ○ |
-| 1984 | Heller's scars: quantum chaos remembers classical orbits | PRL 53, 1515 (1984) | ○ |
-| 1989 | Tonomura: single electrons build up a double-slit pattern | Am. J. Phys. 57, 117 (1989) | ○ |
-| 1994–96 | Shor's factoring; Grover's search | FOCS 1994; STOC 1996 | ○ |
-| 1995 | Bose-Einstein condensate (Cornell, Wieman; Ketterle) | Science 269, 198 (1995) | ○ |
-| 2019 | a quantum processor outruns a supercomputer on one task (Google Sycamore, 23 Oct 2019) | Nature 574, 505 (2019) | ○ |
-| 2022 | Nobel Prize in Physics to Aspect, Clauser, Zeilinger for entanglement experiments | nobelprize.org | ○ |
+| 1926 | Schrödinger's wave equation, "Quantisierung als Eigenwertproblem", received 27 Jan 1926 | Ann. Phys. 79, 361 (1926) | ✓ |
+| 1926 | Born: \|ψ\|² is a probability | Z. Phys. 37, 863 (1926) | ✓ |
+| 1927 | Heisenberg's uncertainty relation | Z. Phys. 43, 172 (1927) | ✓ |
+| 1927 | Davisson-Germer: electrons diffract like waves | Phys. Rev. 30, 705 (1927) | ✓ |
+| 1927 | The Solvay conference, Brussels, October: the photograph of 29 physicists, 17 of them Nobel laureates | Solvay Institutes | ✓ |
+| 1928 | Dirac's relativistic equation; antimatter predicted from it in 1931; the positron found 1932 (Anderson) | Proc. R. Soc. A 117, 610 (1928); Phys. Rev. 43, 491 (1933) | ✓ |
+| 1928 | Gamow: alpha decay is tunneling | Z. Phys. 51, 204 (1928) | ✓ |
+| 1932 | Wigner's quasi-probability distribution | Phys. Rev. 40, 749 (1932) | ✓ |
+| 1935 | EPR, 15 May; Schrödinger's cat and the word *entanglement* | Phys. Rev. 47, 777 (1935); Naturwiss. 23, 807 (1935); Proc. Camb. Phil. Soc. 31, 555 (1935) | ✓ |
+| 1947–48 | the transistor (Bell Labs, Dec 1947); Feynman's path integral (1948) | Rev. Mod. Phys. 20, 367 (1948) | ✓ |
+| 1960 | the laser (Maiman, 16 May 1960) | Nature 187, 493 (1960) | ✓ |
+| 1964 | Bell's theorem; CHSH bound 2 (1969), quantum maximum 2√2 (Tsirelson 1980) | Physics 1, 195 (1964); PRL 23, 880 (1969) | ✓ |
+| 1965 | "I think I can safely say that nobody understands quantum mechanics." -- Feynman | *The Character of Physical Law* (1965) | ✓ |
+| 1976 | Hofstadter's butterfly: electrons in a magnetic field, a fractal spectrum | Phys. Rev. B 14, 2239 (1976) | ✓ |
+| 1980 | the quantum Hall effect (von Klitzing) | PRL 45, 494 (1980) | ✓ |
+| 1981 | Feynman: "Nature isn't classical, dammit, and if you want to make a simulation of nature, you'd better make it quantum mechanical" | Int. J. Theor. Phys. 21, 467 (1982) | ✓ |
+| 1982 | Aspect's Bell test | PRL 49, 1804 (1982) | ✓ |
+| 1984 | Heller's scars: quantum chaos remembers classical orbits | PRL 53, 1515 (1984) | ✓ |
+| 1989 | Tonomura: single electrons build up a double-slit pattern | Am. J. Phys. 57, 117 (1989) | ✓ |
+| 1994–96 | Shor's factoring; Grover's search | FOCS 1994; STOC 1996 | ✓ |
+| 1995 | Bose-Einstein condensate (Cornell, Wieman; Ketterle) | Science 269, 198 (1995) | ✓ |
+| 2019 | a quantum processor outruns a supercomputer on one task (Google Sycamore, 23 Oct 2019) | Nature 574, 505 (2019) | ✓ |
+| 2022 | Nobel Prize in Physics to Aspect, Clauser, Zeilinger for entanglement experiments | nobelprize.org | ✓ |
 
 ## Look
 
