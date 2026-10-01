@@ -1,154 +1,39 @@
-# In[1]:= — the life of a language
+# WolframFilm
 
-A 2:48 code-rendered short film about the Wolfram Language / Mathematica as a *language*:
-its vocabulary growing from 554 words (1988) to 6,801 (2026), told inside one notebook window
-whose chrome and front-end style change era by era (Mac System 6 → NeXTSTEP → Windows 3.1 →
-Windows 95 → Mac OS 9 → Windows XP → Mac OS X → flat → modern → dark mode → 15's AI chatbar).
+Films made entirely of Wolfram Language code: each is a computational essay -- a notebook whose cells build the film
+with [WAnim](https://github.com/sw1sh/WAnim) (`PacletInstall["WolframInstitute/WAnim"]`), render it, and publish
+the notebook and its video to the Wolfram Cloud.  No generative image, video or music models.
 
-Everything is code: every frame is a pure function of time drawn with Canvas2D, and the
-soundtrack is a symbolic score rendered by a small synth. No generative image/video/music models.
+## Films
 
-## Watch
-
-- **Director's cut** (player, chapters, synced commentary, every snippet runnable, English · Русский · 日本語): https://claude.ai/artifact/7DnTACiGrt9hpVJW6bxxJo
-- English: https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1-en.mp4
-- Русский: https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1-ru.mp4
-- 日本語: https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1-ja.mp4
-- Notebook (the film as a Wolfram Language essay, WAnim): https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1.nb, its render: https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1.mp4
-- Source: https://github.com/WolframInstitute/WolframFilm
-
-Made with Claude Opus 5.5 in Claude Code, following the September 2026 trend of films rendered entirely by model-written code:
-[deedydas' history-of-Google video](https://x.com/deedydas/status/2103965547780345859) and
-[mexicat/pdoom-video](https://github.com/mexicat/pdoom-video) ("I'm Upping My P(doom)").
-
-- Script and shot list: `docs/SCRIPT.md`
-- UI references per era: `refs/UI-ERAS.md` (+ `refs/ui/`, reference only)
-- Lexicon data: `data/*.wls` (run with `wolframscript -file`) → `src/data/lexicon.json`
-
-## Run
-
-```sh
-bun install
-bun run music                         # out/music.wav (+ out/score.json)
-bun run preview                       # http://localhost:5173  (space, ←/→, ,/. ; ?t=60)
-bun src/render.ts sheet --n 24        # contact sheet -> out/sheet.png
-bun src/render.ts stills --at 26,50   # stills at seconds
-bun src/render.ts video --out out/film.mp4 [--from s --to s] [--samples 4]
-bun run build                         # incremental: out/film.mp4 + out/player/ (fMP4 segments)
-```
-
-## Languages
-
-English, Russian and Japanese cuts: `FILM_LANG=ru|ja` in front of any command above (`bun run build:ru`, `build:ja`,
-`build:all`; stills land in `out/still-ru-*.png`). Run `scripts/fetch-fonts.sh` once for the Noto CJK, DotGothic16,
-Klee One and Cousine fallbacks.
-
-- `src/core/i18n.ts` — `tr()` (dictionary keyed by the English text, Russian plurals as `{p:слово|слова|слов}`),
-  `words()` (Japanese word units via `Intl.Segmenter`, with punctuation kept on the right side), locale numbers
-- `src/i18n/{ru,ja}.json` — every on-screen string; `bun src/i18n-check.ts` lists what is missing
-- `src/i18n/usage-{ru,ja}.json` — dictionary-entry usage lines: Japanese quoted from reference.wolfram.com (`.html.ja`), Russian translated
-- `src/i18n/directors-{ru,ja}.json` — the director's commentary; `artifact/build.sh` inlines all three languages into the page
-
-Code, outputs and symbol names are never translated. Menus follow the localized systems (Japanese Windows shows
-`ファイル(F)`), the climax says the most common Russian word is «и» and the Japanese one の, and each cut deploys itself
-to its own `In1[-ru|-ja].mp4` (`wolframscript -file data/deploy.wls ru`). The encode cache is keyed by pixel hash,
-so rebuilding a language after an edit only re-encodes the sections that changed.
-
-## The notebook (Wolfram Language, WAnim)
-
-`notebook/In1.md` is the film as a Wolfram Language computational essay, built with
-[WAnim](https://github.com/sw1sh/WAnim) (`WolframInstitute/WAnim`); `notebook/In1.nb` is the evaluated notebook.
-It is self-contained: nothing is read from disk. The vocabulary comes from `WolframLanguageData` plus the 15.0
-new-features guide, the notebook outputs are evaluated, the archive prints are imported from their public URLs,
-and every segment is one WAnim creation tool (`Typewriter`, `Terminal`, `Title`, `NotebookSession`, `WordWall`,
-`Caption`, `DictionaryCard`, `PhotoPrint`, `Counter`, `YearRuler`, `Spikey`, `AutomatonTape`) in a `Timeline`
-whose soundtrack is a `Track` -- the Rule 30 melody Track is also what the automaton tape reads. So far: bars 0-16.
-
-```sh
-scripts/install-fonts.sh              # the Wolfram front end only sees installed fonts
-wolframscript -f notebook/build.wls   # In1.md -> In1.nb (needs WAnim and MarkdownToNotebook next to this repo)
-```
-
-In the notebook, `film["Dynamic"]` plays it live (the audio is the master clock) and `film["Video"]` renders it
-to a `Video`, frames in parallel.
+| Film | | Notebook |
+| --- | --- | --- |
+| [In1](films/In1) | *In[1]:= -- the life of a language*: the Wolfram Language's vocabulary, 1988 to 2026, in one notebook window through the eras | [In1.nb](https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1.nb) |
 
 ## Layout
 
-- `src/core/` — clock (120 BPM, bar = 2 s), drawing kit, lexicon, scene runner
-- `src/music/` — `score.ts` (the music as data), `dsp.ts`, `instruments.ts`, `render-audio.ts` (+ foley from the story)
-- `src/ui/` — era rendering: `screen.ts` (low-res/1-bit/4-grey upscaling), `chrome.ts` (OS chrome), `notebook.ts` (cells, era styles), `widgets.ts` (Manipulate, free-form, Suggestions Bar, Entity, chat, Tabular, MusicScore, chatbar)
-- `src/film/` — `story.ts` (eras, cells, captions, dictionary entries), `window.ts`, `wall.ts` (the lexicon wall), `hud.ts`, `narrator.ts`, `scenes/`
+```
+films/<film>/
+  <film>.md        the film, as a notebook in Markdown (MarkdownToNotebook)
+  README.md        what it is, where to watch it, its sources
+  docs/            its script and notes
+scripts/
+  build.wls <film>     <film>.md -> <film>.nb, every cell evaluated (the film renders itself), then publish
+  publish.wls <film>   <film>.nb -> WolframFilm/<film>.nb in the cloud, public, outputs as pictures
+  cloud.wl             which film, and the cloud account
+```
 
-## Port notes (WolfAnim / WL)
+The built notebook, its cloud copy and the rendered video stay beside the Markdown, untracked.
 
-Scenes use only paths, text, images and affine transforms (→ `Graphics`); the score is note events
-in bars (→ `MusicNote`/`SoundNote`); the timeline is bar-indexed; the lexicon comes from
-`WolframLanguageData`, so the WL version can compute it live.
+## Build
 
-## Credits & sources
+```sh
+wolframscript -f scripts/build.wls In1                 # build, render and publish
+wolframscript -f scripts/build.wls In1 --no-publish    # build and render only
+wolframscript -f scripts/publish.wls In1               # publish again
+```
 
-- Window outputs are computed by the Wolfram Language 15.0 kernel (`data/assets/*.wls`, `data/assets2/*.wls`), SystemModeler for the double pendulum, the Wolfram Data Repository ("Fireballs and Bolides") and Function Repository (`BirdSay`), the Quantum Framework paclet.
-- Archive prints (`assets/archive/`, see its `manifest.json` for per-image source URLs): Stephen Wolfram's [scrapbook](https://www.stephenwolfram.com/scrapbook/), the [Mathematica Scrapbook](https://www.wolfram.com/mathematica/scrapbook/), and posts on [writings.stephenwolfram.com](https://writings.stephenwolfram.com).
-- `next-cube-1.jpg`: NeXTcube at CERN, photo by Geni, [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:NeXTcube_first_webserver.JPG), [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) (credited on screen).
-- Facts: `docs/SCRIPT.md` lists every date/claim with its source.
-- Dictionary entries: usage lines from the [Wolfram Language documentation](https://reference.wolfram.com/language/) (Japanese cut: the [Japanese documentation](https://reference.wolfram.com/language/index.html.ja)); the lexicon from [`WolframLanguageData`](https://reference.wolfram.com/language/ref/WolframLanguageData.html).
+The scripts work in the cloud as the account in `.env` (gitignored): `WOLFRAM_CLOUD_USER`, `WOLFRAM_CLOUD_PASSWORD`.
+Rendering uses WAnim's GPU renderer on Apple silicon and the front end elsewhere.
 
-### Further reading (cited in the director's commentary)
-
-- [There Was a Time before Mathematica (2013)](https://writings.stephenwolfram.com/2013/06/there-was-a-time-before-mathematica/)
-- [Steve Jobs: A Few Memories (2011)](https://writings.stephenwolfram.com/2011/10/steve-jobs-a-few-memories/)
-- [We’ve Come a Long Way in 30 Years (2018)](https://writings.stephenwolfram.com/2018/06/weve-come-a-long-way-in-30-years-but-you-havent-seen-anything-yet/)
-- [The Story of Spikey (2018)](https://writings.stephenwolfram.com/2018/12/the-story-of-spikey/)
-- [Launching Mathematica 10 (2014)](https://writings.stephenwolfram.com/2014/07/launching-mathematica-10-with-700-new-functions-and-a-crazy-amount-of-rd/)
-- [Launching the Wolfram Data Repository (2017)](https://writings.stephenwolfram.com/2017/04/launching-the-wolfram-data-repository-data-publishing-that-really-works/)
-- [The Wolfram Function Repository (2019)](https://writings.stephenwolfram.com/2019/06/the-wolfram-function-repository-launching-an-open-platform-for-extending-the-wolfram-language/)
-- [Introducing Chat Notebooks (2023)](https://writings.stephenwolfram.com/2023/06/introducing-chat-notebooks-integrating-llms-into-the-notebook-paradigm/)
-- [Launching Version 15 (2026)](https://writings.stephenwolfram.com/2026/06/launching-version-15-of-wolfram-language-mathematica-built-in-useful-ai-lots-of-new-core-functionality/)
-- [Wolfram tech as a Foundation Tool for LLMs (Feb 2026)](https://writings.stephenwolfram.com/2026/02/making-wolfram-tech-available-as-a-foundation-tool-for-llm-systems/)
-
-### Archive image sources
-
-<details><summary>35 sources for the 40 archive images</summary>
-
-- `smp-manual-1.jpg` (1981): SMP manual cover, version one, Caltech, July 1981 — https://www.stephenwolfram.com/scrapbook/1981-mathematicas-immediate-ancestor/
-- `smp-summary-handwritten-1.png` (1980): Handwritten SMP language summary on yellow legal paper — https://writings.stephenwolfram.com/2013/06/there-was-a-time-before-mathematica/
-- `smp-ad-1.png` (1983): 'Algebra will never be the same again' SMP ad — https://www.wolfram.com/mathematica/scrapbook/1983/12/01/smp-ad-thumb/
-- `design-sketch-1986-1.jpg` (1986): Handwritten sketch of early Mathematica operator syntax — https://www.wolfram.com/mathematica/scrapbook/1986/02/01/prewri_inventingthelanguage-2/
-- `design-notes-1986-1.jpg` (1986): Typed design notes, Nov 24 1986: pure functions, Map — https://www.wolfram.com/mathematica/scrapbook/1986/02/02/prewri_firstweeks-2/
-- `design-notes-handwritten-1.png` (1986): Early Mathematica handwritten design notes — https://writings.stephenwolfram.com/2016/04/my-life-in-technology-as-told-at-the-computer-history-museum/
-- `first-code-1986-1.jpg` (1986): First Mathematica C code: evaluator, Nov 27 1986 — https://www.wolfram.com/mathematica/scrapbook/1986/04/03/1987_mathematicafirstcode-2/
-- `early-program-1987-1.png` (1987): Early Mathematica package: ContinuedFractions.pm, June 1987 — https://www.stephenwolfram.com/scrapbook/1987-mathematica-is-alive-programs-in-mathematica-before-it-was-mathematica/
-- `product-names-1987-1.jpg` (1987): 'Some perhaps possible product names' list, Aug 1987 — https://www.stephenwolfram.com/scrapbook/1987-omega-polymath-technique-and-finally-mathematica/
-- `frontend-1987-1.jpg` (1987): Early Mathematica notebook front end on Macintosh — https://www.wolfram.com/mathematica/scrapbook/1987/02/08/1987_frontend-2/
-- `v1-box-1.png` (1988): Mathematica for the Macintosh 1.0 box and floppy — https://www.stephenwolfram.com/scrapbook/june-23-1988-mathematica-version-1/
-- `v1-book-1.jpg` (1988): First Mathematica book, Addison-Wesley, 1988 — https://www.stephenwolfram.com/scrapbook/june-23-1988-the-mathematica-book-is-published/
-- `v1-press-release-1.jpg` (1988): June 23 1988 press release introducing Mathematica — https://www.stephenwolfram.com/scrapbook/june-23-1988-mathematica-arrives/
-- `v1-launch-speakers-1.jpg` (1988): Corporate speakers list, Mathematica announcement, June 23 1988 — https://www.wolfram.com/mathematica/scrapbook/1988/03/06/1988_announcementevent-2/
-- `v1-startup-screen-1.png` (1988): Mathematica for Macintosh 1988 startup screen — https://writings.stephenwolfram.com/2018/06/weve-come-a-long-way-in-30-years-but-you-havent-seen-anything-yet/
-- `v1-press-clipping-1.jpg` (1988): 'It's hot, it's sexy, it's... calculus?' press clipping — https://www.stephenwolfram.com/scrapbook/june-24-1988-the-day-after-mathematica-is-a-hit/
-- `v1-apple-poster-1989-1.jpg` (1989): Apple poster: Einstein, 'Macintosh + Mathematica = infinity' — https://www.stephenwolfram.com/scrapbook/1989-apple-and-albert-promote-mathematica/
-- `next-license-1.jpg` (1987): NeXT-Wolfram Mathematica software license agreement, Nov 1987 — https://www.wolfram.com/mathematica/scrapbook/1987/02/11/1987_nextsignson-2/
-- `next-display-1.jpg` (1988): Mathematica running on a NeXT computer display — https://www.stephenwolfram.com/scrapbook/1988-mathematica-is-bundled-on-every-next-computer/
-- `next-cube-1.jpg` (1990): NeXTcube at CERN, Tim Berners-Lee's first web server — https://commons.wikimedia.org/wiki/File:NeXTcube_first_webserver.JPG
-- `next-jobs-card-1.jpg` (1987): Steve Jobs' NeXT, Inc. business card — https://writings.stephenwolfram.com/2011/10/steve-jobs-a-few-memories/
-- `v2-box-book-1.png` (1991): Mathematica 2.0 box and The Mathematica Book, 2nd edition — https://www.stephenwolfram.com/scrapbook/1991-mathematica-2-is-released/
-- `books-1995-1.jpg` (1995): Shelf of Mathematica books from many publishers — https://www.stephenwolfram.com/scrapbook/1995-lots-and-lots-of-mathematica-books/
-- `v3-book-1.jpg` (1996): The Mathematica Book, Third Edition, Mathematica Version 3 — https://www.stephenwolfram.com/scrapbook/1996-mathematica-3-is-released/
-- `v3-typeset-1.jpg` (1996): Mathematica 3.0 typeset integral output — https://www.wolfram.com/mathematica/scrapbook/1996/07/10/1996_typeset-2/
-- `v6-reinvented-1.jpg` (2007): 'Mathematica Reinvented' version 6 launch graphic — https://www.stephenwolfram.com/scrapbook/may-1-2007-a-revolution-in-mathematica/
-- `v6-box-1.jpg` (2007): Wolfram Mathematica 6 product box — https://www.wolfram.com/mathematica/scrapbook/2007/11/03/2007_mathematica6box-2/
-- `demonstrations-2007-1.png` (2007): Wolfram Demonstrations Project site and first Demonstration — https://www.stephenwolfram.com/scrapbook/2007-creating-the-very-first-demonstration-for-the-wolfram-demonstrations-project/
-- `wl2013-something-big-1.png` (2013): 'Something Very Big Is Coming' teaser graphic — https://writings.stephenwolfram.com/2013/11/something-very-big-is-coming-our-most-important-technology-project-yet/
-- `wl2013-raspberry-pi-1.png` (2013): Wolfram Language & Mathematica free on every Raspberry Pi — https://writings.stephenwolfram.com/2013/11/putting-the-wolfram-language-and-mathematica-on-every-raspberry-pi/
-- `wl2014-sxsw-1.jpg` (2014): Wolfram Language debut at SXSW, from the stage — https://www.stephenwolfram.com/scrapbook/2013-wolfram-language-makes-its-debut-at-sxsw/
-- `chat-notebooks-2023-1.png` (2023): Chat Notebooks: 1988 Mac notebook to 2023 LLM chat — https://writings.stephenwolfram.com/2023/06/introducing-chat-notebooks-integrating-llms-into-the-notebook-paradigm/
-- `v14-functions-1.png` (2024): Wolfram Language 14: built-in functions by version — https://writings.stephenwolfram.com/2024/01/the-story-continues-announcing-version-14-of-wolfram-language-and-mathematica/
-- `v15-launch-1.png` (2026): Version 15 launch post table of contents — https://www.wolfram.com/mathematica/scrapbook/2026/06/16/june-16-2026-mathematica-15-released/
-- `spikey-versions-1.png` (2018): Mathematica Spikeys by version, 1988 to 2019 — https://writings.stephenwolfram.com/2018/12/the-story-of-spikey/
-
-</details>
-
-### Tools and fonts
-
-- [Bun](https://bun.sh), [@napi-rs/canvas](https://github.com/Brooooooklyn/canvas) (Skia), [FFmpeg](https://ffmpeg.org), [Vite](https://vite.dev) (preview), [Wolfram Engine / wolframscript](https://www.wolfram.com/wolframscript/)
-- Fonts: [Source Sans 3, Source Serif 4, Source Code Pro](https://fonts.google.com/?query=source), [Arimo, Tinos, Cousine](https://fonts.google.com/?query=arimo), [Courier Prime](https://fonts.google.com/specimen/Courier+Prime), [VT323](https://fonts.google.com/specimen/VT323), [Caveat](https://fonts.google.com/specimen/Caveat); for the Russian and Japanese cuts [Noto CJK](https://github.com/notofonts/noto-cjk), [DotGothic16](https://fonts.google.com/specimen/DotGothic16), [Klee One](https://fonts.google.com/specimen/Klee+One)
+A new film: `films/<Name>/<Name>.md`, starting with `PacletInstall["WolframInstitute/WAnim"]; Needs["WolframInstitute`WAnim`"]`.

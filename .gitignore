@@ -1,13 +1,10 @@
-node_modules/
-out/
-*.log
 .DS_Store
-refs/ui/
-assets/fonts/intl/
-CLAUDE.md
-.cursor/
-notebook/*.mp4
-notebook/In1-cloud.nb
-notebook/In1.nb
 .env
 .env.*
+*.log
+# what a build makes, beside each film's Markdown
+films/*/*.nb
+films/*/*.mp4
+# local only: the first cut's renders, reference screenshots
+films/*/renders/
+films/*/docs/ui/

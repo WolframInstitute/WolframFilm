@@ -1,7 +1,0 @@
-Get["/Users/swish/src/wolfram/WolframFilm/data/assets/common.wl"];
-caps = Entity["City", #] & /@ {{"London", "GreaterLondon", "UnitedKingdom"}, {"NewYork", "NewYork", "UnitedStates"}, {"Tokyo", "Tokyo", "Japan"}, {"Sydney", "NewSouthWales", "Australia"}, {"Champaign", "Illinois", "UnitedStates"}};
-d = DateObject[{2014, 7, 9, 12, 0}, TimeZone -> 0];
-tryIt[name_, expr_] := Module[{r = Quiet@Check[expr, $Failed]}, If[r === $Failed, Print[name, " FAILED"]]; r];
-tryIt["globe", save["v10_globe", GeoGraphics[{GeoStyling[Opacity[0.5]], Black, NightHemisphere[d], {Red, AbsoluteThickness[2.5], GeoPath[{caps[[5]], #}, "GreatCircle"] & /@ caps[[;; 4]]}, {Red, PointSize[0.018], Point /@ caps}}, GeoProjection -> {"Orthographic", "Centering" -> GeoPosition[{30, -55}]}, GeoRange -> "World", GeoBackground -> GeoStyling["ReliefMap"], Frame -> False, Background -> White], {520, 520}, "GeoGraphics[{NightHemisphere[DateObject[{2014, 7, 9, 12}]], GeoPath[{champaign, #}, \"GreatCircle\"] & /@ cities}, GeoProjection -> \"Orthographic\"]", "NightHemisphere", "night shading for 9 July 2014 12:00 UTC (the 10.0 release date); great circles from Champaign, IL"]];
-tryIt["geo", save["v10_geo", GeoListPlot[caps, GeoRange -> "World", GeoProjection -> "Equirectangular", PlotStyle -> Directive[Red, PointSize[0.012]], GeoBackground -> "CountryBorders"], {560, 380}, "GeoListPlot[{london, newYork, tokyo, sydney, champaign}, GeoRange -> \"World\"]", "GeoListPlot", ""]];
-writeManifest[];
