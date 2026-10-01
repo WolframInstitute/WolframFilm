@@ -1,125 +1,128 @@
-# |ψ⟩ — a hundred years of the wave function, in one notebook
+# ψ — the quantum century
 
-A short film about **quantum theory as a language**: a hundred years after Schrödinger wrote down the wave
-equation (January 1926), its objects -- states, operators, measurements, channels, circuits -- are words of the
-Wolfram Language, and one line of code says what a 1926 paper needed pages for.  It is told with the
-[Wolfram Quantum Framework](https://resources.wolframcloud.com/PacletRepository/resources/Wolfram/QuantumFramework/)
-(`Wolfram/QuantumFramework`, QF), and every picture, number and **note** on screen is computed by it.
+A short film about **quantum theory**: how, between 1900 and today, physics learned that the world is made of
+amplitudes -- waves of possibility that interfere, spread, tunnel, entangle, and become a definite click only when
+something looks.  2026 is a hundred years since Schrödinger wrote down the wave equation (January 1926), and the film's
+protagonist is that wave function, ψ: one complex wave, drawn with its phase as colour, that travels the whole film --
+through a double slit, into an atom, through a barrier, across a laboratory, into a computer.
 
 **Length** 2:42 (81 bars) · **Tempo** 120 BPM, so 1 bar = 2.000 s and 1 beat = 0.500 s · **Picture** 1920×1080 ·
-**Sound** a score composed in code, no narration · **Built** as `films/Quantum/Quantum.md`, a notebook made with WAnim,
-like In1
+**Sound** a score composed in code, no narration · **Built** as `films/Quantum/Quantum.md`, a notebook made with WAnim
+
+Not a tutorial: no code on screen except where code is the point.  Every picture is *computed* -- solved, sampled
+or simulated in the Wolfram Language (NDSolve, special functions, Fourier transforms, the Wolfram Quantum Framework
+for the discrete systems, archive photographs for the people) -- so the classic images of quantum physics are
+recreated, not copied.
 
 ## The idea
 
-**Every note is a measurement.**  The soundtrack is played by quantum states being measured: a WAnim `Track` whose
-events are the outcomes of QF measurements (seeded, so the film is reproducible).  The music *is* the physics, so
-the story can be heard as well as seen:
+**The wave and the click.**  Quantum theory has two faces, and so does the film.  The *wave* is continuous, smooth,
+deterministic, beautiful: ψ in phase colour, evolving by Schrödinger's equation.  The *click* is discrete, random,
+final: a dot on a screen, a detector firing.  The picture is the wave; the rhythm is the clicks.
+
+**The music is quantum too.**
 
 | Physics | What you hear |
 |---|---|
-| a qubit in superposition, measured every 16th | a hi-hat that plays half the time, at random: the Born rule as a groove |
-| a Bell pair, both halves measured | kick and snare that always agree, however random each one is: entanglement |
-| a GHZ state of three | three voices in unison; a W state of three: exactly one of them, every step |
-| a qutrit (d = 3) | the three notes of a triad, one level each |
-| amplitude damping (a Lindblad channel) | the mix decays into reverb: decoherence |
-| Grover's search | probability flowing onto one pitch until the melody lands on it |
-| phase estimation | a phase read out, bit by bit, as a pitch |
-
-**One notebook, one hundred years.**  Each step of the history is shown twice: first as it was written (the
-formula in a 1920s typeset paper, on paper), then as one line of QF code, typed and evaluated in a notebook,
-its output drawn by the framework itself.  The paper fades; the code stays.
-
-The HUD is a timeline 1900 → 2026 along the bottom and, from 2021, the framework's own counter: its commits.
+| single particles arriving at a screen, sampled from \|ψ\|² | the hi-hats and clicks: random, but building a pattern |
+| the hydrogen atom's spectral lines (Rydberg: 1/n² − 1/m²) | the melody and its chords: the Balmer lines as pitches -- the atom's own chord |
+| the harmonic oscillator's evenly spaced levels | the bass: an evenly stepped line |
+| a particle in a box (levels ∝ n²), its revivals | the arpeggio that returns exactly on itself (the quantum carpet) |
+| two entangled particles measured | kick and snare: each random, always together |
+| decoherence | the mix losing its reverb tail, interference fading |
 
 ## The facts the film stands on
 
-Status: **✓** checked against the source given; **○** standard history, source given, to be checked against the
-primary source before the film is final.  Framework facts come from its repository (`~/src/wolfram/QuantumFramework`)
-and its own reports.
+Status: **○** standard history, source given, to be checked against the primary source before the film is final;
+**✓** checked.  Nothing goes on screen unverified.
 
-| Fact | Value | Source | |
+| Year | Fact | Source | |
 |---|---|---|---|
-| Planck's quantum | presented 14 Dec 1900, German Physical Society | Verh. Dtsch. Phys. Ges. 2, 237 (1900) | ○ |
-| Heisenberg, matrix mechanics | June 1925, on Helgoland; "Umdeutung" paper received 29 Jul 1925 | Z. Phys. 33, 879 (1925); IYQ 2025 materials | ✓ (Helgoland, June 1925) |
-| The centenary | 2025 is the UN International Year of Quantum Science and Technology, for the centenary of quantum mechanics; launched 4 Feb 2025 at UNESCO | [Physics World](https://physicsworld.com/a/international-year-of-quantum-science-and-technology-2025-heres-all-you-need-to-know/), [quantum2025.org](https://quantum2025.org/about-iyq-2025/) | ✓ |
-| Schrödinger's equation | "Quantisierung als Eigenwertproblem", received 27 Jan 1926 | Ann. Phys. 79, 361 (1926) | ○ |
-| Born's rule | probability interpretation, received 25 Jun 1926 | Z. Phys. 37, 863 (1926) | ○ |
-| von Neumann | measurement as an interaction that entangles system and apparatus; the density matrix | *Mathematische Grundlagen der Quantenmechanik* (1932) | ○ |
-| Wigner's quasi-probability | 1932 | Phys. Rev. 40, 749 (1932) | ○ |
-| EPR | "Can quantum-mechanical description of physical reality be considered complete?", 15 May 1935 | Phys. Rev. 47, 777 (1935) | ○ |
-| "Entanglement" | Schrödinger names it (*Verschränkung*), 1935 | Proc. Camb. Phil. Soc. 31, 555 (1935) | ○ |
-| Dirac's notation | bras and kets, 1939 | Proc. Camb. Phil. Soc. 35, 416 (1939) | ○ |
-| Bell's theorem | 1964 | Physics 1, 195 (1964) | ○ |
-| CHSH | classical bound 2 (1969); quantum maximum 2√2 (Tsirelson, 1980) | PRL 23, 880 (1969); Lett. Math. Phys. 4, 93 (1980) | ○ |
-| Lindblad equation | 1976 (and Gorini-Kossakowski-Sudarshan, 1976) | Commun. Math. Phys. 48, 119 (1976) | ○ |
-| Feynman | "Nature isn't classical, dammit, and if you want to make a simulation of nature, you'd better make it quantum mechanical" -- talk May 1981, published 1982 | Int. J. Theor. Phys. 21, 467 (1982) | ○ (quote wording to check) |
-| Deutsch | the universal quantum computer, 1985 | Proc. R. Soc. A 400, 97 (1985) | ○ |
-| Teleportation | Bennett et al., 1993 | PRL 70, 1895 (1993) | ○ |
-| Shor | factoring, 1994; the 9-qubit code, 1995 | FOCS 1994; PRA 52, R2493 (1995) | ○ |
-| Grover | search, 1996 | STOC 1996 (PRL 79, 325, 1997) | ○ |
-| Stabilizers | Gottesman 1997; the Aaronson-Gottesman tableau QF's `PauliStabilizer` uses, 2004 | Caltech thesis (1997); PRA 70, 052328 (2004) | ○ |
-| ZX-calculus | Coecke and Duncan, 2008 | ICALP 2008 | ○ |
-| Quantum in the cloud | IBM puts a 5-qubit processor online, 4 May 2016 | IBM press release | ○ |
-| OpenQASM | 2017 | arXiv:1707.03429 | ○ |
-| Bell tests, Nobel | Aspect, Clauser, Zeilinger, Physics 2022 | nobelprize.org | ○ |
-| **QF begins** | initial commit 10 Sep 2021 | QF git history | ✓ |
-| QF 1.0 | 4 Dec 2021 | QF git history (PacletInfo) | ✓ |
-| QF on Amazon Braket | 2 Aug 2023 | [AWS blog](https://aws.amazon.com/blogs/quantum-computing/introducing-the-wolfram-quantum-framework-for-amazon-braket/), [Wolfram blog](https://blog.wolfram.com/2023/08/04/quantum-computation-wolfram-language-meets-amazon-braket/) | ✓ |
-| QF 2.0 / 2.1 | 6 May 2026 / 28 Jul 2026 | QF git history | ✓ |
-| QF's size | 2,891 commits to date; 222 / 564 / 641 / 692 / 304 / 468 commits a year, 2021-26 | QF git history | ✓ |
-| One object model | state, operator, channel (Stinespring form), measurement (von Neumann dilation), circuit; exact and symbolic by default; any qudit dimension; basis a first-class attribute | QF's `OngoingProjects/QF-At-A-Glance.md` | ✓ |
-| Three engines | tensor network (default), Schrödinger, stabilizer | same | ✓ |
-| A thousand qubits | a 1,000-qubit, 2×10⁴-gate Clifford stream in under 60 ms on the stabilizer engine | same (June 2026 rewrite) | ✓ (their benchmark; re-run on the film machine) |
-| Named textbook objects | circuits `"Deutsch"`, `"DeutschJozsa"`, `"Simon"`, `"BernsteinVazirani"`, `"Grover"`, `"Fourier"`, `"PhaseEstimation"`, `"CHSH"`, `"LeggettGarg"`, `"GHZ"`, `"Bell"`, `"Trotterization"`, ...; states `"Bell"`, `"GHZ"`, `"W"`, `"Dicke"`, `"Werner"`, `"Graph"`; channels `"BitFlip"`, `"Depolarizing"`, `"AmplitudeDamping"`, ... | QF source, `Named*.m` | ✓ |
-| Real hardware | OpenQASM 2/3 import/export in pure WL; `IBMJobSubmit` returns the same `QuantumMeasurement` an exact simulation gives | QF-At-A-Glance.md | ✓ |
+| 1900 | Planck's quantum of action: the blackbody law, *E = hν*; presented 14 Dec 1900 | Verh. Dtsch. Phys. Ges. 2, 237 (1900) | ○ |
+| 1905 | Einstein: light comes in quanta (photoelectric effect) | Ann. Phys. 17, 132 (1905) | ○ |
+| 1913 | Bohr's atom: the hydrogen lines from quantized orbits | Phil. Mag. 26, 1 (1913) | ○ |
+| 1922 | Stern-Gerlach: a beam of silver atoms splits in two | Z. Phys. 9, 349 (1922) | ○ |
+| 1924 | de Broglie: matter is a wave, λ = h/p | thesis, Paris (1924) | ○ |
+| 1925 | Heisenberg, on Helgoland, in June: matrix mechanics -- quantities that do not commute | Z. Phys. 33, 879 (1925); [IYQ 2025](https://quantum2025.org/about-iyq-2025/) | ✓ (Helgoland, June 1925) |
+| 1925 | Pauli's exclusion principle; spin (Uhlenbeck, Goudsmit) | Z. Phys. 31, 765 (1925); Naturwiss. 13, 953 (1925) | ○ |
+| 2025 | the UN International Year of Quantum Science and Technology, for the centenary | [Physics World](https://physicsworld.com/a/international-year-of-quantum-science-and-technology-2025-heres-all-you-need-to-know/) | ✓ |
+| 1926 | Schrödinger's wave equation, "Quantisierung als Eigenwertproblem", received 27 Jan 1926 | Ann. Phys. 79, 361 (1926) | ○ |
+| 1926 | Born: \|ψ\|² is a probability | Z. Phys. 37, 863 (1926) | ○ |
+| 1927 | Heisenberg's uncertainty relation | Z. Phys. 43, 172 (1927) | ○ |
+| 1927 | Davisson-Germer: electrons diffract like waves | Phys. Rev. 30, 705 (1927) | ○ |
+| 1927 | The Solvay conference, Brussels, October: the photograph of 29 physicists, 17 of them Nobel laureates | Solvay Institutes | ○ |
+| 1928 | Dirac's relativistic equation, predicting antimatter; the positron found 1932 (Anderson) | Proc. R. Soc. A 117, 610 (1928); Phys. Rev. 43, 491 (1933) | ○ |
+| 1928 | Gamow: alpha decay is tunneling | Z. Phys. 51, 204 (1928) | ○ |
+| 1932 | Wigner's quasi-probability distribution | Phys. Rev. 40, 749 (1932) | ○ |
+| 1935 | EPR, 15 May; Schrödinger's cat and the word *entanglement* | Phys. Rev. 47, 777 (1935); Naturwiss. 23, 807 (1935); Proc. Camb. Phil. Soc. 31, 555 (1935) | ○ |
+| 1947–48 | the transistor (Bell Labs, Dec 1947); Feynman's path integral (1948) | Rev. Mod. Phys. 20, 367 (1948) | ○ |
+| 1960 | the laser (Maiman, 16 May 1960) | Nature 187, 493 (1960) | ○ |
+| 1964 | Bell's theorem; CHSH bound 2 (1969), quantum maximum 2√2 (Tsirelson 1980) | Physics 1, 195 (1964); PRL 23, 880 (1969) | ○ |
+| 1965 | "I think I can safely say that nobody understands quantum mechanics." -- Feynman | *The Character of Physical Law* (1965) | ○ (wording) |
+| 1976 | Hofstadter's butterfly: electrons in a magnetic field, a fractal spectrum | Phys. Rev. B 14, 2239 (1976) | ○ |
+| 1980 | the quantum Hall effect (von Klitzing) | PRL 45, 494 (1980) | ○ |
+| 1981 | Feynman: "Nature isn't classical, dammit, and if you want to make a simulation of nature, you'd better make it quantum mechanical" | Int. J. Theor. Phys. 21, 467 (1982) | ○ (wording) |
+| 1982 | Aspect's Bell test | PRL 49, 1804 (1982) | ○ |
+| 1984 | Heller's scars: quantum chaos remembers classical orbits | PRL 53, 1515 (1984) | ○ |
+| 1989 | Tonomura: single electrons build up a double-slit pattern | Am. J. Phys. 57, 117 (1989) | ○ |
+| 1994–96 | Shor's factoring; Grover's search | FOCS 1994; STOC 1996 | ○ |
+| 1995 | Bose-Einstein condensate (Cornell, Wieman; Ketterle) | Science 269, 198 (1995) | ○ |
+| 2019 | a quantum processor outruns a supercomputer on one task (Google Sycamore, 23 Oct 2019) | Nature 574, 505 (2019) | ○ |
+| 2022 | Nobel Prize in Physics to Aspect, Clauser, Zeilinger for entanglement experiments | nobelprize.org | ○ |
 
 ## Look
 
-- **Two grounds.** Paper `#F4F1EA` for the history (the formula as its paper set it: Source Serif 4, the era's
-  notation), and the notebook on deep ink `#0E0F11` for the code, WAnim's "Manim" theme.  Each era's formula
-  dissolves into its line of code.
-- **The framework draws itself.** Every picture is a QF output: `["Diagram"]` circuits drawing gate by gate,
-  `["BlochPlot"]`, `["ProbabilityPlot"]`, Wigner surfaces, stabilizer tableaux, ZX spiders, Dirac-notation output.
-- **One accent per idea.** Probability amplitudes in Manim blue, phases as hue (QF's own phase colouring),
-  the classical bound and anything classical in grey, entanglement in Wolfram red `#DD1100`.
-- **Motion**: holds and snaps, as In1.  Measurements land on 16ths; every cut lands on a downbeat.
+- **ψ in phase colour.**  The wave function is drawn the way physicists draw complex fields: brightness \|ψ\|,
+  hue its phase (`ComplexPlot`'s colouring).  Wherever it goes, it looks the same, so it is recognisable as one
+  character.  Probability \|ψ\|² is drawn as light on black.
+- **Paper and dark.**  The years before 1926 on warm paper `#F4F1EA`, formulas set as their papers set them
+  (Source Serif 4); from the wave equation on, deep ink `#0E0F11`, where ψ glows.  Archive photographs (Solvay 1927,
+  the Helgoland coast) as prints, as in In1.
+- **Clicks are dots.**  Every detection is a dot that lands on a 16th note and stays.
+- **Motion**: holds and snaps, as In1; ψ itself moves continuously -- the only thing in the film that never snaps.
 
 ## Shot list (bar = 2 s), 81 bars / 2:42
 
-| Bars | Time | Section | Picture · caption · what you hear |
+| Bars | Time | Section | Picture · caption · sound |
 |---|---|---|---|
-| 0–4 | 0:00 | **Cold open** | Black.  `m = QuantumMeasurementOperator[][QuantumState["Plus"]]` typed; `m["SimulatedMeasurement"]` -- a 0 or a 1, again and again.  "Every sound in this film is a measurement." · a lone hi-hat, half the 16ths, at random |
-| 4–8 | 0:08 | **1900 · 1925** | Paper: Planck's *E = hν*.  Then Heisenberg on Helgoland: *pq − qp = h/2πi*.  It becomes `Commutator[QuantumOperator["X"], QuantumOperator["Y"]]` → `2 I Z`.  "1925. Physics becomes matrices that do not commute." · bass enters on the commutator |
-| 8–14 | 0:16 | **1926 · the wave function (DROP)** | "*Quantisierung als Eigenwertproblem*", 27 January 1926.  Card: **100 years**.  A driven qubit: `QuantumEvolve[H, ψ0, t]` -- its state in closed form, its Bloch vector spiralling on the sphere (README example 3).  · the full groove: the drums are now measurements of the evolving state |
-| 14–18 | 0:28 | **1926 · Born** | The amplitudes become probabilities: `ψ["ProbabilityPlot"]` beside the hi-hat's live counts converging on them.  "The square of an amplitude is a chance." |
-| 18–22 | 0:36 | **1932 · von Neumann, Wigner** | A measurement in QF is an entangling gate onto a record wire (wire 0): the diagram shows it.  "A measurement entangles the apparatus. Here it still does."  Then a cat state's Wigner function, its negative fringes in red. |
-| 22–26 | 0:44 | **1935 · entanglement** | EPR's title, then Schrödinger's word.  `QuantumState["PhiPlus"]` in Dirac form: (|00⟩ + |11⟩)/√2.  · kick and snare join: each random, always together |
-| 26–28 | 0:52 | **1939 · Dirac** | Kets set in 1939 type become QF's own kets.  "One notation, then and now." |
-| 28–32 | 0:56 | **1964 · Bell** | `QuantumCircuitOperator["CHSH"]`: the correlation climbs a gauge past the classical **2** to **2√2**.  "1982: Aspect measures it. 2022: the Nobel Prize." |
-| 32–36 | 1:04 | **1976 · open systems** | `QuantumChannel["AmplitudeDamping"[γ]]` and the Lindblad equation: the Bloch vector spirals in to the pole.  · the mix decays into reverb, then dries |
-| 36–38 | 1:12 | **Breakdown · 1981** | Black. Feynman, typed: "Nature isn't classical, dammit…" |
-| 38–44 | 1:16 | **Quantum computers (DROP 2)** | Circuits drawing themselves, one per bar: `"Deutsch"` (1985) → teleportation (1993: the measurement record is a wire, the correction a controlled gate) → `"Fourier"` (Shor, 1994) → `"Grover"` (1996). · Grover heard: amplitude pouring onto one pitch, the melody landing on it |
-| 44–48 | 1:28 | **1995 · error correction** | A bit flip hits a qubit (`QuantumChannel["BitFlip"[p]]`); the code catches it; the state comes back.  "Errors, digitized and corrected." |
-| 48–52 | 1:36 | **1997 · stabilizers** | `PauliStabilizer` tableau of a GHZ state; then 1,000 qubits, 20,000 gates, done before the beat ends. · the GHZ unison: three voices, one outcome |
-| 52–56 | 1:44 | **2008 · 2016 · 2019** | ZX spiders (2008).  Quantum in the cloud (2016); OpenQASM text pouring out of `QuantumQASM` (2017).  "Quantum computers, anyone can reach." |
-| 56–62 | 1:52 | **2021 · the framework** | A git log scrolling from "Initial commit" (10 Sep 2021); the commit counter racing to **2,891**; versions 1.0 → 2.1 on the timeline.  The five objects -- state, operator, channel, measurement, circuit -- assemble into one diagram: one algebra. |
-| 62–66 | 2:04 | **Any dimension** | A qutrit: `QuantumState["Plus", 3]`'s three levels light up three notes. · the chords become qutrit measurements |
-| 66–74 | 2:12 | **Climax** | All of it at once: the exact propagator as a formula, the Bloch sphere, the Wigner surface, the CHSH gauge at 2√2, the 1,000-qubit tableau as a wall of bits (In1's word wall, in qubits), a hardware histogram beside the ideal one. · everything measured, everything in time |
-| 74–81 | 2:28 | **Outro** | A fresh notebook: `In[1]:= QuantumState["0"]` → \|0⟩.  "1926 – 2026. Still the first line."  `PacletInstall["Wolfram/QuantumFramework"]`.  Credits. |
+| 0–4 | 0:00 | **Cold open: one at a time** | Black.  Dots arrive on a screen, one per click, at random -- and slowly build interference fringes (sampled from a two-slit \|ψ\|²; Tonomura's experiment).  "One particle at a time." · clicks only, accelerating |
+| 4–8 | 0:08 | **1900 · the quantum** | Paper.  A glowing body's spectrum: the classical curve shoots to infinity (the ultraviolet catastrophe), Planck's curve bends down; colours of the black body.  *E = hν*. · a low drone, then a pulse |
+| 8–12 | 0:16 | **1905–1913 · light and atoms** | Light as dots (photons); hydrogen's lines -- red, cyan, blue, violet -- appear at 656, 486, 434, 410 nm.  Bohr's orbits.  "Atoms only sing certain notes." · **the four Balmer lines become four pitches: the atom's chord** |
+| 12–16 | 0:24 | **1922–1925 · strange rules** | Stern-Gerlach: a beam splits into exactly two.  de Broglie: a particle becomes a wave.  Helgoland, June 1925 (photo): two matrices multiplied both ways give different answers: *pq − qp ≠ 0*. · bass enters, evenly stepped (oscillator levels) |
+| 16–22 | 0:32 | **1926 · ψ (DROP)** | The wave equation, set as in Annalen der Physik, 27 January 1926.  Card: **100 years**.  ψ is born: a wave packet in phase colour, moving and spreading.  The oscillator's standing waves; hydrogen's orbitals, 3D, turning (1s, 2p, 3d, 4f…). · full groove |
+| 22–26 | 0:44 | **1926 · Born** | The orbital becomes a cloud of dots: each one a measurement, landing where \|ψ\|² is bright.  "The wave tells you where the click is likely." · the hi-hats are those dots |
+| 26–30 | 0:52 | **1927 · uncertainty** | One packet, two views: squeeze it in position and it spreads in momentum (the Fourier pair, side by side).  Electrons diffracting (Davisson-Germer).  The Solvay photograph, October 1927. |
+| 30–34 | 1:00 | **1928 · through walls** | ψ meets a barrier: most reflects, a ghost passes through -- tunneling (Gamow's alpha decay).  Dirac's equation and its mirror: antimatter. |
+| 34–38 | 1:08 | **1935 · entanglement** | EPR's title page.  Schrödinger's cat as a Wigner function: two blobs and, between them, fringes going negative -- a superposition you can see.  Two particles, far apart, whose clicks always agree. · kick and snare join, locked |
+| 38–40 | 1:16 | **Breakdown · 1948** | Black.  Feynman's path integral: every path from A to B at once, each an arrow turning with its phase; they cancel everywhere except along one line -- the classical path emerges.  "Nobody understands quantum mechanics." (1965) |
+| 40–48 | 1:20 | **The quantum world we built (DROP 2)** | One per bar, each computed: the transistor's band gap (1947) · laser light, phases locked (1960) · Bell's inequality broken, 2√2 > 2 (1964, Aspect 1982) · Hofstadter's butterfly (1976) · quantum Hall plateaus (1980) · a condensate's spike (1995) · MRI's precessing spins · a quantum carpet: a particle in a box weaving and returning to itself. |
+| 48–54 | 1:36 | **1981 · computing with ψ** | "Nature isn't classical, dammit…" (Feynman, 1981).  Qubits on Bloch spheres; a circuit; Grover's search, amplitude pouring onto one answer (Wolfram Quantum Framework).  · the melody converges onto one note |
+| 54–58 | 1:48 | **Decoherence** | The Wigner fringes of the cat fade as it touches the world; the quantum becomes classical.  · the reverb dries |
+| 58–62 | 1:56 | **Chaos and order** | A stadium billiard: a chaotic eigenstate, and inside it a scar along a classical orbit (Heller, 1984).  Quantum chaos still remembers the paths. |
+| 62–74 | 2:04 | **Climax: the quantum century** | Everything at once, on a timeline 1900 → 2026: the orbitals, the butterfly, the carpet, the cat, the fringes completing on the screen from the cold open, now dense and bright. |
+| 74–81 | 2:28 | **Outro** | One packet of ψ, alone, in phase colour, drifting.  "1926 – 2026."  "Nobody understands it.  Everything runs on it." · the atom's chord, once more, alone |
 
-## The score
+## Assets: what computes each picture
 
-Written as WAnim `Track`s, with the drum and note *events* drawn from QF measurements:
-`QuantumMeasurementOperator[...][state]["SimulatedMeasurement", n]` on each section's state, `SeedRandom`ed, sampled on the 16th-note
-grid; amplitudes set velocities; measuring a Bell pair gives two voices from one outcome.  Key and harmony
-change with the history (a single pitch class for the cold open; triads from qutrits at 2:04).  The same
-`Track` drives the pictures' pulses, as In1's kick drove Spikey.
+| Picture | How |
+|---|---|
+| Double slit, dot by dot | two-slit Fraunhofer intensity; `RandomVariate` from it; dots on 16ths |
+| Blackbody | Planck's law vs Rayleigh-Jeans, `ColorData["BlackBodySpectrum"]` |
+| Hydrogen lines, orbitals | Rydberg formula; `LaguerreL`, `SphericalHarmonicY`; 3D density contours |
+| Wave packets, tunneling, carpets | `NDSolve` / split-step Fourier on the Schrödinger equation; `ComplexPlot`-style phase colour |
+| Oscillator, box | `HermiteH` eigenfunctions; box modes `Sin[n π x]`, their revival |
+| Uncertainty | `FourierTransform` of a Gaussian packet |
+| Cat state, decoherence | Wigner function of a cat (Wolfram Quantum Framework's phase-space tools), its fringes damped |
+| Bell, qubits, Grover | Wolfram Quantum Framework: `QuantumState`, `QuantumCircuitOperator["CHSH"]`, `["Grover"]`, Bloch plots |
+| Path integral | random and stationary paths, phase arrows summed |
+| Hofstadter's butterfly | Harper's equation eigenvalues over flux |
+| Quantum Hall, BEC, band gap | Landau-level plateaus; a Bose-Einstein velocity distribution; Kronig-Penney bands |
+| Scars | eigenstates of a stadium billiard (finite elements, `NDEigensystem`) |
+| People | archive photographs from public sources (Solvay 1927), imported by URL with credits |
 
 ## Open questions
 
-1. **Title.**  Working title "|ψ⟩"; the film's folder is `films/Quantum`.
-2. **Real hardware.**  The climax's hardware histogram needs an IBM Quantum run (`IBMJobSubmit`, an account);
-   otherwise a QF noisy simulation stands in, labelled as such.
-3. **People on screen.**  The physicists are named in captions; the framework's contributors only in the credits?
-4. **Language cuts.**  English only, or Russian and Japanese too, as In1?
+1. **Title.**  Working title "ψ — the quantum century"; folder `films/Quantum`.
+2. **Archive photos.**  Which: the Solvay 1927 photograph, Helgoland, the 1926 paper's first page, Tonomura's
+   frames?  All by public URL, credited.
+3. **Language cuts.**  English only, or also Russian and Japanese, as In1?
