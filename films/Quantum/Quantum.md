@@ -585,7 +585,7 @@ carpetImage = Colorize[carpet, ColorFunction -> (Blend[{Black, RGBColor["#1d4e8f
 
 ```wl
 carpetScene[{t0_, t1_}] := {t0, t1} -> Function[t, With[{u = Clip[(t - t0) / 0.9, {0, 1}]},
-    CanvasClip[{560, 140, 800, 800 u}, CanvasImage[carpetImage, {560, 140, 800, 800}]]]];
+    CanvasClip[{460, 140, 1000, 800 u}, CanvasImage[carpetImage, {460, 140, 1000, 800}]]]];
 ```
 
 ```wl
@@ -653,16 +653,28 @@ chaosScene = {{58, 62} -> Function[t, With[{k = Clip[1 + Floor[(t - 58) / 1], {1
 
 ## Bars 62 to 74: The Quantum Century
 
-Everything at once: the century's pictures dealt out on the beat, around the screen from the beginning, its fringes now dense and bright:
+Everything at once: the century's pictures dealt out on the beat around the screen from the beginning, its fringes now dense; then one atom, large, filling with clicks:
 
 ```wl
 wall = {orbitals[[3]], orbitals[[8]], carpetImage, butterflyImage, catFrames[[12]], scars[[2]], orbitals[[11]], orbitals[[6]]};
-climaxScene = {{62, 74} -> Function[t, {
-        Table[With[{u = Clip[(t - 62 - (j - 1) / 2) 4, {0, 1}], pos = {{60, 60}, {520, 60}, {980, 60}, {1440, 60}, {60, 700}, {520, 700}, {980, 700}, {1440, 700}}[[j]]},
-            If[u > 0, CanvasImage[wall[[j]], {pos[[1]], pos[[2]], 420, 320}, Opacity -> 0.85 u], {}]], {j, Length[wall]}],
-        With[{n = Min[6000, Round[6000 Clip[(t - 63) / 6, {0, 1}]]]}, {CanvasRectangle[{260, 400, 1400, 280}, RGBColor[0.06, 0.06, 0.07], Opacity -> 0.9],
-            Table[CanvasDisk[{260 + 1400 (landing[[k, 1]] + 7) / 14, 540 + 120 landing[[k, 2]]}, 1.6, RGBColor["#9FE6FF"], Opacity -> 0.8], {k, n}]}]}],
-    TitleCard["A hundred years of \[Psi].", {68, 74}, Position -> {960, 1010}, FontSize -> 52, FontColor -> boneC, "Enter" -> "Fade", "Exit" -> "Fade"]};
+pulse = TrackPulse[kick, 14];
+climaxOrbital = orbitalImage[{5, 3, 1}, 700];
+climaxDensity = N @ Table[hydrogen[5, 3, 1, x, z]^2, {z, 59, -59, -118 / 399}, {x, -59, 59, 118 / 399}];
+climaxDots = BlockRandom[SeedRandom[2026]; With[{cells = RandomChoice[Flatten[climaxDensity] -> Range[400^2], 9000]}, ({Mod[# - 1, 400], Quotient[# - 1, 400]} + RandomReal[{0, 1}, 2]) & /@ cells]];
+climaxScene = {
+    (* the century's pictures, dealt on the beat, breathing with the kick, drifting in *)
+    {62, 68.2} -> Function[t, With[{z = 1 + 0.05 (t - 62) / 6 + 0.025 pulse[t], fade = Clip[(68.2 - t) / 0.25, {0, 1}]},
+        CanvasOpacity[fade, CanvasTransform[CanvasTranslate[{960, 540}] . CanvasScale[z] . CanvasTranslate[{-960, -540}], {
+            Table[With[{u = Clip[(t - 62 - (j - 1) / 4) 4, {0, 1}], pos = {{60, 60}, {520, 60}, {980, 60}, {1440, 60}, {60, 700}, {520, 700}, {980, 700}, {1440, 700}}[[j]]},
+                If[u > 0, CanvasImage[wall[[j]], {pos[[1]], pos[[2]] + 30 (1 - u), 420, 320}, Opacity -> 0.9 u], {}]], {j, Length[wall]}],
+            With[{n = Min[6000, Round[6000 Clip[(t - 63) / 4.5, {0, 1}]]]}, {CanvasRectangle[{260, 400, 1400, 280}, RGBColor[0.06, 0.06, 0.07], Opacity -> 0.92],
+                Table[CanvasDisk[{260 + 1400 (landing[[k, 1]] + 7) / 14, 540 + 120 landing[[k, 2]]}, 1.6, RGBColor["#9FE6FF"], Opacity -> 0.8], {k, n}]}]}]]]],
+    (* then one atom, large, filling with clicks *)
+    {68, 74} -> Function[t, With[{u = Clip[(t - 68) / 0.5, {0, 1}], n = Round[9000 Clip[(t - 68.2) / 4.5, {0, 1}]^0.8], s = 1 + 0.02 pulse[t]},
+        CanvasOpacity[u Clip[(74 - t) / 0.4, {0, 1}], CanvasTransform[CanvasTranslate[{960, 500}] . CanvasScale[s] . CanvasTranslate[{-960, -500}], {
+            CanvasImage[climaxOrbital, {610, 150, 700, 700}, Opacity -> 0.35],
+            Table[CanvasDisk[{610, 150} + 700 climaxDots[[k]] / 400, 1.8, RGBColor["#9FE6FF"], Opacity -> 0.75], {k, n}]}]]]],
+    TitleCard["A hundred years of \[Psi].", {69, 73.8}, Position -> {960, 960}, FontSize -> 60, FontColor -> boneC, "Enter" -> "Rise", "Exit" -> "Fade"]};
 ```
 
 ## Bars 74 to 81: Outro
