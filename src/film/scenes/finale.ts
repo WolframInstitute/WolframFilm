@@ -171,10 +171,11 @@ export function climax(c: Ctx) {
 const EPONYMS = new Set([...byName.values()].filter((w) => w.eponym).map((w) => w.name));
 
 // ---------------------------------------------------------------- outro
-// each language deploys its own file: In1.mp4, In1-ru.mp4, In1-ja.mp4
+// each language deploys its own file: In1.mp4, In1-ru.mp4, In1-ja.mp4 (the code the film shows); the English
+// cut now lives at In1-en.mp4, In1.mp4 being the notebook's WAnim render
 const SUFFIX = LANG === 'en' ? '' : `-${LANG}`;
 export const DEPLOY = {
-  mp4: `https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1${SUFFIX}.mp4`,
+  mp4: `https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1-${LANG}.mp4`,
   code: `CopyFile["out/film${SUFFIX}.mp4", CloudObject["WolframFilm/In1${SUFFIX}.mp4", Permissions -> "Public"]]`,
 };
 const DEPLOY_CELLS: Cell[] = [

@@ -13,6 +13,6 @@
     v.addEventListener('timeupdate', tell);
     v.addEventListener('seeking', tell);
   } else {
-    v.src = 'https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1.mp4'; // progressive fallback
+    v.src = 'https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/In1-en.mp4'; // progressive fallback
   }
 })();
