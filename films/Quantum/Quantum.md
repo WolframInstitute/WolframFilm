@@ -692,8 +692,8 @@ GraphicsGrid[Partition[film[#, ImageSize -> 400] & /@ {5, 16, 29, 60, 77, 85, 10
 Render it, frames in parallel, and store it in the cloud, public:
 
 ```wl
-Export["Quantum.mp4", film];
-video = Video[CopyFile["Quantum.mp4", CloudObject["WolframFilm/Quantum.mp4", Permissions -> "Public"], OverwriteTarget -> True]]
+mp4 = Export["Quantum.mp4", film];
+video = If[StringQ[mp4], Video[CopyFile[mp4, CloudObject["WolframFilm/Quantum.mp4", Permissions -> "Public"], OverwriteTarget -> True]], mp4]
 ```
 
 ## References
