@@ -146,6 +146,23 @@ In order of the story.  Where the original is not English, the quote is followed
 
 **Avoid:** YouTube `yQ5zM07MjbU` ("Planck: Es gibt keine Materie an sich"), whose source and quote are both unreliable.
 
+## D. Skeptics (the coda)
+
+YouTube sections, cut with `yt` in `fetch-archive.sh` (the source second given there), speech-recognised (whisper.cpp, word timings); in–out below are seconds into the cut.  All copyrighted, used as short quotations.
+
+| id | who | quote (exact) | source | in–out | date / occasion | verified? |
+|---|---|---|---|---|---|---|
+| v-aaronson-parallel | Scott Aaronson | "Well, if you read almost any popular article on the subject … a quantum computer just tries them all in parallel, in different parallel universes." · "The trouble is, you know, alas, it's not that simple." | youtube.com/watch?v=JvIbrDR1G_c @533 | 3.8–21.3, 28.9–31.5 | TEDxDresden, 2017 | audio |
+| v-sabine-advantage | Sabine Hossenfelder | "Quantum advantage has indeed been demonstrated for some quantum computers, but that just means … not that this was of any use for real-world issues." | youtube.com/watch?v=CBLVtCYHVO8 @200 | 9.95–25.4 | "The Quantum Hype Bubble Is About To Burst", 5 Nov 2022 | audio |
+| v-sabine-burst | Sabine Hossenfelder | "This bubble of inflated promises will eventually burst. It's just a matter of time." · "This scenario has been dubbed 'the quantum winter', and winter is coming." | same @261 | 9.85–15.5, 23.05–28.95 | same | audio |
+| v-sabine-marketing | Sabine Hossenfelder | "Well, the marketing departments have definitely achieved quantum advantage." | youtube.com/watch?v=gBTS7JZTyZY @106 | 5.5–11.0 | "I was SO wrong about quantum computing", 5 Nov 2025 | audio |
+| v-sabine-profitable | Sabine Hossenfelder | "Today, the only profitable quantum application has been forecasting profitable quantum applications." | youtube.com/watch?v=DX_oIQ-tA6M @202 | 6.95–12.75 | 25 Aug 2026 | audio |
+| v-huang-ces | Jensen Huang | "And so if you kind of set 15 years for very useful quantum computers, that would probably be on the early side. If you set 30 … But if you pick 20, I think a whole bunch of us would believe it." | youtube.com/watch?v=oLmokphbjPY @387 (his CES analyst Q&A, relayed; picture not used) | 12.4–25.5 | CES, 7 Jan 2025 | audio |
+| v-huang-public | Jensen Huang | "And my first reaction was, I didn't know they were public. How could a quantum computer company be public?" | youtube.com/watch?v=9XB-LsfpvCU @208 | 21.85–31.3 | Nvidia GTC Quantum Day, March 2025 | audio |
+| v-kalai-impossible | Gil Kalai | "I think that eventually it will turn out that quantum computations, superior quantum computation, and quantum fault tolerance are indeed impossible." | youtube.com/watch?v=h6p_ZeMqGIU @143 | 3.55–17.9 (cropped to his inset) | Hebrew University, 2014 | audio |
+
+Share prices (IonQ, Rigetti, D-Wave, daily closes, Jan 2024 – Sep 2025): Yahoo Finance chart API, `archive/quantum-stocks.csv`.
+
 ## B. Experiment footage
 
 Every row is CC or PD unless marked otherwise.

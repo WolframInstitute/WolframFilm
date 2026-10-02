@@ -87,3 +87,24 @@ cut f-ibm-system-one "$C/a/a2/The_World%E2%80%99s_First_Integrated_Quantum_Compu
 cut f-ibm-system-two "$C/1/13/Unveiling_IBM_Quantum_System_Two.webm" 0 137 mute
 cut f-ibm-qcsc "$C/0/0b/Introducing_quantum-centric_supercomputing.webm" 0 42 mute
 yt  f-willow W7ppd_RY-UE 0 200
+
+# ---- the skeptics ----
+yt  v-aaronson-parallel JvIbrDR1G_c 533 32
+yt  v-sabine-advantage CBLVtCYHVO8 200 28
+yt  v-sabine-burst CBLVtCYHVO8 261 32
+yt  v-sabine-marketing gBTS7JZTyZY 106 14
+yt  v-sabine-profitable DX_oIQ-tA6M 202 16
+yt  v-huang-ces oLmokphbjPY 387 29
+yt  v-huang-public 9XB-LsfpvCU 208 34
+yt  v-kalai-impossible h6p_ZeMqGIU 143 19
+# daily closes, as Date,IONQ,RGTI,QBTS
+[ -s quantum-stocks.csv ] || { echo Date,IONQ,RGTI,QBTS > quantum-stocks.csv
+    for s in IONQ RGTI QBTS; do curl -s -A "$UA" "https://query1.finance.yahoo.com/v8/finance/chart/$s?period1=1704153600&period2=1759276800&interval=1d" > src/$s.json; done
+    python3 -c 'import json,datetime
+d={s:json.load(open(f"src/{s}.json"))["chart"]["result"][0] for s in ["IONQ","RGTI","QBTS"]}
+rows={}
+for s,r in d.items():
+    for t,v in zip(r["timestamp"],r["indicators"]["quote"][0]["close"]):
+        if v: rows.setdefault(str(datetime.date.fromtimestamp(t)),{})[s]=round(v,3)
+for k in sorted(rows):
+    if len(rows[k])==3: print(k,rows[k]["IONQ"],rows[k]["RGTI"],rows[k]["QBTS"],sep=",")' >> quantum-stocks.csv; }

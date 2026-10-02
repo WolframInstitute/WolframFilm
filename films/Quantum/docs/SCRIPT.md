@@ -1,7 +1,7 @@
 # ψ — the quantum century
 
-A mini-documentary, about **4½ minutes**, on a hundred years of quantum theory, told by the people who made it.
-**The narration is their own recorded voices**: lectures, interviews and radio talks from 1942 to 2022, subtitled where
+A mini-documentary, about **8 minutes**, on a hundred years of quantum theory, told by the people who made it.
+**The narration is their own recorded voices**: lectures, interviews and radio talks from 1942 to 2026, subtitled where
 they speak German or French.  The pictures are **real experiments on film** -- glowing metal, gas-tube spectra, electron
 diffraction rings, cloud-chamber tracks, atoms cooled into a single wave, a quantum processor -- each joined by a
 **computed animation** of what the experiment shows (the wave function in phase colour, orbitals, tunnelling, the
@@ -30,7 +30,9 @@ credit); the computed sequences are AnimatedGraphics as before.  Time is in **se
 | 3:00–3:35 | **1935–1982: entanglement** | Bell, 1986: "…not a puzzle provided you admit the socks are really there before you look at them.  It's a mystery if looking at one sock makes the other one blue…" · Aspect, 1985: "…we are compelled to reject the idea that the polarization of the photon was already existing…" | EPR page; the cat's Wigner function; real down-conversion light cone (photon pairs); Bell's 2√2 against 2 |
 | 3:35–3:50 | **Nobody understands** | Feynman, 1964: "I think I can safely say that nobody understands quantum mechanics." · Feynman, 1964: "Nobody knows how it can be like that." | Feynman on film; the path integral's paths cancelling into one |
 | 3:50–4:15 | **The world it built, the machines it builds** | NASA Cold Atom Lab: "atoms acting collectively as a wave" · Martinis, 2019: "a quantum bit can be both zero and one at the same time." | Laser light (USIA 1960s film); NIST: a condensate forming, the 1980s ion "quantum jumps"; MRI; IBM/Google processors (CC BY); Grover's amplitude pouring onto one answer |
-| 4:15–4:35 | **Outro** (music rises) | Zeilinger, 2022: "…nobody in the universe knows it, and I say even God doesn't know it.  This information is not there." | The cold open's screen, complete; one packet of ψ drifting; "1926 – 2026"; credits |
+| 4:33–6:12 | **Computing with ψ** | Preskill, Shor, Wineland, Martinis, Google 2019, Neven, Kelly 2024 | Feynman's 1981 proposal; IBM and Google machines; 3D Bloch spheres; Grover |
+| 6:12–7:51 | **Skeptics: the bubble** | Aaronson, 2017: "…a quantum computer just tries them all in parallel … alas, it's not that simple." · Hossenfelder, 2022: "…not that this was of any use." · Hossenfelder, 2025: "the marketing departments have definitely achieved quantum advantage." · Huang, Jan 2025: "15 years … early side; 30 … late side." · Huang, Mar 2025: "How could a quantum computer company be public?" · Hossenfelder, 2026: "the only profitable quantum application has been forecasting profitable quantum applications." · Kalai, 2014: "…quantum fault tolerance are indeed impossible." · Hossenfelder, 2022: "This bubble of inflated promises will eventually burst … winter is coming." | Warning signs: the film's own hype quotes; the computed share-price bubble of IonQ, Rigetti, D-Wave and its 8 January 2025 crash |
+| 7:51–8:07 | **Outro** (music rises) | — | one packet of ψ drifting; "1926 – 2026"; credits |
 
 ## Sources
 
