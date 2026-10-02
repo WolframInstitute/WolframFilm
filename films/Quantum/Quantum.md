@@ -21,7 +21,7 @@ PacletInstall["WolframInstitute/WAnim"]; PacletInstall["Wolfram/QuantumFramework
 Needs["WolframInstitute`WAnim`"]; Needs["Wolfram`QuantumFramework`"];
 ```
 
-The clips are cut from their sources (listed, with their rights, in the film's CLIPS.md) and kept beside the film in the cloud:
+The clips are cut from their sources (listed, with their rights, in the film's [CLIPS.md](https://github.com/WolframInstitute/WolframFilm/blob/main/films/Quantum/docs/CLIPS.md)) and kept beside the film in the cloud:
 
 ```wl
 archive[name_String] := "https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/Quantum/archive/" <> name;
@@ -335,29 +335,21 @@ diracPart = {voice["v-dirac", 111.8, {0.36, 13.6}, All, {"Paul Dirac", "lecture 
 
 ## 2:05 — 1926: ψ
 
-The music rises.  The first page of Schrödinger's paper, received by the Annalen der Physik on 27 January 1926 -- a hundred years ago -- and ψ: a packet of possibility, travelling and spreading as his equation says; bound, it can only stand, the harmonic oscillator's standing waves, each turning its phase at its own frequency:
+The music rises.  The first page of Schrödinger's paper, received by the Annalen der Physik on 27 January 1926 -- a hundred years ago -- and ψ: a packet of possibility, travelling and spreading as his equation says:
 
 ```wl
-oscillator[n_, x_] := 1 / Sqrt[2^n n! Sqrt[Pi]] HermiteH[n, x] Exp[-x^2 / 2];
-oxs = Subdivide[-5., 5., 220];
 schrodingerPage = image["schrodinger1926.jpg"];
 psiPart = {pageTour[schrodingerPage, {
         {125, {720, 560}, 640, {{{190, 435}, {1250, 530}}}, "Quantization as an Eigenvalue Problem \[Dash] by E. Schr\[ODoubleDot]dinger"},
-        {127.2, {760, 860}, 560, {{{80, 760}, {1250, 820}}, {{80, 815}, {1250, 905}}}, "\[Ellipsis]the usual quantum rule can be replaced by another requirement, in which there is no longer any mention of \[OpenCurlyDoubleQuote]whole numbers\[CloseCurlyDoubleQuote]."},
-        {129.4, {760, 1560}, 560, {{{80, 1455}, {1250, 1515}}, {{300, 1600}, {900, 1665}}}, "We now introduce for $S$ a new unknown $\\psi$ \[Ellipsis]"}},
-        {125, 131.5}, "Annalen der Physik \[CenterDot] received 27 January 1926, a hundred years ago"],
-    shot[{131.5, 135.5}, Function[t, With[{tau = 0.9 (t - 131.5), hx = Subdivide[-6., 14., 500]},
-        psiHelix[CanvasCamera["Center" -> {960, 520}, "Scale" -> 78, "Azimuth" -> 0.25 + 0.05 (t - 131.5), "Elevation" -> 0.32, "Distance" -> 26, "Target" -> {4, 0, 0}],
-            hx, packet[hx, tau, 4, 1], {2.2, -2.6}, Clip[2 (t - 131.5), {0, 1}]]]],
+        {127.6, {760, 860}, 560, {{{80, 760}, {1250, 820}}, {{80, 815}, {1250, 905}}}, "\[Ellipsis]the usual quantum rule can be replaced by another requirement, in which there is no longer any mention of \[OpenCurlyDoubleQuote]whole numbers\[CloseCurlyDoubleQuote]."},
+        {132.6, {760, 1560}, 560, {{{80, 1455}, {1250, 1515}}, {{300, 1600}, {900, 1665}}}, "We now introduce for $S$ a new unknown $\\psi$ \[Ellipsis]"}},
+        {125, 136}, "Annalen der Physik \[CenterDot] received 27 January 1926, a hundred years ago"],
+    shot[{136, 140}, Function[t, With[{tau = 0.9 (t - 136), hx = Subdivide[-6., 14., 500]},
+        psiHelix[CanvasCamera["Center" -> {960, 520}, "Scale" -> 78, "Azimuth" -> 0.25 + 0.05 (t - 136), "Elevation" -> 0.32, "Distance" -> 26, "Target" -> {4, 0, 0}],
+            hx, packet[hx, tau, 4, 1], {2.2, -2.6}, Clip[2 (t - 136), {0, 1}]]]],
         "Computed: $\\psi$ of a free particle \[Dash] real and imaginary parts winding around the axis, colour its phase, $|\\psi|^2$ its shadow"],
-    shot[{135.5, 140}, Function[t, With[{u = t - 135.5, cam = CanvasCamera["Center" -> {960, 600}, "Scale" -> 95, "Azimuth" -> 0.3 + 0.05 (t - 135.5), "Elevation" -> 0.42, "Distance" -> 30]}, {
-        CanvasCurve3D[cam, Table[{x, 0, 0.5 x^2 0.95 - 3}, {x, -4.2, 4.2, 0.05}], GrayLevel[0.55], 3, "Glow" -> 8],
-        Table[With[{lvl = (n + 1/2) 0.95 - 3, zs = oscillator[n, oxs] Exp[-I (n + 1/2) 2.5 u]}, {
-            CanvasCurve3D[cam, Transpose[{oxs, ConstantArray[0., Length[oxs]], ConstantArray[lvl, Length[oxs]]}], GrayLevel[0.3], 1, Opacity -> Clip[2 u - n / 3, {0, 1}]],
-            CanvasCurve3D[cam, Transpose[{oxs, 1.5 Re[zs], lvl + 1.5 Im[zs]}], Hue[Mod[Arg[#], 2 Pi] / (2 Pi), 0.75, 1] & /@ zs, 3.5, "Glow" -> 8, Opacity -> Clip[2 u - n / 3, {0, 1}]]}], {n, 0, 4}]}]],
-        "Computed: a bound particle\[CloseCurlyQuote]s standing waves, one per energy, each turning at its own frequency"],
     chapter[{125, 140}, "1926", "Schr\[ODoubleDot]dinger: the wave equation"],
-    {131.5, 135.5} -> Function[t, CanvasOpacity[Clip[Min[(t - 131.7) / 0.5, (135.5 - t) / 0.4], {0, 1}],
+    {136, 140} -> Function[t, CanvasOpacity[Clip[Min[(t - 136.2) / 0.5, (140 - t) / 0.4], {0, 1}],
         CanvasTeX["i\\hbar\\,\\frac{\\partial\\psi}{\\partial t} = -\\frac{\\hbar^2}{2m}\\frac{\\partial^2\\psi}{\\partial x^2}", {960, 960}, 56, boneC, Alignment -> Center]]]};
 ```
 
@@ -400,10 +392,10 @@ bornShot[t0_, t1_] := Function[t, With[{n = Max[1, Round[6000 Clip[(t - t0) / (t
     CanvasCloud[cam, bornCloud[[Max[1, n - 12] ;; n, 1]], White, 5, "Glow" -> 14, "DepthFade" -> 0],
     CanvasText[ToString[n] <> " measurements", {1480, 900}, sans[34], boneC]}]];
 bornFootnote = ImageTake[image["born1926-p865.jpg"], {1830, 2130}, {110, 1370}];
-bornPart = {shot[{156.5, 166.8}, bornShot[156.5, 177.8], "Computed: electrons measured in one orbital, landing where $|\\psi|^2$ is large"], pageTour[bornFootnote, {
-        {166.8, {630, 120}, 480, {{{0, 52}, {1260, 100}}}, "\[Ellipsis]only one interpretation is possible: $\\Phi_{nm}$ determines the probability"},
-        {169.2, {630, 200}, 420, {{{0, 190}, {1260, 270}}}, "Note added in proof: more careful consideration shows that the probability is proportional to the square of the quantity $\\Phi_{nm}$."}},
-        {166.8, 172}, "Born\[CloseCurlyQuote]s paper of 1926, and the footnote added in proof \[CenterDot] Zeitschrift f\[UDoubleDot]r Physik 37"], shot[{172, 177.8}, bornShot[156.5, 177.8], "Computed: each dot a measurement"],
+bornPart = {shot[{156.5, 164.5}, bornShot[156.5, 177.8], "Computed: electrons measured in one orbital, landing where $|\\psi|^2$ is large"], pageTour[bornFootnote, {
+        {164.5, {630, 120}, 480, {{{0, 52}, {1260, 100}}}, "\[Ellipsis]only one interpretation is possible: $\\Phi_{nm}$ determines the probability"},
+        {168.5, {630, 200}, 420, {{{0, 190}, {1260, 270}}}, "Note added in proof: more careful consideration shows that the probability is proportional to the square of the quantity $\\Phi_{nm}$."}},
+        {164.5, 173.5}, "Born\[CloseCurlyQuote]s paper of 1926, and the footnote added in proof \[CenterDot] Zeitschrift f\[UDoubleDot]r Physik 37"], shot[{173.5, 177.8}, bornShot[156.5, 177.8], "Computed: each dot a measurement"],
     voice["v-born-probability", 152.8, {0, 14}, {{152.8, 156.5}}, {"Max Born", "radio interview, 1954"},
         {{0, 8, "Today, in an atomic experiment, we can predict with what *probability* this or that will happen."}, {8, 14, "But with *complete certainty* we can say what will happen only in *very few cases*."}}],
     voice["v-born-dice", 166.8, {0, 11}, None, {"Max Born", "talk at Lindau, 1965"},
