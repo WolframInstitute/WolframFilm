@@ -23,7 +23,8 @@ yt() { [ -s "$1.mp4" ] && return; yt-dlp -q -f "bv*[height<=720]+ba/b[height<=72
     && norm src/$1.* "$1.mp4" && echo "$1"; }
 # norm IN OUT: a section cut at keyframes starts its picture and sound at different times; both start at 0 here,
 # the first frame held (and silence added) until each begins, so they stay in sync
-norm() { vs=$(ffprobe -v error -select_streams v -show_entries stream=start_time -of csv=p=0 "$1"); as=$(ffprobe -v error -select_streams a -show_entries stream=start_time -of csv=p=0 "$1")
+norm() { vs=$(ffprobe -v error -select_streams v -show_entries stream=start_time -of csv=p=0 "$1" | awk '{print ($1 > 0 ? $1 : 0)}')
+    as=$(ffprobe -v error -select_streams a -show_entries stream=start_time -of csv=p=0 "$1" | awk '{print ($1 > 0 ? $1 : 0)}')
     ffmpeg -v error -y -i "$1" -vf "setpts=PTS-STARTPTS,tpad=start_mode=clone:start_duration=$vs" -af "asetpts=PTS-STARTPTS,adelay=$(echo "$as * 1000" | bc | cut -d. -f1):all=1" \
         -c:v libx264 -crf 20 -c:a aac -b:a 160k -ac 2 "$2"; }
 img() { [ -s "src/$1" ] || { curl -sL -A "$UA" -o "src/$1" "$2"; sleep 2; }; }
@@ -72,3 +73,17 @@ cut f-mri "$C/7/71/Real-time_Magnetic_Resonance_Imaging_of_a_child_saying_Krokod
 cut f-ibm-build "$C/a/ad/Building_an_IBM_Quantum_computer_in_hyperspeed.webm" 0 21 mute
 cut f-sycamore "$C/d/d7/Demonstrating_Quantum_Supremacy.webm" 60 120 mute
 cut f-bohr-1957 "$IA/1957-10-28_Space_Race/1957-10-28_Space_Race.mp4" 103 20 mute
+
+# ---- the quantum computing chapter ----
+G="$C/d/d7/Demonstrating_Quantum_Supremacy.webm"
+cut v-google-promise "$G" 0 23.5
+cut v-neven "$G" 60.8 7
+yt  v-preskill lN8zT_Yk5sg 409.5 12.5
+yt  v-shor PJ48RBTbRrE 39.5 20.5
+yt  v-willow W7ppd_RY-UE 209.5 21.5
+# NIST's Kaltura host is often unreachable: the copy fetched earlier, if Kaltura fails
+cut v-wineland "https://cdnapisec.kaltura.com/p/684682/sp/68468200/playManifest/entryId/0_2q5w3ncm/format/url/protocol/https/a.mp4" 274.4 13.6 || cut v-wineland src/nist-wineland.mp4 274.4 13.6
+cut f-ibm-system-one "$C/a/a2/The_World%E2%80%99s_First_Integrated_Quantum_Computing_System.webm" 0 66 mute
+cut f-ibm-system-two "$C/1/13/Unveiling_IBM_Quantum_System_Two.webm" 0 137 mute
+cut f-ibm-qcsc "$C/0/0b/Introducing_quantum-centric_supercomputing.webm" 0 42 mute
+yt  f-willow W7ppd_RY-UE 0 200
