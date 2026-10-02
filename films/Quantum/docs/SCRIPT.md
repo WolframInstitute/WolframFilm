@@ -5,7 +5,7 @@ A mini-documentary, about **8¼ minutes**, on a hundred years of quantum theory,
 they speak German or French.  The pictures are **real experiments on film** -- glowing metal, gas-tube spectra, electron
 diffraction rings, cloud-chamber tracks, atoms cooled into a single wave, a quantum processor -- each joined by a
 **computed animation** of what the experiment shows (the wave function in phase colour, orbitals, tunnelling, the
-cat's Wigner function).  Music sits underneath, ducked under every voice, and rises only at three moments: the wave
+pairs of entangled photons measured far apart).  Music sits underneath, ducked under every voice, and rises only at three moments: the wave
 equation, the clicks of the double slit, and the end.
 
 No narrator, no text-to-speech, no captions that tell the story: the voices do.  On screen, only a lower-third for
@@ -27,7 +27,7 @@ credit); the computed sequences are AnimatedGraphics as before.  Time is in **se
 | 2:10–2:30 | **Born: chance** | Born, 1954: "Today … we can predict with what probability this or that will happen…" · Born, 1965: "'God does not play dice,' said Einstein." | Born's footnote; an orbital filling with clicks |
 | 2:30–2:45 | **Uncertainty** | Heisenberg, 1953: "Either you can fix the position very sharply, and then the velocity is very indeterminate…" | The Fourier pair, squeezed |
 | 2:45–3:00 | **Through walls, antimatter** | — (music) | Cloud chamber: alpha tracks; computed tunnelling packet; cosmic-ray tracks curling both ways (the positron) |
-| 3:00–3:35 | **1935–1982: entanglement** | Bell, 1986: "…not a puzzle provided you admit the socks are really there before you look at them.  It's a mystery if looking at one sock makes the other one blue…" · Aspect, 1985: "…we are compelled to reject the idea that the polarization of the photon was already existing…" | EPR page; the cat's Wigner function; real down-conversion light cone (photon pairs); Bell's 2√2 against 2 |
+| 3:00–3:35 | **1935–1982: entanglement** | Bell, 1986: "…not a puzzle provided you admit the socks are really there before you look at them.  It's a mystery if looking at one sock makes the other one blue…" · Aspect, 1985: "…we are compelled to reject the idea that the polarization of the photon was already existing…" | EPR page; entangled pairs computed: each detector random, the two always opposite; real down-conversion light cone (photon pairs); Bell's 2√2 against 2 |
 | 3:35–3:50 | **Nobody understands** | Feynman, 1964: "I think I can safely say that nobody understands quantum mechanics." · Feynman, 1964: "Nobody knows how it can be like that." | Feynman on film; the path integral's paths cancelling into one |
 | 4:17–4:33 | **Atoms in one wave** | NASA Cold Atom Lab, 2018: "…atoms acting collectively, as a wave." | The first Bose–Einstein condensate (JILA, 1995) and Cold Atom Lab's trap and hardware (NASA/JPL) |
 | 4:33–6:12 | **Computing with ψ** | Preskill, Shor, Wineland, Martinis, Google 2019, Neven, Kelly 2024 | Feynman's 1981 proposal; IBM and Google machines; the quantum Fourier transform drawn gate by gate; 3D Bloch spheres; random-circuit sampling and the race: Willow's five minutes against $10^{25}$ years |

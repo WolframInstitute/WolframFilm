@@ -4,7 +4,7 @@ Name: "ψ — The Quantum Century"
 Author: Nikolay Murzin
 Date: 2026
 Description: "A short documentary about a hundred years of quantum theory, told in the voices of the people who made it, over real experiments and computed pictures, made entirely in this notebook with WAnim"
-Abstract: "In January 1926 Schrödinger wrote down the equation of a wave no one had seen. This notebook makes an eight-minute documentary about the century since, narrated only by recordings of the physicists themselves -- Planck, Bohr, de Broglie, Heisenberg, Dirac, Schrödinger, Born, Bell, Aspect, Feynman, the builders of quantum computers and their skeptics -- over film of real experiments and pictures computed here: the blackbody curve, hydrogen's orbitals, a wave packet tunnelling through a wall, the Wigner function of Schrödinger's cat."
+Abstract: "In January 1926 Schrödinger wrote down the equation of a wave no one had seen. This notebook makes an eight-minute documentary about the century since, narrated only by recordings of the physicists themselves -- Planck, Bohr, de Broglie, Heisenberg, Dirac, Schrödinger, Born, Bell, Aspect, Feynman, the builders of quantum computers and their skeptics -- over film of real experiments and pictures computed here: the blackbody curve, hydrogen's orbitals, a wave packet tunnelling through a wall, entangled pairs measured far apart."
 Keywords: [WAnim, documentary, quantum mechanics, wave function, Schrödinger equation, archival film, hydrogen, entanglement]
 Sources: ["[WAnim](https://github.com/sw1sh/WAnim)", "[The film's clips and their sources](https://github.com/WolframInstitute/WolframFilm/blob/main/films/Quantum/docs/CLIPS.md)", "[The facts, checked](https://github.com/WolframInstitute/WolframFilm/blob/main/films/Quantum/docs/SOURCES.md)"]
 Links: ["[What Is a Computational Essay?](https://writings.stephenwolfram.com/2017/11/what-is-a-computational-essay/)"]
@@ -25,7 +25,15 @@ The clips are cut from their sources (listed, with their rights, in the film's C
 
 ```wl
 archive[name_String] := "https://www.wolframcloud.com/obj/wolframinstitute/WolframFilm/Quantum/archive/" <> name;
-image[name_String] := Import[archive[name]];
+(* a photograph or a table from the archive, downloaded once into a cache on this computer (and kept only
+   when it came whole), so the film does not depend on the cloud answering every time it is evaluated *)
+cached[name_String] := Module[{f = FileNameJoin[{$UserBaseDirectory, "ApplicationData", "WolframFilm", "Quantum", name}], r},
+    If[! FileExistsQ[f], Quiet @ CreateDirectory[DirectoryName[f], CreateIntermediateDirectories -> True];
+        Do[r = Quiet @ URLDownload[archive[name], f <> ".part", {"StatusCode", "Headers"}];
+            If[AssociationQ[r] && r["StatusCode"] === 200 && FileByteCount[f <> ".part"] === Replace[Lookup[KeyMap[ToLowerCase, Association[r["Headers"]]], "content-length", None], {l_String :> FromDigits[l], _ -> FileByteCount[f <> ".part"]}],
+                RenameFile[f <> ".part", f]; Break[]], {4}]];
+    f];
+image[name_String] := Import[cached[name]];
 ```
 
 Time in this film is in seconds.
@@ -459,15 +467,31 @@ wallsPart = {footage["f-alpha", {199.2, 203.5}, {6, 10.3}, "Alpha particles tunn
 
 ## 3:31 — 1935 to 1982: Entanglement
 
-John Bell, on BBC television in 1986, with his socks: correlations are no puzzle if the socks are there before you look -- but a mystery if looking at one makes the other blue.  The picture: a real source of entangled photon pairs, a cone of down-converted light; Schrödinger's cat as a Wigner function, alive and dead at once, its fringes between them going negative:
+John Bell, on BBC television in 1986, with his socks: correlations are no puzzle if the socks are there before you look -- but a mystery if looking at one makes the other blue.  The picture: a real source of entangled photon pairs, a cone of down-converted light; then what Bell describes, computed: pairs fly apart to two detectors far from each other, and each detector's result is random -- blue or pink -- but the two always come out opposite:
 
 ```wl
-wigner[x_, p_, a_, fringe_] := (Exp[-(x - a)^2 - p^2] + Exp[-(x + a)^2 - p^2] + 2 fringe Exp[-x^2 - p^2] Cos[2 a p]) / (2 Pi (1 + fringe Exp[-a^2]));
-wignerColour = Function[{x, p, w}, Blend[{{-0.12, red}, {-0.02, RGBColor[0.55, 0.12, 0.08]}, {0, RGBColor[0.2, 0.22, 0.26]}, {0.12, blue}, {0.3, White}}, w]];
-wignerGrid[fringe_] := Table[{x, p, 7 wigner[x, p, 2.2, fringe]}, {x, -4.5, 4.5, 0.15}, {p, -3, 3, 0.15}];
-catSurface[cam_, fringe_] := {CanvasSurface3D[cam, wignerGrid[fringe], Function[q, Blend[{{-0.6, RGBColor["#FF4B3E"]}, {-0.05, RGBColor[0.4, 0.08, 0.06]}, {0, GrayLevel[0.16]}, {0.4, RGBColor["#2E8FB0"]}, {1.1, cyan}, {1.6, White}}, q[[3]]]], "Ambient" -> 0.45],
-    glowText["alive", {600, 260}, sans[36], cyan], glowText["dead", {1240, 260}, sans[36], cyan], glowText["interference: below zero", {200, 330}, sans[30], RGBColor["#FF4B3E"]]};
-Dimensions[wignerGrid[1]]
+sockPink = RGBColor["#FF6FAE"];
+pairAt[k_] := 219.2 + 0.36 (k - 1);
+pairBits = BlockRandom[SeedRandom[1986]; RandomInteger[1, 14]];
+pairColour[b_] := If[b == 1, sockPink, cyan];
+pairsShot[t_] := Module[{arrived = Select[Range[14], pairAt[#] + 0.9 <= t &]}, {
+    (* the source, and the two detectors far apart *)
+    CanvasDisk[{960, 470}, 16 + 3 Sin[12 t], amber, "Glow" -> 22],
+    CanvasText["source", {960, 540}, sans[26, 400], grey, Alignment -> Center],
+    Table[With[{x = If[side == 1, 200, 1600], last = SelectFirst[Reverse[arrived], True &, None]}, {
+        CanvasRectangle[{x, 380, 120, 180}, GrayLevel[0.12], "Radius" -> 10],
+        If[last =!= None, With[{b = If[side == 1, pairBits[[last]], 1 - pairBits[[last]]], a = Exp[-4 (t - pairAt[last] - 0.9)]},
+            CanvasRectangle[{x, 380, 120, 180}, pairColour[b], "Radius" -> 10, Opacity -> 0.25 + 0.6 a]], {}],
+        CanvasRectangle[{x, 380, 120, 180}, GrayLevel[0.5], "Radius" -> 10, "Stroke" -> 2],
+        CanvasText[If[side == 1, "detector A", "detector B"], {x + 60, 600}, sans[28, 600], boneC, Alignment -> Center],
+        (* every result so far *)
+        Table[With[{b = If[side == 1, pairBits[[k]], 1 - pairBits[[k]]]}, CanvasRectangle[{x + 60 - 91 + 26 Mod[k - 1, 7], 660 + 30 Quotient[k - 1, 7], 22, 22}, pairColour[b], "Radius" -> 3]], {k, arrived}]}], {side, 2}],
+    (* the pairs on their way, one photon each way *)
+    Table[With[{u = (t - pairAt[k]) / 0.9}, If[0 <= u < 1, With[{dy = 18 Sin[2.3 k]}, {
+        CanvasDisk[{960 - 700 u, 470 + dy u}, 8, White, "Glow" -> 14], CanvasLine[{{960 - 700 Max[0, u - 0.12], 470 + dy Max[0, u - 0.12]}, {960 - 700 u, 470 + dy u}}, White, "Thickness" -> 3, Opacity -> 0.5],
+        CanvasDisk[{960 + 700 u, 470 + dy u}, 8, White, "Glow" -> 14], CanvasLine[{{960 + 700 Max[0, u - 0.12], 470 + dy Max[0, u - 0.12]}, {960 + 700 u, 470 + dy u}}, White, "Thickness" -> 3, Opacity -> 0.5]}], {}]], {k, 14}],
+    CanvasOpacity[Clip[(t - 221.4) / 0.5, {0, 1}], {CanvasText["each result random", {260, 780}, sans[30, 400], boneC, Alignment -> Center],
+        CanvasText["always the opposite", {1660, 780}, sans[30, 400], boneC, Alignment -> Center]}]}];
 ```
 
 Then Alain Aspect, in 1985, three years after his experiment: Bell's inequalities violated, so the photon's polarisation was not there before it was measured.  The bound any local world keeps, 2, and what quantum mechanics reaches, 2√2, computed for a Bell state measured along the optimal directions:
@@ -493,7 +517,7 @@ bellShot = shot[{228, 234}, Function[t, With[{v = chsh Easing["OutCubic"][Clip[(
     If[v > 2.8, CanvasTeX["\\text{quantum: } 2\\sqrt{2} \\approx 2.83", {960, 815}, 64, RGBColor["#FF4B3E"], Alignment -> Center],
         CanvasText[TextString[Round[v, 0.01]], {960, 815}, sans[56, 700], If[v > 2, RGBColor["#FF4B3E"], cyan], Alignment -> Center]]}]],
     "Computed: Bell\[CloseCurlyQuote]s test (CHSH) for an entangled pair: quantum mechanics passes the bound no local world can"];
-entanglePart = {footage["f-spdc", {215, 219}, {0, 4}, "A laser making entangled photon pairs: the cone of down-converted light"], shot[{219, 224.1}, Function[t, catSurface[CanvasCamera["Center" -> {960, 640}, "Scale" -> 150, "Azimuth" -> -0.5 + 0.12 (t - 219), "Elevation" -> 0.55, "Distance" -> 16], 1]], "Computed: Schr\[ODoubleDot]dinger\[CloseCurlyQuote]s cat (1935, the paper that named entanglement) \[Dash] alive and dead at once, and their interference"],
+entanglePart = {footage["f-spdc", {215, 219}, {0, 4}, "A laser making entangled photon pairs: the cone of down-converted light"], shot[{219, 224.1}, pairsShot, "Computed: entangled pairs measured far apart \[Dash] each result random, the two always opposite, like Bell\[CloseCurlyQuote]s socks"],
     voice["v-bell-socks", 211, {0.4, 13.5}, {{211, 215}}, {"John Bell", "BBC television, 1986"},
         {{0, 6.8, "So correlations like that are not a puzzle, provided you admit *the socks are really there* before you look at them."},
          {6.8, 13.1, "It's a *mystery* if looking at one sock *makes the other one blue* at the same time."}}],
@@ -650,7 +674,7 @@ hypeShot[{t0_, t1_}] := shot[{t0, t1}, Function[t, {
 Then the bubble itself: the share prices of three quantum-computing companies, which rose twentyfold in a year -- until, on 8 January 2025, Nvidia's Jensen Huang told analysts that very useful quantum computers were fifteen to thirty years away, and they lost around 40% in a day:
 
 ```wl
-stocks = Rest[Import[archive["quantum-stocks.csv"], "CSV"]];
+stocks = Rest[Import[cached["quantum-stocks.csv"], "CSV"]];
 stockDays = stocks[[All, 1]]; stockRel = Transpose[# / First[#] & /@ Transpose[N[stocks[[All, 2 ;;]]]]];
 dayIndex[d_String] := First[FirstPosition[AbsoluteTime /@ stockDays, _ ? (# >= AbsoluteTime[d] &)]];
 {peakDay, crashDay} = {dayIndex["2025-01-07"], dayIndex["2025-01-08"]};
