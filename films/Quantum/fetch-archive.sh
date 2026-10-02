@@ -38,6 +38,7 @@ cut v-feynman-clicks "$M6" 1523.9 11.3
 yt  v-planck B9FpAGK8bj8 808.5 14.5
 cut v-bohr-planck "$LINDAU/1962_phy_niels_bohr/Master%20Niels%20Bohr%201962_1080p.mp4" 991.3 22.4
 cut v-bohr-einstein "$LINDAU/1962_phy_niels_bohr/Master%20Niels%20Bohr%201962_1080p.mp4" 1144.5 18.1
+cut v-bohr-atom "$LINDAU/1962_phy_niels_bohr/Master%20Niels%20Bohr%201962_1080p.mp4" 1242.1 16
 yt  v-debroglie stRrf4DB_3Y 83.5 12
 yt  v-heisenberg-helgoland xbpOMkBMtYU 408.5 23
 still v-dirac src/dirac.jpg "$LINDAU/1976__phy_paul_dirac/1976%20_Dirac_640x480.mp4" 791.0 14.4
@@ -46,10 +47,11 @@ still v-born-probability src/born.jpg "https://rbbmediapmdp-a.akamaihd.net/conte
 still v-born-dice src/born.jpg "https://cdn-storage.br.de/MUJIuUOVBwQIbtChb6OHu7ODifWH_-46/_-QS/_2F6_Axc_71S/6e3b3a85-4e25-46d3-9526-eb9099a3a6e1_2.mp3" 600 13
 cut v-heisenberg-uncertainty "$LINDAU/1953_phys_werner_heisenberg/1953_Heisenberg%20_fragment-2012_854x480.mp4" 592.9 22
 cut v-bell-socks "https://videos.cern.ch/api/files/339476f6-c698-4fa4-8b71-9fb025a029ba/480p.mp4" 648.8 15.6
-cut v-aspect "https://videos.cern.ch/api/files/6be1315a-ff00-4d83-8ecc-40bd9a9c8ea5/480p.mp4" 1400.5 17
+cut v-aspect "https://videos.cern.ch/api/files/6be1315a-ff00-4d83-8ecc-40bd9a9c8ea5/480p.mp4" 1400.5 18
 cut v-feynman-nobody "$M6" 481.5 6
 cut v-feynman-drain "$M6" 515.3 11.9
 cut v-nasa-bec "$C/0/0d/NASA%E2%80%99s_Cold_Atom_Lab-_The_Coolest_Experiment_in_the_Universe.webm" 62.7 16.5
+cut f-cold-atom-lab "$C/0/0d/NASA%E2%80%99s_Cold_Atom_Lab-_The_Coolest_Experiment_in_the_Universe.webm" 40 70 mute
 cut v-martinis "$C/d/d7/Demonstrating_Quantum_Supremacy.webm" 40.2 9.4
 yt  v-zeilinger ct2uWbI2vF8 476.5 12
 

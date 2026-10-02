@@ -1,6 +1,6 @@
 # ψ — the quantum century
 
-A mini-documentary, about **8 minutes**, on a hundred years of quantum theory, told by the people who made it.
+A mini-documentary, about **8¼ minutes**, on a hundred years of quantum theory, told by the people who made it.
 **The narration is their own recorded voices**: lectures, interviews and radio talks from 1942 to 2026, subtitled where
 they speak German or French.  The pictures are **real experiments on film** -- glowing metal, gas-tube spectra, electron
 diffraction rings, cloud-chamber tracks, atoms cooled into a single wave, a quantum processor -- each joined by a
@@ -18,21 +18,21 @@ credit); the computed sequences are AnimatedGraphics as before.  Time is in **se
 
 | Time | Beat | Voice (archival) | Picture |
 |---|---|---|---|
-| 0:00–0:20 | **Cold open: clicks** | Feynman, 1964: "…are clicks.  Click, click, click, click … lumps, absolutely lumps." | Black.  Real single electrons arriving on a detector one at a time (Bach et al. 2013), then the computed buildup completing the fringes.  Title: **ψ — the quantum century** |
+| 0:00–0:18 | **Cold open: clicks** | Feynman, 1964: "…are clicks.  Click, click, click, click … lumps, absolutely lumps." | Real single electrons arriving one at a time (Bach et al. 2013); then the experiment computed in 3D: electrons fly from a source through two slits to a screen, each landing a click, faster and faster until the fringes stand; title **ψ — the quantum century** on the hit |
 | 0:20–0:45 | **1900: Planck** | Planck, 1942: "At first I disliked this hypothesis … but there was no other way." · Bohr, 1962: "…the discovery of the universal quantum of action in the first year of this century by Planck." | Forged steel glowing red to white; the computed blackbody curve against the classical one running to infinity |
 | 0:45–1:05 | **1905–1913: light quanta, atoms** | Bohr, 1962: "[Einstein] tried to explain the individual photoeffect by assuming … a transfer of a light quantum." | PSSC 1961: ultraviolet light discharging a zinc plate; hydrogen gas tube through a grating, its four lines; the computed Bohr orbits sounding the Balmer chord (music's first entrance) |
 | 1:05–1:25 | **1924–27: matter waves** | de Broglie, 1967: "…l'idée que la particule est accompagnée d'une onde." | PSSC "Matter Waves": **Lester Germer at his apparatus**, the diffraction rings; a modern electron-diffraction tube; computed wave packet |
-| 1:25–1:45 | **1925: Helgoland** | Heisenberg, early 1970s: "…so I had to spend the holiday on an island … it was there that I really came to the scheme of quantum mechanics." · Dirac, 1976: "it was quite a revelation to me when this discovery of Heisenberg was set up…" | Helgoland photochrom; Heisenberg 1926; the non-commuting matrices |
+| 1:30–1:52 | **1925: Helgoland** | Heisenberg, early 1970s: "…so I had to spend the holiday on an island … it was there that I really came to this scheme of quantum mechanics." · Dirac, 1976: "it was quite a revelation to me when this discovery of Heisenberg was set up…" | Helgoland photochrom; Heisenberg 1926; his idea computed: the atom's jumps between levels as a table $X_{nm}$, coloured by their spectral lines, and $XP - PX = i\hbar$ |
 | 1:45–2:10 | **1926: ψ** (music rises) | Schrödinger, 1952: "…dass alles, überhaupt alles, zugleich Partikel und Feld ist." | The equation on the first page of *Annalen der Physik* (received 27 Jan 1926), "100 years"; ψ born as a packet; standing waves; hydrogen orbitals turning |
 | 2:10–2:30 | **Born: chance** | Born, 1954: "Today … we can predict with what probability this or that will happen…" · Born, 1965: "'God does not play dice,' said Einstein." | Born's footnote; an orbital filling with clicks |
 | 2:30–2:45 | **Uncertainty** | Heisenberg, 1953: "Either you can fix the position very sharply, and then the velocity is very indeterminate…" | The Fourier pair, squeezed |
 | 2:45–3:00 | **Through walls, antimatter** | — (music) | Cloud chamber: alpha tracks; computed tunnelling packet; cosmic-ray tracks curling both ways (the positron) |
 | 3:00–3:35 | **1935–1982: entanglement** | Bell, 1986: "…not a puzzle provided you admit the socks are really there before you look at them.  It's a mystery if looking at one sock makes the other one blue…" · Aspect, 1985: "…we are compelled to reject the idea that the polarization of the photon was already existing…" | EPR page; the cat's Wigner function; real down-conversion light cone (photon pairs); Bell's 2√2 against 2 |
 | 3:35–3:50 | **Nobody understands** | Feynman, 1964: "I think I can safely say that nobody understands quantum mechanics." · Feynman, 1964: "Nobody knows how it can be like that." | Feynman on film; the path integral's paths cancelling into one |
-| 3:50–4:15 | **The world it built, the machines it builds** | NASA Cold Atom Lab: "atoms acting collectively as a wave" · Martinis, 2019: "a quantum bit can be both zero and one at the same time." | Laser light (USIA 1960s film); NIST: a condensate forming, the 1980s ion "quantum jumps"; MRI; IBM/Google processors (CC BY); Grover's amplitude pouring onto one answer |
-| 4:33–6:12 | **Computing with ψ** | Preskill, Shor, Wineland, Martinis, Google 2019, Neven, Kelly 2024 | Feynman's 1981 proposal; IBM and Google machines; 3D Bloch spheres; Grover |
+| 4:17–4:33 | **Atoms in one wave** | NASA Cold Atom Lab, 2018: "…atoms acting collectively, as a wave." | The first Bose–Einstein condensate (JILA, 1995) and Cold Atom Lab's trap and hardware (NASA/JPL) |
+| 4:33–6:12 | **Computing with ψ** | Preskill, Shor, Wineland, Martinis, Google 2019, Neven, Kelly 2024 | Feynman's 1981 proposal; IBM and Google machines; the quantum Fourier transform drawn gate by gate; 3D Bloch spheres; random-circuit sampling and the race: Willow's five minutes against $10^{25}$ years |
 | 6:12–7:51 | **Skeptics: the bubble** | Aaronson, 2017: "…a quantum computer just tries them all in parallel … alas, it's not that simple." · Hossenfelder, 2022: "…not that this was of any use." · Hossenfelder, 2025: "the marketing departments have definitely achieved quantum advantage." · Huang, Jan 2025: "15 years … early side; 30 … late side." · Huang, Mar 2025: "How could a quantum computer company be public?" · Hossenfelder, 2026: "the only profitable quantum application has been forecasting profitable quantum applications." · Kalai, 2014: "…quantum fault tolerance are indeed impossible." · Hossenfelder, 2022: "This bubble of inflated promises will eventually burst … winter is coming." | Warning signs: the film's own hype quotes; the computed share-price bubble of IonQ, Rigetti, D-Wave and its 8 January 2025 crash |
-| 7:51–8:07 | **Outro** (music rises) | — | one packet of ψ drifting; "1926 – 2026"; credits |
+| 7:51–8:15 | **Outro** (music rises) | — | The cold open's two-slit screen, every electron landed, as the camera draws away; "1926 – 2026"; the credits, scrolled all the way up |
 
 ## Sources
 
@@ -43,3 +43,10 @@ Every clip, its exact in/out, transcript and rights: `CLIPS.md`.  Every fact: `S
 Dirac, Feynman, Bell, Aspect and Zeilinger are copyrighted recordings (Bundesarchiv, Lindau, INA, CBC, ARD, BBC,
 Jorlunde, Nobel): the film uses each as a short quotation of a few seconds, credited on screen, in a non-commercial
 educational work.  The PSSC films (1959–63) are probably public domain in the US (no renewal found).
+
+## Conventions
+
+- **Subtitles** mark the words that make a quotation worth including between asterisks, `*like this*`; they are set bolder, in the accent.
+- **Mathematics** is TeX everywhere -- in captions, labels and titles (`$|\psi|^2$`), set by WAnim's `CanvasTeX` through MaTeX.
+- **German pages** (Schrödinger 1926, Born 1926) are toured line by line, the German marked and its English set over it.
+- **Voices** fade in and out at the cut, and the music stays ducked through pauses between voices shorter than 3 s.

@@ -146,6 +146,15 @@ In order of the story.  Where the original is not English, the quote is followed
 
 **Avoid:** YouTube `yQ5zM07MjbU` ("Planck: Es gibt keine Materie an sich"), whose source and quote are both unreliable.
 
+## Changes in the third cut
+
+- **v-aspect** re-cut 18 s (was 17): the last word, "emission", ends at 17.0 s.  Used 0.15–17.25.
+- **v-shor** ends at 16.5 s, after "…on a quantum computer"; the clip goes on "And this was a very surprising discovery…".
+- **v-heisenberg-helgoland** ends at 27.1 s, after "…this scheme of quantum mechanics"; it goes on "and tried to develop it in a close mathematical form".
+- **v-bohr-atom**: Bohr, Lindau 1962, source 1242.1 s + 16 s; used 0.45–15.3: "…to bring order in certain fields of experience.  But that was of a very unsatisfactory nature." (whisper.cpp, three passes; "experience" heard twice of three, "spirit" once; the words before "to bring order" are unclear, so the clip starts there).  Over the atom: the chapter now runs 70–88 s, and everything after it is 8 s later.
+- **f-spectra** now 115–119.6 s, cropped to the hydrogen tube and its lines.
+- **f-cold-atom-lab**: NASA/JPL, *Cold Atom Lab: The Coolest Experiment in the Universe* (Wikimedia Commons, PD), 40–110 s, silent: 7.5 s the first BEC (JILA, 1995), 44 s the hardware, 56 s the laser and coil trap.  Replaces f-laser and f-mri under Kohel's voice.
+
 ## D. Skeptics (the coda)
 
 YouTube sections, cut with `yt` in `fetch-archive.sh` (the source second given there), speech-recognised (whisper.cpp, word timings); in–out below are seconds into the cut.  All copyrighted, used as short quotations.
