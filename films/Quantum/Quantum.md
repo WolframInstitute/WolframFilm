@@ -635,7 +635,7 @@ computingPart = {feynmanQuote,
     blochShot, voice["v-martinis", 319.3, {0, 8.2}, {{319.3, 322.5}}, {"John Martinis", "Google, 2019"},
         {{0, 8.2, "The classical bit stores information as a zero or one, and a quantum bit can be *both zero and one at the same time*."}}],
     footage["f-sycamore", {330, 340.7}, {56, 66.7}, "Google\[CloseCurlyQuote]s Sycamore and its dilution refrigerator, 2019 \[CenterDot] Google Quantum AI (CC BY)"],
-    voice["v-google-promise", 327.5, {0, 13.2}, {{327.5, 330}}, {"Google Quantum AI", "Demonstrating Quantum Supremacy, 2019"},
+    voice["v-google-promise", 327.5, {0, 13.05}, {{327.5, 330}}, {"Google Quantum AI", "Demonstrating Quantum Supremacy, 2019"},
         {{0, 13.2, "The tantalizing promise of quantum computers is that they can do certain tasks *exponentially faster* than classical machines."}}],
     voice["v-neven", 340.7, {0, 6}, All, {"Hartmut Neven", "Google, 2019"},
         {{0, 6, "The nice thing about *quantum supremacy* is that it is a very well-defined *engineering milestone*."}}],
@@ -649,7 +649,7 @@ computingPart = {feynmanQuote,
 
 ## 6:12 — The Bubble
 
-The machines got their money, and the words got bigger: *both places at once*, *exponentially faster*, *supremacy*, *advantage*.  The skeptics have the last word.  First the warning signs -- the film's own quotes and the popular version of them -- while Scott Aaronson describes what almost every article says:
+The machines got their money, and the words got bigger: *both places at once*, *exponentially faster*, *supremacy*, *advantage*.  The skeptics have the last word.  First the words themselves -- the film's own quotes and the popular version of them -- while Scott Aaronson describes what almost every article says:
 
 ```wl
 hypeCards = {{"\[OpenCurlyDoubleQuote]tries them all in parallel\[CloseCurlyDoubleQuote]", "almost any popular article"},
@@ -658,16 +658,11 @@ hypeCards = {{"\[OpenCurlyDoubleQuote]tries them all in parallel\[CloseCurlyDoub
     {"\[OpenCurlyDoubleQuote]quantum supremacy\[CloseCurlyDoubleQuote]", "Google, 2019"},
     {"\[OpenCurlyDoubleQuote]ten to the twenty-five years\[CloseCurlyDoubleQuote]", "Google, 2024"},
     {"\[OpenCurlyDoubleQuote]bigger than fire\[CloseCurlyDoubleQuote]", "a Bank of America analyst, 2022"}};
-warningSign[{x_, y_}, h_, a_] := {CanvasPolygon[{{x + h / 2, y}, {x + h, y + 0.87 h}, {x, y + 0.87 h}}, amber, Opacity -> 0.18 a],
-    CanvasPolygon[{{x + h / 2, y}, {x + h, y + 0.87 h}, {x, y + 0.87 h}}, amber, "Stroke" -> 4, Opacity -> a],
-    CanvasLine[{{x + h / 2, y}, {x + h, y + 0.87 h}, {x, y + 0.87 h}, {x + h / 2, y}}, amber, "Thickness" -> 1, "Glow" -> 10, Opacity -> 0.6 a],
-    CanvasText["!", {x + h / 2 - 0.09 h, y + 0.78 h}, sans[Round[0.6 h], 700], amber, Opacity -> a]};
 hypeShot[{t0_, t1_}] := shot[{t0, t1}, Function[t, {
-    glowText["Warning signs", {160, 250}, sans[34, 700], RGBColor["#FF4B3E"], Clip[(t - t0) / 0.6, {0, 1}]],
-    Table[With[{tk = t0 + 0.3 + 2.25 (k - 1), c = hypeCards[[k]]}, With[{u = Clip[(t - tk) / 0.5, {0, 1}], y = 300 + 112 (k - 1), x = 160 + 90 Mod[k - 1, 2]},
-        If[u > 0, With[{a = Easing["OutCubic"][u] If[t > tk + 2.25 && k < 6, 0.6, 1]}, {warningSign[{x, y + 14 (1 - u)}, 64, a],
-            CanvasText[c[[1]], {x + 96, y + 46 + 14 (1 - u)}, serif[50, True], White, Opacity -> a],
-            CanvasText[c[[2]], {x + 116 + CanvasTextWidth[c[[1]], serif[50, True]], y + 46 + 14 (1 - u)}, sans[28, 400], boneC, Opacity -> a]}], {}]]], {k, Length[hypeCards]}]}],
+    Table[With[{tk = t0 + 0.3 + 2.25 (k - 1), c = hypeCards[[k]]}, With[{u = Clip[(t - tk) / 0.5, {0, 1}], y = 200 + 112 (k - 1), x = 180 + 90 Mod[k - 1, 2]},
+        If[u > 0, With[{a = Easing["OutCubic"][u] If[t > tk + 2.25 && k < 6, 0.55, 1]}, {
+            CanvasText[c[[1]], {x, y + 46 + 14 (1 - u)}, serif[54, True], White, Opacity -> a],
+            CanvasText[c[[2]], {x + 24 + CanvasTextWidth[c[[1]], serif[54, True]], y + 46 + 14 (1 - u)}, sans[28, 400], grey, Opacity -> a]}], {}]]], {k, Length[hypeCards]}]}],
     "How quantum computing has been sold, 2019\[Dash]2024"];
 ```
 
@@ -712,11 +707,10 @@ skepticsPart = {hypeShot[{375.2, 389.6}],
          {5.15, 10.5, "well, unlike a classical computer, which just has to try every possible answer one by one,"},
          {10.5, 17.5, "a quantum computer just *tries them all in parallel*, in different parallel universes."}}],
     voice["v-aaronson-parallel", 389.6, {28.9, 31.5}, All, {"Scott Aaronson", "TEDxDresden, 2017"}, {{0, 2.6, "The trouble is, you know, alas, *it's not that simple*."}}, False],
-    voice["v-sabine-advantage", 392.8, {9.95, 25.4}, {{392.8, 398}}, {"Sabine Hossenfelder", "physicist, \[OpenCurlyDoubleQuote]The Quantum Hype Bubble Is About To Burst\[CloseCurlyDoubleQuote], 2022"},
+    voice["v-sabine-advantage", 392.8, {9.95, 25.4}, All, {"Sabine Hossenfelder", "physicist, \[OpenCurlyDoubleQuote]The Quantum Hype Bubble Is About To Burst\[CloseCurlyDoubleQuote], 2022"},
         {{0, 5.86, "*Quantum advantage* has indeed been demonstrated for some quantum computers,"},
          {5.86, 11.72, "but that just means the quantum computer did something faster than a conventional computer,"},
          {11.72, 15.45, "*not that this was of any use* for real-world issues."}}],
-    footage["f-sycamore", {398, 408.25}, {70, 80.25}, "The task of 2019\[CloseCurlyQuote]s \[OpenCurlyDoubleQuote]supremacy\[CloseCurlyDoubleQuote]: sampling the output of random circuits \[CenterDot] Google Quantum AI (CC BY)"],
     voice["v-sabine-marketing", 408.6, {5.5, 11.0}, All, {"Sabine Hossenfelder", "physicist, on YouTube, 2025"},
         {{0, 5.5, "Well, the *marketing departments* have definitely achieved quantum advantage."}}],
     stockShot[{414.5, 430.5}, 420.7],
@@ -727,20 +721,21 @@ skepticsPart = {hypeShot[{375.2, 389.6}],
         {{0, 4.48, "And my first reaction was, I didn't know they were public."}, {4.48, 9.45, "How could a quantum computer company *be public*?"}}],
     voice["v-sabine-profitable", 437.9, {6.95, 12.75}, All, {"Sabine Hossenfelder", "physicist, on YouTube, 2026"},
         {{0, 5.8, "Today, the only profitable quantum application has been *forecasting profitable quantum applications*."}}],
-    voice["v-kalai-impossible", 444.2, {3.55, 17.9}, All, {"Gil Kalai", "mathematician, Hebrew University of Jerusalem, 2014"},
+    voice["v-kalai-impossible", 444.2, {3.55, 17.9}, {{444.2, 457.3}}, {"Gil Kalai", "mathematician, Hebrew University of Jerusalem, 2014"},
         {{0, 5.69, "I think that eventually it will turn out that"},
          {5.69, 14.35, "quantum computations, superior quantum computation, and quantum fault tolerance are *indeed impossible*."}}, True, {0.43, 0.13, 0.52, 0.03}],
+    (* his recording turns to a slide of a blog in its last second: his face a moment longer, silent *)
+    footage["v-kalai-impossible", {457.3, 458.6}, {14.4, 15.7}, "", 0.03, {0.43, 0.13, 0.52, 0.03}],
     voice["v-sabine-burst", 459, {9.85, 15.5}, All, {"Sabine Hossenfelder", "physicist, \[OpenCurlyDoubleQuote]The Quantum Hype Bubble Is About To Burst\[CloseCurlyDoubleQuote], 2022"},
         {{0, 5.65, "This *bubble of inflated promises* will eventually burst. It's just a matter of time."}}],
-    voice["v-sabine-burst", 464.9, {23.05, 28.95}, {{464.9, 467}}, {"Sabine Hossenfelder", "2022"},
-        {{0, 5.9, "This scenario has been dubbed \[OpenCurlyDoubleQuote]the quantum winter\[CloseCurlyDoubleQuote], and *winter is coming*."}}, False],
-    footage["f-ibm-system-two", {467, 470.8}, {100, 103.8}, "IBM Quantum System Two, 2023 \[CenterDot] IBM Research"],
-    chapter[{372, 470.8}, "2014 \[Dash] 2026", "Skeptics"]};
+    voice["v-sabine-burst", 464.9, {23.75, 29.7}, {{464.9, 467.4}}, {"Sabine Hossenfelder", "2022"},
+        {{0, 5.95, "This scenario has been dubbed \[OpenCurlyDoubleQuote]the quantum winter\[CloseCurlyDoubleQuote], and *winter is coming*."}}, False],
+    chapter[{372, 467.4}, "2014 \[Dash] 2026", "Skeptics"]};
 ```
 
 ## 7:51 — Outro
 
-Back to the screen of the beginning, every electron landed, as the camera draws away; the century; the credits, all the way up:
+Winter, as she says: snow falls and settles, flake by flake, into the pattern the electrons drew at the beginning; the century; the credits, all the way up:
 
 ```wl
 credits = {"Voices", "Max Planck (film portrait, 1942) \[CenterDot] Niels Bohr (Lindau Nobel Laureate Meetings, 1962)",
@@ -754,10 +749,20 @@ credits = {"Voices", "Max Planck (film portrait, 1942) \[CenterDot] Niels Bohr (
     "Library of Congress \[CenterDot] Friedrich Hund \[CenterDot] Internet Archive", "",
     "Short quotations of copyrighted recordings, for a non-commercial educational film", "Computed and composed in Wolfram Language with WAnim"};
 creditFont[s_] := If[MemberQ[{"Voices", "Footage"}, s], sans[34], sans[26, 400]];
-outroCam[t_] := With[{u = Easing["InOutCubic"][Clip[(t - 471.2) / 24, {0, 1}]]},
-    CanvasCamera["Center" -> {960, 430 - 40 u}, "Scale" -> 136 - 70 u, "Azimuth" -> 1.5 - 0.8 u, "Elevation" -> 0.08 + 0.3 u, "Distance" -> 30, "Target" -> {6 - 4 u, 0, 0}]];
+(* winter: snowflakes fall one at a time and settle where the electrons landed, into the pattern of a wave *)
+ice = RGBColor["#DDF4FF"];
+flakes = 1500;
+flakeAt[k_] := 467.6 + 10 (k / flakes)^0.75;
+flakeHome[k_] := {160 + 1600 (landing[[k, 1]] + 7) / 14, 330 + 400 (landing[[k, 2]] + 1) / 2};
+snowflake[{x_, y_}, r_, ang_, a_] := Table[CanvasLine[{{x, y} - r {Cos[th], Sin[th]}, {x, y} + r {Cos[th], Sin[th]}}, ice, "Thickness" -> 1.6, "Glow" -> 3, Opacity -> a], {th, ang + {0, Pi / 3, 2 Pi / 3}}];
+snowScene[t_] := {
+    (* the ones that have settled *)
+    With[{n = Count[flakeAt /@ Range[flakes], _ ? (# + 2.6 <= t &)]}, If[n > 0, Table[CanvasDisk[flakeHome[k], 2.4, ice, Opacity -> 0.85, "Glow" -> 3], {k, n}], {}]],
+    (* the ones on their way down, turning and swaying *)
+    Table[With[{u = (t - flakeAt[k]) / 2.6}, If[0 <= u < 1, With[{h = flakeHome[k]},
+        snowflake[{h[[1]] + 26 Sin[3 u + k] (1 - u), -30 + (h[[2]] + 30) u}, 9 - 5 u, 1.3 t + k, 0.9]], {}]], {k, flakes}]};
 creditsTop[t_] := 1100 - 112 (t - 477.7);
-outroPart = {shot[{471.2, 495.5}, Function[t, CanvasOpacity[1 - 0.85 Clip[(t - 477.7) / 2, {0, 1}], slitScene[t, 6000, False, outroCam[t]]]], ""],
+outroPart = {shot[{467.4, 495.5}, Function[t, CanvasOpacity[1 - 0.7 Clip[(t - 478.5) / 2, {0, 1}], snowScene[t]]], ""],
     TitleCard["1926 \[Dash] 2026", {471.7, 477.5}, Position -> {960, 200}, FontSize -> 96, FontColor -> boneC, "Enter" -> "Rise", "Exit" -> "Fade"],
     {477.7, 495.5} -> Function[t, With[{y0 = creditsTop[t]}, CanvasOpacity[Clip[(t - 477.7) 3, {0, 1}] Clip[(495.5 - t) 2, {0, 1}],
         MapIndexed[If[#1 === "" || ! (-60 < y0 + 52 #2[[1]] < 1140), {}, CanvasText[#1, {960 - CanvasTextWidth[#1, creditFont[#1]] / 2, y0 + 52 #2[[1]]}, creditFont[#1],
