@@ -727,7 +727,7 @@ skepticsPart = {hypeShot[{375.2, 389.6}],
 
 ## 7:51 — Outro
 
-Winter, as she says: snow falls and settles, flake by flake, into the pattern the electrons drew at the beginning; the century; the credits, all the way up:
+Winter, as she says: snow falls through the titles and the credits and settles, flake by flake, in drifts shaped like the pattern the electrons drew at the beginning; the century; the credits, all the way up:
 
 ```wl
 credits = {"Voices", "Max Planck (film portrait, 1942) \[CenterDot] Niels Bohr (Lindau Nobel Laureate Meetings, 1962)",
@@ -741,20 +741,28 @@ credits = {"Voices", "Max Planck (film portrait, 1942) \[CenterDot] Niels Bohr (
     "Library of Congress \[CenterDot] Friedrich Hund \[CenterDot] Internet Archive", "",
     "Short quotations of copyrighted recordings, for a non-commercial educational film", "Computed and composed in Wolfram Language with WAnim"};
 creditFont[s_] := If[MemberQ[{"Voices", "Footage"}, s], sans[34], sans[26, 400]];
-(* winter: snowflakes fall one at a time and settle where the electrons landed, into the pattern of a wave *)
+(* winter: snowflakes fall one at a time, through the titles and well into the credits, and pile up where the
+   electrons landed -- the pattern of a wave, as drifts of snow *)
 ice = RGBColor["#DDF4FF"];
-flakes = 1500;
-flakeAt[k_] := 467.6 + 10 (k / flakes)^0.75;
-flakeHome[k_] := {160 + 1600 (landing[[k, 1]] + 7) / 14, 330 + 400 (landing[[k, 2]] + 1) / 2};
+flakes = 2400; binW = 10; ground = 960;
+flakeAt[k_] := 467.6 + 21 (k / flakes)^0.85;
+flakeX[k_] := 160 + 1600 (landing[[k, 1]] + 7) / 14;
+flakeBin = Clip[Floor[(flakeX /@ Range[flakes] - 160) / binW] + 1, {1, 160}];
+(* how many flakes lie under each one in its drift, so it falls to the top of the snow already there *)
+flakeDepth = Module[{seen = ConstantArray[0, 160]}, Table[seen[[flakeBin[[k]]]]++, {k, flakes}]];
+landTime = flakeAt /@ Range[flakes] + 2.6;
+drift[t_] := With[{landed = Pick[flakeBin, Thread[landTime <= t]]}, If[landed === {}, ConstantArray[0., 160], GaussianFilter[N @ BinCounts[landed, {1, 161, 1}], 2.5] 3.8]];
 snowflake[{x_, y_}, r_, ang_, a_] := Table[CanvasLine[{{x, y} - r {Cos[th], Sin[th]}, {x, y} + r {Cos[th], Sin[th]}}, ice, "Thickness" -> 1.6, "Glow" -> 3, Opacity -> a], {th, ang + {0, Pi / 3, 2 Pi / 3}}];
-snowScene[t_] := {
-    (* the ones that have settled *)
-    With[{n = Count[flakeAt /@ Range[flakes], _ ? (# + 2.6 <= t &)]}, If[n > 0, Table[CanvasDisk[flakeHome[k], 2.4, ice, Opacity -> 0.85, "Glow" -> 3], {k, n}], {}]],
-    (* the ones on their way down, turning and swaying *)
-    Table[With[{u = (t - flakeAt[k]) / 2.6}, If[0 <= u < 1, With[{h = flakeHome[k]},
-        snowflake[{h[[1]] + 26 Sin[3 u + k] (1 - u), -30 + (h[[2]] + 30) u}, 9 - 5 u, 1.3 t + k, 0.9]], {}]], {k, flakes}]};
+snowScene[t_] := With[{h = drift[t], xs = 160 + binW (Range[160] - 0.5)}, {
+    (* the drifts: the snow that has settled, its top lit *)
+    If[Max[h] > 0, {CanvasPolygon[Join[Transpose[{xs, ground - h}], {{1760, ground}, {160, ground}}], ice, Opacity -> 0.92],
+        CanvasLine[Transpose[{xs, ground - h}], White, "Thickness" -> 2, "Glow" -> 8]}, {}],
+    CanvasLine[{{120, ground}, {1800, ground}}, GrayLevel[0.35], "Thickness" -> 1.5],
+    (* the flakes still falling, turning and swaying *)
+    Table[With[{u = (t - flakeAt[k]) / 2.6}, If[0 <= u < 1, With[{x = flakeX[k], y = ground - 3.8 flakeDepth[[k]] - 4},
+        snowflake[{x + 26 Sin[3 u + k] (1 - u), -30 + (y + 30) u}, 9 - 4 u, 1.3 t + k, 0.9]], {}]], {k, flakes}]}];
 creditsTop[t_] := 1100 - 112 (t - 477.7);
-outroPart = {shot[{467.4, 495.5}, Function[t, CanvasOpacity[1 - 0.7 Clip[(t - 478.5) / 2, {0, 1}], snowScene[t]]], ""],
+outroPart = {shot[{467.4, 495.5}, Function[t, CanvasOpacity[1 - 0.45 Clip[(t - 478.5) / 2, {0, 1}], snowScene[t]]], ""],
     TitleCard["1926 \[Dash] 2026", {471.7, 477.5}, Position -> {960, 200}, FontSize -> 96, FontColor -> boneC, "Enter" -> "Rise", "Exit" -> "Fade"],
     {477.7, 495.5} -> Function[t, With[{y0 = creditsTop[t]}, CanvasOpacity[Clip[(t - 477.7) 3, {0, 1}] Clip[(495.5 - t) 2, {0, 1}],
         MapIndexed[If[#1 === "" || ! (-60 < y0 + 52 #2[[1]] < 1140), {}, CanvasText[#1, {960 - CanvasTextWidth[#1, creditFont[#1]] / 2, y0 + 52 #2[[1]]}, creditFont[#1],
