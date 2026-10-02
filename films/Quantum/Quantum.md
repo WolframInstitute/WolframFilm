@@ -526,14 +526,27 @@ Feynman, 1964.  And while he warns against asking how it can be like that, his o
 ```wl
 paths = BlockRandom[SeedRandom[1948]; Table[With[{w = Accumulate[RandomVariate[NormalDistribution[0, 1], 80]]}, With[{bridge = w - Range[80] / 80 Last[w]}, (k / 40.) bridge / Max[Abs[bridge]]]], {k, 1, 40}]];
 pathAction[y_] := Total[Differences[y]^2] 600;
-cornu = Table[{FresnelC[s], FresnelS[s]}, {s, -3.5, 3.5, 0.01}];
+(* each path's arrow, head to tail: the far ones turn and curl up on themselves, cancelling; those near the
+   classical path point the same way and add up -- the sum is the arrow from the first tail to the last head *)
+arrowS = Range[-5, 5, 0.1];
+arrowPts = {FresnelC[#], FresnelS[#]} & /@ arrowS;
+arrowTo[{x_, y_}] := {1540 + 330 x, 470 - 330 y};
+arrowHead[a_, b_, c_, w_, op_] := With[{d = Normalize[b - a], n = {-#[[2]], #[[1]]} &[Normalize[b - a]]}, {CanvasLine[{a, b - 0.7 w d}, c, "Thickness" -> w / 4, Opacity -> op],
+    CanvasPolygon[{b, b - w d + 0.55 w n, b - w d - 0.55 w n}, c, Opacity -> op]}];
 pathShot = shot[{249, 257.5}, Function[t, With[{u = Clip[(t - 249.2) / 4, {0, 1}]}, {
     Table[With[{y = paths[[k]]}, CanvasLine[Table[{260 + 1000 (j - 1) / 79, 480 + 170 y[[j]] Sin[Pi (j - 1) / 79]^0.5}, {j, 80}], Hue[Mod[pathAction[y], 1], 0.8, 0.9], "Thickness" -> 2, "Glow" -> 5,
         Opacity -> (0.25 + 0.5 Exp[-k / 8]) Clip[3 u - k / 40, {0, 1}]]], {k, 40}],
     CanvasLine[{{260, 480}, {1260, 480}}, White, "Thickness" -> 5, "Glow" -> 16, Opacity -> u],
     CanvasDisk[{260, 480}, 12, boneC], CanvasDisk[{1260, 480}, 12, boneC], CanvasText["A", {240, 550}, sans[36], boneC], CanvasText["B", {1245, 550}, sans[36], boneC],
-    CanvasLine[{1560, 480} + 280 # - {140, 140} & /@ Take[cornu, Max[2, Round[u Length[cornu]]]], amber, "Thickness" -> 3, "Glow" -> 10],
-    CanvasText["the arrows of all paths, added", {1400, 780}, sans[26, 400], amber, Opacity -> u]}]], "Computed: every path from A to B, and their arrows summing to one"];
+    (* the arrows, one per path, laid head to tail as the paths are added *)
+    With[{m = Round[Clip[(t - 249.6) / 4.2, {0, 1}] (Length[arrowPts] - 1)]}, Table[With[{a = arrowTo[arrowPts[[j]]], b = arrowTo[arrowPts[[j + 1]]], far = Abs[arrowS[[j]]] > 2},
+        arrowHead[a, b, If[far, violet, amber], 10, If[far, 0.75, 1]]], {j, m}]],
+    With[{v = Clip[(t - 254.2) / 0.6, {0, 1}]}, If[v > 0, {
+        CanvasLine[{arrowTo[First[arrowPts]], arrowTo[First[arrowPts]] + v (arrowTo[Last[arrowPts]] - arrowTo[First[arrowPts]])}, White, "Thickness" -> 5, "Glow" -> 14],
+        If[v == 1, arrowHead[arrowTo[Last[arrowPts]] - 40 Normalize[arrowTo[Last[arrowPts]] - arrowTo[First[arrowPts]]], arrowTo[Last[arrowPts]], White, 30, 1], {}],
+        CanvasText["the sum: the amplitude to go from A to B", {1540, 850}, sans[28, 600], White, Alignment -> Center, Opacity -> v]}, {}]],
+    CanvasOpacity[Clip[(t - 251.5) / 0.6, {0, 1}], {CanvasText["far paths: the arrows turn and cancel", {1540, 150}, sans[26, 400], violet, Alignment -> Center],
+        CanvasText["near the straight path: they line up", {1540, 190}, sans[26, 400], amber, Alignment -> Center]}]}]], "Computed: every path from A to B, each an arrow; added head to tail, they cancel far away and add up near the classical path"];
 feynmanPart = {voice["v-feynman-nobody", 241.75, {0.95, 4.95}, All, {"Richard Feynman", "lecture at Cornell, 1964"},
         {{0, 4, "On the other hand, I think I can safely say that *nobody understands quantum mechanics*."}}],
     pathShot, voice["v-feynman-drain", 245.8, {0, 11.7}, {{245.8, 249}}, {"Richard Feynman", "lecture at Cornell, 1964"},
@@ -547,10 +560,10 @@ feynmanPart = {voice["v-feynman-nobody", 241.75, {0.95, 4.95}, All, {"Richard Fe
 What it became: atoms cooled until they share one wave -- a Bose-Einstein condensate, in NASA's Cold Atom Lab on the space station -- described by the physicist who runs it:
 
 ```wl
-builtPart = {footage["f-cold-atom-lab", {261, 266}, {7.5, 12.5}, "The first Bose\[Dash]Einstein condensate (JILA, 1995): atoms condensing into one wave \[CenterDot] NASA/JPL"],
-    footage["f-cold-atom-lab", {266, 269.7}, {56, 59.7}, "Cold Atom Lab\[CloseCurlyQuote]s trap: lasers and magnetic coils hold the atoms \[CenterDot] NASA/JPL"],
-    footage["f-cold-atom-lab", {269.7, 273.4}, {44, 47.7}, "Cold Atom Lab, built for the space station \[CenterDot] NASA/JPL"],
-    voice["v-nasa-bec", 257.5, {0.4, 16.3}, {{257.5, 261}}, {"Jim Kohel", "NASA Cold Atom Lab, 2018"},
+builtPart = {footage["f-cold-atom-lab", {257.5, 262.4}, {7.5, 12.4}, "The first Bose\[Dash]Einstein condensate (JILA, 1995): atoms condensing into one wave \[CenterDot] NASA/JPL"],
+    footage["f-cold-atom-lab", {262.4, 267.2}, {56, 60.8}, "Cold Atom Lab\[CloseCurlyQuote]s trap: lasers and magnetic coils hold the atoms \[CenterDot] NASA/JPL"],
+    footage["f-cold-atom-lab", {269.6, 273.4}, {44, 47.8}, "Cold Atom Lab, built for the space station \[CenterDot] NASA/JPL"],
+    voice["v-nasa-bec", 257.5, {0.4, 16.3}, {{267.2, 269.6}}, {"Jim Kohel", "NASA Cold Atom Lab, 2018"},
         {{0, 5.4, "These *wispy clouds of atoms* behave in very strange ways."}, {5.4, 9.4, "They're *no longer distinguishable* as individual particles."},
          {9.4, 15.9, "You really have to describe it more like *atoms acting collectively, as a wave*."}}],
     chapter[{257.5, 273.4}, "1995 \[Dash] 2018", "Atoms in one wave: Bose\[Dash]Einstein condensates"]};
@@ -587,12 +600,13 @@ qftShot = shot[{297, 306.3}, Function[t, With[{pulse = 330 + 1500 Clip[(t - 297.
     CanvasTeX["R_k = \\begin{pmatrix} 1 & 0 \\\\ 0 & e^{2\\pi i/2^k} \\end{pmatrix}", {1500, 205}, 40, grey, Alignment -> Center]}]],
     "Computed: the quantum Fourier transform on four qubits, the heart of Shor\[CloseCurlyQuote]s algorithm"];
 blochState[j_, t_] := {Sin[th] Cos[ph], Sin[th] Sin[ph], Cos[th]} /. {th -> Pi (0.5 + 0.42 Sin[0.9 t + j]), ph -> 1.3 t + 2 j};
-blochShot = shot[{322.5, 327.5}, Function[t, Table[With[{cam = CanvasCamera["Center" -> {330 + 420 j, 520}, "Scale" -> 150, "Azimuth" -> 0.6, "Elevation" -> 0.3, "Distance" -> 9], c = {cyan, amber, violet, RGBColor["#7CFFB2"]}[[j + 1]]}, {
+blochFrame = Function[t, Table[With[{cam = CanvasCamera["Center" -> {330 + 420 j, 520}, "Scale" -> 150, "Azimuth" -> 0.6, "Elevation" -> 0.3, "Distance" -> 9], c = {cyan, amber, violet, RGBColor["#7CFFB2"]}[[j + 1]]}, {
     CanvasSphere3D[cam, {0, 0, 0}, 1, c, "Wire" -> {8, 5}],
     CanvasCurve3D[cam, Table[blochState[j, t - d], {d, 0, 1.2, 0.04}], c, 3, "Glow" -> 6, Opacity -> 0.5],
     CanvasCurve3D[cam, {{0, 0, 0}, blochState[j, t]}, c, 5, "Glow" -> 10], CanvasCloud[cam, {blochState[j, t]}, White, 8, "Glow" -> 14],
-    CanvasTeX["|0\\rangle", {330 + 420 j, 335}, 40, grey, Alignment -> Center], CanvasTeX["|1\\rangle", {330 + 420 j, 745}, 40, grey, Alignment -> Center]}], {j, 0, 3}]],
-    "Computed: four qubits, each a point on a sphere \[Dash] $|0\\rangle$ at the top, $|1\\rangle$ at the bottom, anything between"];
+    CanvasTeX["|0\\rangle", {330 + 420 j, 335}, 40, grey, Alignment -> Center], CanvasTeX["|1\\rangle", {330 + 420 j, 745}, 40, grey, Alignment -> Center]}], {j, 0, 3}]];
+blochCaption = "Computed: four qubits, each a point on a sphere \[Dash] $|0\\rangle$ at the top, $|1\\rangle$ at the bottom, anything between";
+blochShot = {shot[{316.8, 319.3}, blochFrame, blochCaption], shot[{322.5, 327.5}, blochFrame, blochCaption]};
 (* Willow's benchmark: random circuits on a grid of qubits, and the bitstrings they output, whose
    probabilities are a speckle no classical computer can reproduce in time -- and then the race *)
 rcsGrid = Flatten[Table[{i, j}, {i, 7}, {j, 7}], 1];
@@ -622,14 +636,14 @@ computingPart = {feynmanQuote,
     qftShot, voice["v-shor", 293.3, {4.3, 16.5}, {{293.3, 297}}, {"Peter Shor", "interview, 2020"},
         {{0, 8.4, "What I did was, I looked at Dan Simon's algorithm and figured out how to take some of the techniques from it, and add some more,"},
          {8.4, 12.2, "and show how to *factor large numbers into primes* on a quantum computer."}}],
-    voice["v-wineland", 306.3, {0, 13}, All, {"David Wineland", "NIST, after his 2012 Nobel Prize"},
+    voice["v-wineland", 306.3, {0, 13}, {{306.3, 316.8}}, {"David Wineland", "NIST, after his 2012 Nobel Prize"},
         {{0, 13, "With this idea of *superposition*, we can put our atoms or ions in these states where they're *simultaneously both a zero and a one* at the same time."}}],
     blochShot, voice["v-martinis", 319.3, {0, 8.2}, {{319.3, 322.5}}, {"John Martinis", "Google, 2019"},
         {{0, 8.2, "The classical bit stores information as a zero or one, and a quantum bit can be *both zero and one at the same time*."}}],
-    footage["f-sycamore", {330, 340.7}, {56, 66.7}, "Google\[CloseCurlyQuote]s Sycamore and its dilution refrigerator, 2019 \[CenterDot] Google Quantum AI (CC BY)"],
+    footage["f-sycamore", {330, 341.9}, {56, 67.9}, "Google\[CloseCurlyQuote]s Sycamore and its dilution refrigerator, 2019 \[CenterDot] Google Quantum AI (CC BY)"],
     voice["v-google-promise", 327.5, {0, 13.05}, {{327.5, 330}}, {"Google Quantum AI", "Demonstrating Quantum Supremacy, 2019"},
         {{0, 13.2, "The tantalizing promise of quantum computers is that they can do certain tasks *exponentially faster* than classical machines."}}],
-    voice["v-neven", 340.7, {0, 6}, All, {"Hartmut Neven", "Google, 2019"},
+    voice["v-neven", 340.7, {0, 6}, {{341.9, 346}}, {"Hartmut Neven", "Google, 2019"},
         {{0, 6, "The nice thing about *quantum supremacy* is that it is a very well-defined *engineering milestone*."}}],
     footage["f-willow", {350, 358}, {30, 38}, "Willow, Google\[CloseCurlyQuote]s 105-qubit chip, 2024"], rcsShot,
     voice["v-willow", 346.7, {10.2, 29.9}, {{346.7, 350}}, {"Julian Kelly", "Google Quantum AI, 2024"},
@@ -703,13 +717,13 @@ skepticsPart = {hypeShot[{375.2, 389.6}],
         {{0, 5.86, "*Quantum advantage* has indeed been demonstrated for some quantum computers,"},
          {5.86, 11.72, "but that just means the quantum computer did something faster than a conventional computer,"},
          {11.72, 15.45, "*not that this was of any use* for real-world issues."}}],
-    voice["v-sabine-marketing", 408.6, {5.5, 11.0}, All, {"Sabine Hossenfelder", "physicist, on YouTube, 2025"},
+    voice["v-sabine-marketing", 408.6, {5.5, 11.0}, {{408.9, 413.9}}, {"Sabine Hossenfelder", "physicist, on YouTube, 2025"},
         {{0, 5.5, "Well, the *marketing departments* have definitely achieved quantum advantage."}}],
-    stockShot[{414.5, 430.5}, 420.7],
+    stockShot[{414.5, 435.35}, 420.7],
     voice["v-huang-ces", 414.5, {12.4, 25.5}, None, {"Jensen Huang", "Nvidia, to analysts at CES, 7 January 2025"},
         {{0, 6.8, "And so if you kind of set *15 years* for very useful quantum computers, that would probably be on the *early side*."},
          {6.8, 9.76, "If you set *30*, it's probably on the late side."}, {9.76, 13.1, "But if you pick 20, I think a whole bunch of us would believe it."}}],
-    voice["v-huang-public", 428, {21.85, 31.3}, {{430.5, 437.45}}, {"Jensen Huang", "Nvidia GTC, Quantum Day, March 2025"},
+    voice["v-huang-public", 428, {21.85, 31.3}, {{435.35, 437.45}}, {"Jensen Huang", "Nvidia GTC, Quantum Day, March 2025"},
         {{0, 4.48, "And my first reaction was, I didn't know they were public."}, {4.48, 9.45, "How could a quantum computer company *be public*?"}}],
     voice["v-sabine-profitable", 437.9, {6.95, 12.75}, All, {"Sabine Hossenfelder", "physicist, on YouTube, 2026"},
         {{0, 5.8, "Today, the only profitable quantum application has been *forecasting profitable quantum applications*."}}],
