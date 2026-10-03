@@ -52,8 +52,8 @@ Every voice is an ArchiveClip filling the frame, shown only while the film looks
 
 ```wl
 fade = 0.6;
-voice[name_, t0_, {in_, out_}, show_, credit_, subs_, strap_ : True, crop_ : None] := ArchiveClip[archive[name <> ".mp4"], {t0, t0 + out - in}, "From" -> in, "To" -> out,
-    "Style" -> "Full", "Show" -> Replace[show, None -> {}], "Credit" -> credit, "LowerThird" -> strap, "Subtitle" -> subs, "Zoom" -> 0.03, "Duck" -> 0.15, "Fade" -> fade, "Crop" -> crop];
+voice[name_, t0_, {in_, out_}, show_, credit_, subs_, strap_ : True, crop_ : None, duck_ : 0.15] := ArchiveClip[archive[name <> ".mp4"], {t0, t0 + out - in}, "From" -> in, "To" -> out,
+    "Style" -> "Full", "Show" -> Replace[show, None -> {}], "Credit" -> credit, "LowerThird" -> strap, "Subtitle" -> subs, "Zoom" -> 0.03, "Duck" -> duck, "Fade" -> fade, "Crop" -> crop];
 footage[name_, {t0_, t1_}, {in_, out_}, caption_, zoom_ : 0.04, crop_ : None] := With[{r = (out - in) / (t1 - t0)},
     ArchiveClip[archive[name <> ".mp4"], {t0 - fade / 2, t1 + fade / 2}, "From" -> Max[0, in - r fade / 2], "To" -> out + r fade / 2, "Style" -> "Full",
         "Sound" -> False, "Zoom" -> zoom, "Fade" -> fade, "Caption" -> caption, "Enter" -> "Cut", "Exit" -> "Cut", "Crop" -> crop]];
@@ -248,7 +248,7 @@ warmShot = {19.0, 21.6} -> Function[t, With[{u = Clip[(t - 19.0) / 2.4, {0, 1}],
 planckPart = {warmShot, footage["f-forge", {24.5, 27}, {6, 10}, "Steel glowing in a forge: hotter is whiter"],
     shot[{27, 44}, blackbody[27], "Computed: the glow of a hot body \[Dash] Planck\[CloseCurlyQuote]s law against classical physics"],
     voice["v-planck", 18.5, {10, 23}, {{21.9, 24.5}}, {"Max Planck", "film portrait, 1942"},
-        {{0, 10, "At first I accepted this hypothesis only *reluctantly*, because it contradicted *every idea of classical* atomism."}, {10, 13, "But there was *no other way*."}}],
+        {{0, 10, "At first I accepted this hypothesis only *reluctantly*, because it contradicted *every idea of classical* atomism."}, {10, 13, "But there was *no other way*."}}, True, None, 0.35],
     footage["f-forge", {44, 50.4}, {16, 26}, "Steel glowing in a forge"],
     (* the Lindau film is a slideshow with captions burned in: Bohr's close-up, its caption cropped away *)
     voice["v-bohr-planck", 31.5, {0.5, 21.9}, {{50.4, 52.9}}, {"Niels Bohr", "lecture at Lindau, 1962"},
@@ -857,7 +857,7 @@ chordAt[s_] := {{57, 60, 64}, {53, 57, 60}, {50, 53, 57}, {52, 56, 59}}[[Mod[Flo
 rootAt[s_] := {45, 41, 38, 40}[[Mod[Floor[s / 4], 4] + 1]];
 rises = Join[{{70, 88}}, Map[late, {{125, 140}, {199.2, 211}, {273.4, 280.4}, {471.2, 495.5}}, {2}]];
 rising[s_] := AnyTrue[rises, #[[1]] <= s < #[[2]] &];
-padEvents = Flatten[Table[{s, 4, #, If[rising[s], 0.75, 0.42]} & /@ chordAt[s], {s, 16, 498, 4}], 1];
+padEvents = Join[{12, 4, #, 0.3} & /@ chordAt[12], Flatten[Table[{s, 4, #, If[rising[s], 0.75, 0.42]} & /@ chordAt[s], {s, 16, 498, 4}], 1]];
 bassEvents = Table[{s, 2, rootAt[s], If[rising[s], 0.85, 0.5]}, {s, 18, 500, 2}];
 pulseEvents = {late[#], 1/4, "bd", 0.7} & /@ Join[Range[125, 139.5, 1], Range[199.2, 210.5, 1], Range[471.2, 478.2, 1]];
 hatEvents = {late[#], 1/8, "hh", 0.35} & /@ Join[Range[125.5, 139.5, 0.5], Range[199.7, 210.7, 0.5]];
@@ -865,11 +865,11 @@ hatEvents = {late[#], 1/8, "hh", 0.35} & /@ Join[Range[125.5, 139.5, 0.5], Range
    until they come too fast to count *)
 clickEvents = BlockRandom[SeedRandom[1964]; {#, 1/16, "hh", RandomReal[{0.35, 0.6}]} & /@ Join[Sort[RandomReal[{0.2, 13.0}, 40]], landingTime /@ Range[120]]];
 hook = {{0, 2, 69}, {2, 1, 72}, {3, 1, 76}, {4, 2, 74}, {6, 2, 72}, {8, 2, 77}, {10, 1, 76}, {11, 1, 74}, {12, 3, 76}};
-leadEvents = Join[{15.3 + #1 / 2, #2 / 2, #3, 0.35} & @@@ Take[hook, 4], {late[129.5] + #1 / 2, #2 / 2, #3, 0.7} & @@@ hook, {late[472.2] + #1 / 2, #2 / 2, #3, 0.6} & @@@ hook];
+leadEvents = Join[{15.3 + #1 / 2, #2 / 2, #3, 0.28} & @@@ Take[hook, 4], {late[129.5] + #1 / 2, #2 / 2, #3, 0.7} & @@@ hook, {late[472.2] + #1 / 2, #2 / 2, #3, 0.6} & @@@ hook];
 (* hydrogen's chord, one bell as each line appears, and again at the end *)
 bellEvents = Join[Table[{fallAt[k] + 0.5, 3, balmerPitch[[k + 1]] + 12, 0.85}, {k, 0, 3}], Table[{late[479.2] + k / 2, 4, balmerPitch[[k + 1]] + 12, 0.6}, {k, 0, 3}]];
-crashEvents = Join[{{15.2, 2, "cr", 0.25}}, {#, 2, "cr", 0.6} & /@ Join[{70}, late /@ {125, 199.2, 273.4, 471.2}]];
-riserEvents = {{13.6, 1.6, 60, 0.35}, {late[122], 3, 60, 0.9}, {late[196.5], 2.7, 60, 0.8}};
+crashEvents = {#, 2, "cr", 0.6} & /@ Join[{70}, late /@ {125, 199.2, 273.4, 471.2}];
+riserEvents = {{late[122], 3, 60, 0.9}, {late[196.5], 2.7, 60, 0.8}};
 (* the score in two pieces: up to 88 s, and the rest, played in the part of the film that runs 8 s later *)
 scorePart[sel_, shift_] := Mixer["FadeOut" -> 3][Track[DeleteCases[MapThread[With[{ev = {#[[1]] - shift, Sequence @@ Rest[#]} & /@ Select[#2, sel[#[[1]]] &]}, If[ev === {}, Nothing, (Instrument @@ #1)[Track[ev]]]] &,
     {{{"Pad"}, {"Bass"}, {"SoftKick"}, {"Hat"}, {"Hat", "Gain" -> 0.45, "Reverb" -> 0.6}, {"Lead"}, {"Bell"}, {"Crash"}, {"Riser"}},
