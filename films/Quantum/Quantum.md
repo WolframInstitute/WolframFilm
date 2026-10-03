@@ -272,7 +272,7 @@ photoShot = shot[{60.5, 70}, Function[t, {
     CanvasOpacity[Clip[(t - 61.2) / 0.5, {0, 1}] Clip[(64.6 - t) / 0.4, {0, 1}], CanvasText["red light, however bright: no electron comes out", {160, 200}, sans[34, 400], RGBColor["#FF4B3E"]]],
     CanvasOpacity[Clip[(t - 65.2) / 0.5, {0, 1}], {CanvasText["ultraviolet: each quantum frees one electron", {160, 200}, sans[34, 400], violet],
         CanvasTeX["E = h\\nu", {1560, 560}, 80, boneC, Alignment -> Center]}]}],
-    "Computed: the photoelectric effect, as Einstein explained it in 1905 \[Dash] light comes in quanta of energy $h\\nu$"];
+    "Computed: the photoelectric effect, as Einstein explained it in 1905 \[Dash] light in quanta $h\\nu$"];
 photoPart = {footage["f-photoelectric", {56, 60.5}, {60, 64.5}, "PSSC film, 1961: a charged zinc plate and its electroscope", 0.03], photoShot,
     voice["v-bohr-einstein", 52.9, {0.5, 17.6}, {{52.9, 56}}, {"Niels Bohr", "lecture at Lindau, 1962"},
         {{0, 17.1, "Einstein tried to explain the individual photoeffect by assuming that we had to do with *a transfer of a light quantum*."}}, True, {0.1, 0.1, 0, 0.24}],
