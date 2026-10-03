@@ -166,8 +166,8 @@ Histogram[landing[[All, 1]], 120, Axes -> False, ImageSize -> 400]
 Feynman, in 1964, on what a detector hears: clicks.  Then the same experiment computed, in depth: electrons leave a source, pass the two slits and land on a screen one at a time -- each a click, the first few heard one by one -- faster and faster until the screen holds the pattern of a wave, and the film's title:
 
 ```wl
-landingTime[k_] := 13.4 + 3.4 (k / 6000.)^(1/3);
-landedBy[t_] := Clip[Floor[6000 ((t - 13.4) / 3.4)^3], {0, 6000}];
+landingTime[k_] := 13.4 + 2.8 (k / 6000.)^(1/3);
+landedBy[t_] := Clip[Floor[6000 ((t - 13.4) / 2.8)^3], {0, 6000}];
 screenPoint[k_] := {6, 5 landing[[k, 1]] / 7, 2.1 landing[[k, 2]]};
 slitPath[k_, u_] := With[{p1 = {0, If[landing[[k, 1]] > 0, 0.55, -0.55], 0.3 landing[[k, 2]]}, p0 = {-7, 0, 0}, p2 = screenPoint[k]},
     If[u < 0.45, p0 + (p1 - p0) u / 0.45, p1 + (p2 - p1) (u - 0.45) / 0.55]];
@@ -175,7 +175,14 @@ panel[{y0_, y1_}, {z0_, z1_}, x_, c_] := CanvasSurface3D[#, {{{x, y0, z0}, {x, y
 slitCam[t_] := With[{u = Easing["InOutCubic"][Clip[(t - 13.2) / 4.2, {0, 1}]]},
     (* from the side, the source on the left, round to behind the screen, the pattern facing us *)
     CanvasCamera["Center" -> {960, 470 - 40 u}, "Scale" -> 74 + 62 u, "Azimuth" -> 0.3 + 1.2 u, "Elevation" -> 0.34 - 0.26 u, "Distance" -> 30, "Target" -> {1 + 5 u, 0, 0}]];
+(* what the electrons do between the source and the screen, as a wave: fronts rolling in to the wall, and
+   from each slit a set of rings spreading and crossing -- where they cross in step, the fringes *)
+waveFronts[cam_, t_, a_] := With[{ph = 1.6 (t - 13.2)}, {
+    Table[With[{x = -6.4 + Mod[ph + 0.8 k, 6.4]}, CanvasCurve3D[cam, {{x, -1.6, 0}, {x, 1.6, 0}}, cyan, 1.5, "Glow" -> 4, Opacity -> a 0.3 Sin[Pi (x + 6.4) / 6.4]]], {k, 0, 7}],
+    Table[With[{r = Mod[ph + 0.8 k, 6.4]}, If[r < 0.15, {}, CanvasCurve3D[cam, Table[{r Cos[th], y0 + r Sin[th], 0}, {th, -1.15, 1.15, 0.05}], cyan, 1.5, "Glow" -> 4,
+        Opacity -> a 0.32 (1 - r / 6.4)]]], {k, 0, 7}, {y0, {-0.55, 0.55}}]}];
 slitScene[t_, n_, flights_ : True, camera_ : Automatic] := With[{cam = Replace[camera, Automatic :> slitCam[t]]}, {
+    If[flights, waveFronts[cam, t, Clip[(t - 13.3) / 1.2, {0, 1}] Clip[(17.6 - t) / 1.4, {0, 1}]], {}],
     (* the wall with two slits, and the screen *)
     Through[{panel[{-3.2, -0.7}, {-2.2, 2.2}, 0, GrayLevel[0.16]], panel[{-0.4, 0.4}, {-2.2, 2.2}, 0, GrayLevel[0.16]], panel[{0.7, 3.2}, {-2.2, 2.2}, 0, GrayLevel[0.16]]}[cam]],
     CanvasCurve3D[cam, {{0, -0.7, -2.2}, {0, -0.7, 2.2}, {0, -0.4, 2.2}, {0, -0.4, -2.2}, {0, -0.7, -2.2}}, cyan, 2, "Glow" -> 8],
@@ -188,13 +195,15 @@ slitScene[t_, n_, flights_ : True, camera_ : Automatic] := With[{cam = Replace[c
     (* the ones on their way *)
     If[flights, With[{ks = Select[Range[n + 1, Min[n + 40, 400]], landingTime[#] - t < 0.3 &]},
         If[ks === {}, {}, CanvasCloud[cam, slitPath[#, 1 - (landingTime[#] - t) / 0.3] & /@ ks, White, 3.5, "Glow" -> 10, "DepthFade" -> 0]]], {}]}];
-coldOpen = {footage["f-electrons", {0, 13.2}, {0, 72}, "Electrons through two slits, one at a time \[CenterDot] Bach et al., 2013", 0.08],
+(* the real electrons dissolve slowly into the computed ones, and the title lingers as the forge comes up *)
+coldOpen = {footage["f-electrons", {0, 13.9}, {0, 72}, "Electrons through two slits, one at a time \[CenterDot] Bach et al., 2013", 0.08],
     voice["v-feynman-clicks", 2, {0.2, 11.2}, {{4.6, 7.6}}, {"Richard Feynman", "lecture at Cornell, 1964"},
         {{0, 11, "\[Ellipsis]are *clicks*.  Click, click, click, click\[Ellipsis]  *Lumps*.  Absolutely *lumps*."}}],
-    shot[{13.2, 18.5}, Function[t, {slitScene[t, landedBy[t]],
-        CanvasOpacity[Clip[(t - 15.7) / 0.5, {0, 1}], {CanvasTeX["\\psi", {960, 965}, 150, boneC, Alignment -> Center],
-            CanvasText["THE QUANTUM CENTURY", {960, 1040}, sans[30, 600], red, Alignment -> Center, "Tracking" -> 8]}]}],
-        "Computed: electrons through two slits, one at a time"]};
+    With[{cb = captionBox["Computed: electrons through two slits, one at a time"]}, {12.7, 19.4} -> Function[t,
+        CanvasOpacity[Clip[Min[(t - 12.7) / 1.3, (19.4 - t) / 1.2], {0, 1}], {CanvasRectangle[{0, 0, 1920, 1080}, inkC], slitScene[t, landedBy[t]],
+            CanvasOpacity[Easing["InOutCubic"][Clip[(t - 14.9) / 0.9, {0, 1}]], {CanvasTeX["\\psi", {960, 965}, 150, boneC, Alignment -> Center],
+                CanvasText["THE QUANTUM CENTURY", {960, 1040}, sans[30, 600], red, Alignment -> Center, "Tracking" -> 8]}],
+            CanvasOpacity[Clip[(14.6 - t) / 0.6, {0, 1}], cb]}]]]};
 preview[coldOpen, {6, 14.6, 17}]
 ```
 
@@ -245,7 +254,25 @@ preview[planckPart, {20, 23, 35}]
 Bohr again: Einstein explained the photoelectric effect by a transfer of a light quantum.  The 1961 film of the Physical Science Study Committee shows it: ultraviolet light discharging a zinc plate, its electroscope's leaf falling:
 
 ```wl
-photoPart = {footage["f-photoelectric", {56, 63}, {60, 67}, "PSSC film, 1961: a charged zinc plate and its electroscope", 0.03], footage["f-photoelectric", {63, 70}, {100, 107}, "Ultraviolet light knocks electrons out: the leaf falls", 0.03],
+(* the effect itself: red light, however much of it, frees no electron from the metal; each ultraviolet quantum,
+   carrying more energy, frees one at once *)
+photonAt[k_] := 60.9 + 0.32 (k - 1);
+photonY[k_] := 340 + 400 FractionalPart[0.6180339 k];
+photonUV[k_] := photonAt[k] >= 64.6;
+photoShot = shot[{60.5, 70}, Function[t, {
+    CanvasRectangle[{1180, 280, 70, 540}, GrayLevel[0.55], "Radius" -> 4], CanvasRectangle[{1180, 280, 14, 540}, GrayLevel[0.8], Opacity -> 0.6],
+    CanvasText["zinc", {1215, 262}, sans[28, 400], grey, Alignment -> Center],
+    Table[With[{u = (t - photonAt[k]) / 1.1, uv = photonUV[k], y = photonY[k]}, If[0 <= u < 1.7, With[{x = 160 + 1020 Min[u, 1], c = If[uv, violet, RGBColor["#FF4B3E"]], lam = If[uv, 16, 46]}, {
+        (* the photon: a short wave, its colour and wavelength its energy *)
+        If[u < 1, CanvasLine[Table[{x - s, y + 16 Sin[2 Pi s / lam] Exp[-((s - 60) / 45)^2]}, {s, 0, 120, 2}], c, "Thickness" -> 3, "Glow" -> 10], {}],
+        If[1 <= u < 1.15, CanvasDisk[{1180, y}, 18 (1.15 - u) / 0.15, c, Opacity -> 0.8, "Glow" -> 14], {}],
+        (* an electron freed, only by the ultraviolet *)
+        If[uv && u >= 1, With[{v = u - 1}, {CanvasDisk[{1180 - 600 v, y - 260 v}, 8, cyan, "Glow" -> 14], CanvasText["e\[Minus]", {1196 - 600 v, y - 260 v - 14}, sans[22, 600], cyan]}], {}]}], {}]], {k, 28}],
+    CanvasOpacity[Clip[(t - 61.2) / 0.5, {0, 1}] Clip[(64.6 - t) / 0.4, {0, 1}], CanvasText["red light, however bright: no electron comes out", {160, 200}, sans[34, 400], RGBColor["#FF4B3E"]]],
+    CanvasOpacity[Clip[(t - 65.2) / 0.5, {0, 1}], {CanvasText["ultraviolet: each quantum frees one electron", {160, 200}, sans[34, 400], violet],
+        CanvasTeX["E = h\\nu", {1560, 560}, 80, boneC, Alignment -> Center]}]}],
+    "Computed: the photoelectric effect, as Einstein explained it in 1905 \[Dash] light comes in quanta of energy $h\\nu$"];
+photoPart = {footage["f-photoelectric", {56, 60.5}, {60, 64.5}, "PSSC film, 1961: a charged zinc plate and its electroscope", 0.03], photoShot,
     voice["v-bohr-einstein", 52.9, {0.5, 17.6}, {{52.9, 56}}, {"Niels Bohr", "lecture at Lindau, 1962"},
         {{0, 17.1, "Einstein tried to explain the individual photoeffect by assuming that we had to do with *a transfer of a light quantum*."}}, True, {0.1, 0.1, 0, 0.24}],
     chapter[{52.9, 70}, "1905", "Einstein: light comes in quanta"]};
@@ -815,7 +842,7 @@ The music sits beneath the voices -- ducked under each -- and comes forward thre
 late[t_] := If[t >= 80, t + 8, t];
 chordAt[s_] := {{57, 60, 64}, {53, 57, 60}, {50, 53, 57}, {52, 56, 59}}[[Mod[Floor[s / 4], 4] + 1]];
 rootAt[s_] := {45, 41, 38, 40}[[Mod[Floor[s / 4], 4] + 1]];
-rises = Join[{{15.6, 18.5}, {70, 88}}, Map[late, {{125, 140}, {199.2, 211}, {273.4, 280.4}, {471.2, 495.5}}, {2}]];
+rises = Join[{{70, 88}}, Map[late, {{125, 140}, {199.2, 211}, {273.4, 280.4}, {471.2, 495.5}}, {2}]];
 rising[s_] := AnyTrue[rises, #[[1]] <= s < #[[2]] &];
 padEvents = Flatten[Table[{s, 4, #, If[rising[s], 0.75, 0.42]} & /@ chordAt[s], {s, 16, 498, 4}], 1];
 bassEvents = Table[{s, 2, rootAt[s], If[rising[s], 0.85, 0.5]}, {s, 18, 500, 2}];
@@ -823,18 +850,17 @@ pulseEvents = {late[#], 1/4, "bd", 0.7} & /@ Join[Range[125, 139.5, 1], Range[19
 hatEvents = {late[#], 1/8, "hh", 0.35} & /@ Join[Range[125.5, 139.5, 0.5], Range[199.7, 210.7, 0.5]];
 (* the detector's clicks: under the real electrons, at random; then one for each computed electron as it lands,
    until they come too fast to count *)
-clickEvents = {#, 1/16, "hh", 0.8} & /@ Join[BlockRandom[SeedRandom[1964]; Sort[RandomReal[{0.2, 13.0}, 40]]], landingTime /@ Range[160]];
+clickEvents = BlockRandom[SeedRandom[1964]; {#, 1/16, "hh", RandomReal[{0.35, 0.6}]} & /@ Join[Sort[RandomReal[{0.2, 13.0}, 40]], landingTime /@ Range[120]]];
 hook = {{0, 2, 69}, {2, 1, 72}, {3, 1, 76}, {4, 2, 74}, {6, 2, 72}, {8, 2, 77}, {10, 1, 76}, {11, 1, 74}, {12, 3, 76}};
-leadEvents = Join[{15.8 + #1 / 2, #2 / 2, #3, 0.6} & @@@ Take[hook, 4], {late[129.5] + #1 / 2, #2 / 2, #3, 0.7} & @@@ hook, {late[472.2] + #1 / 2, #2 / 2, #3, 0.6} & @@@ hook];
+leadEvents = Join[{15.3 + #1 / 2, #2 / 2, #3, 0.35} & @@@ Take[hook, 4], {late[129.5] + #1 / 2, #2 / 2, #3, 0.7} & @@@ hook, {late[472.2] + #1 / 2, #2 / 2, #3, 0.6} & @@@ hook];
 (* hydrogen's chord, one bell as each line appears, and again at the end *)
 bellEvents = Join[Table[{fallAt[k] + 0.5, 3, balmerPitch[[k + 1]] + 12, 0.85}, {k, 0, 3}], Table[{late[479.2] + k / 2, 4, balmerPitch[[k + 1]] + 12, 0.6}, {k, 0, 3}]];
-crashEvents = {#, 2, "cr", 0.6} & /@ Join[{15.6, 70}, late /@ {125, 199.2, 273.4, 471.2}];
-riserEvents = {{14.1, 1.5, 60, 0.75}, {late[122], 3, 60, 0.9}, {late[196.5], 2.7, 60, 0.8}};
-impactEvents = {{15.6, 2, 36, 0.8}};
+crashEvents = Join[{{15.2, 2, "cr", 0.25}}, {#, 2, "cr", 0.6} & /@ Join[{70}, late /@ {125, 199.2, 273.4, 471.2}]];
+riserEvents = {{13.6, 1.6, 60, 0.35}, {late[122], 3, 60, 0.9}, {late[196.5], 2.7, 60, 0.8}};
 (* the score in two pieces: up to 88 s, and the rest, played in the part of the film that runs 8 s later *)
-scorePart[sel_, shift_] := Mixer["FadeOut" -> 3][Track[DeleteCases[MapThread[With[{ev = {#[[1]] - shift, Sequence @@ Rest[#]} & /@ Select[#2, sel[#[[1]]] &]}, If[ev === {}, Nothing, Instrument[#1][Track[ev]]]] &,
-    {{"Pad", "Bass", "SoftKick", "Hat", "Hat", "Lead", "Bell", "Crash", "Riser", "Impact"},
-     {padEvents, bassEvents, pulseEvents, hatEvents, clickEvents, leadEvents, bellEvents, crashEvents, riserEvents, impactEvents}}], Nothing]]];
+scorePart[sel_, shift_] := Mixer["FadeOut" -> 3][Track[DeleteCases[MapThread[With[{ev = {#[[1]] - shift, Sequence @@ Rest[#]} & /@ Select[#2, sel[#[[1]]] &]}, If[ev === {}, Nothing, (Instrument @@ #1)[Track[ev]]]] &,
+    {{{"Pad"}, {"Bass"}, {"SoftKick"}, {"Hat"}, {"Hat", "Gain" -> 0.45, "Reverb" -> 0.6}, {"Lead"}, {"Bell"}, {"Crash"}, {"Riser"}},
+     {padEvents, bassEvents, pulseEvents, hatEvents, clickEvents, leadEvents, bellEvents, crashEvents, riserEvents}}], Nothing]]];
 earlyScore = scorePart[# < 88 &, 0];
 lateScore = scorePart[# >= 88 &, 8];
 TrackView["PianoRoll", "Cycles" -> 16][TrackShift[-132][Track[{Track[padEvents], Track[leadEvents]}]]]
