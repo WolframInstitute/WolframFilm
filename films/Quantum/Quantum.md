@@ -200,8 +200,8 @@ slitScene[t_, n_, flights_ : True, camera_ : Automatic] := With[{cam = Replace[c
 coldOpen = {footage["f-electrons", {0, 13.9}, {0, 72}, "Electrons through two slits, one at a time \[CenterDot] Bach et al., 2013", 0.08],
     voice["v-feynman-clicks", 2, {0.2, 11.2}, {{4.6, 7.6}}, {"Richard Feynman", "lecture at Cornell, 1964"},
         {{0, 11, "\[Ellipsis]are *clicks*.  Click, click, click, click\[Ellipsis]  *Lumps*.  Absolutely *lumps*."}}],
-    With[{cb = captionBox["Computed: electrons through two slits, one at a time"]}, {12.7, 19.4} -> Function[t,
-        CanvasOpacity[Clip[Min[(t - 12.7) / 1.3, (19.4 - t) / 1.2], {0, 1}], {CanvasRectangle[{0, 0, 1920, 1080}, inkC], slitScene[t, landedBy[t]],
+    With[{cb = captionBox["Computed: electrons through two slits, one at a time"]}, {12.7, 18.8} -> Function[t,
+        CanvasOpacity[Clip[Min[(t - 12.7) / 1.3, (18.8 - t) / 1.1], {0, 1}], {CanvasRectangle[{0, 0, 1920, 1080}, inkC], slitScene[t, landedBy[t]],
             CanvasOpacity[Easing["InOutCubic"][Clip[(t - 14.9) / 0.9, {0, 1}]], {CanvasTeX["\\psi", {960, 965}, 150, boneC, Alignment -> Center],
                 CanvasText["THE QUANTUM CENTURY", {960, 1040}, sans[30, 600], red, Alignment -> Center, "Tracking" -> 8]}],
             CanvasOpacity[Clip[(14.6 - t) / 0.6, {0, 1}], cb]}]]]};
@@ -238,9 +238,16 @@ blackbody[t0_][t_] := Module[{u = Easing["InOutCubic"][Clip[(t - t0 - 0.5) / 9, 
      (* the body itself, glowing at its temperature *)
      CanvasGradient[{1500, 300, 380, 380}, "Radial", ColorData["BlackBodySpectrum"][T], {{0, 1}, {0.42, 1}, {0.5, 0.45}, {0.7, 0.12}, {1, 0}}, "Steps" -> 48],
      CanvasText[ToString[Round[T, 50]] <> " K", {1640, 740}, sans[34], White]}];
-planckPart = {footage["f-forge", {18.5, 21.5}, {0, 4}, "Steel glowing in a forge: hotter is whiter"], footage["f-forge", {24.5, 27}, {6, 10}, "Steel glowing in a forge: hotter is whiter"],
+(* out of the dark after the title, a body warming: dull red, then orange -- the glow Planck set out to explain *)
+embers = BlockRandom[SeedRandom[1900]; RandomReal[{0, 1}, {60, 3}]];
+warmShot = {19.0, 21.6} -> Function[t, With[{u = Clip[(t - 19.0) / 2.4, {0, 1}], a = Clip[Min[(t - 19.0) / 0.9, (21.6 - t) / 0.45], {0, 1}]},
+    With[{T = 850 + 1100 Easing["InOutCubic"][u]}, CanvasOpacity[a, {CanvasRectangle[{0, 0, 1920, 1080}, inkC],
+        CanvasGradient[{960 - 420, 540 - 420, 840, 840}, "Radial", ColorData["BlackBodySpectrum"][T], {{0, 1}, {0.36, 0.95}, {0.46, 0.4 + 0.3 u}, {0.7, 0.12 u}, {1, 0}}, "Steps" -> 48],
+        Table[With[{e = embers[[k]]}, With[{v = Mod[(t - 19.0) 0.35 + e[[3]], 1]}, CanvasDisk[{960 + 520 (e[[1]] - 0.5) + 30 Sin[6 v + 7 k], 760 - 640 v}, 2.5,
+            ColorData["BlackBodySpectrum"][T + 300], Opacity -> u Sin[Pi v] 0.8, "Glow" -> 6]]], {k, 60}]}]]]];
+planckPart = {warmShot, footage["f-forge", {24.5, 27}, {6, 10}, "Steel glowing in a forge: hotter is whiter"],
     shot[{27, 44}, blackbody[27], "Computed: the glow of a hot body \[Dash] Planck\[CloseCurlyQuote]s law against classical physics"],
-    voice["v-planck", 18.5, {10, 23}, {{21.5, 24.5}}, {"Max Planck", "film portrait, 1942"},
+    voice["v-planck", 18.5, {10, 23}, {{21.9, 24.5}}, {"Max Planck", "film portrait, 1942"},
         {{0, 10, "At first I accepted this hypothesis only *reluctantly*, because it contradicted *every idea of classical* atomism."}, {10, 13, "But there was *no other way*."}}],
     footage["f-forge", {44, 50.4}, {16, 26}, "Steel glowing in a forge"],
     (* the Lindau film is a slideshow with captions burned in: Bohr's close-up, its caption cropped away *)
@@ -257,10 +264,10 @@ Bohr again: Einstein explained the photoelectric effect by a transfer of a light
 ```wl
 (* the effect itself: red light, however much of it, frees no electron from the metal; each ultraviolet quantum,
    carrying more energy, frees one at once *)
-photonAt[k_] := 60.9 + 0.32 (k - 1);
+photonAt[k_] := 56.4 + 0.32 (k - 1);
 photonY[k_] := 340 + 400 FractionalPart[0.6180339 k];
-photonUV[k_] := photonAt[k] >= 64.6;
-photoShot = shot[{60.5, 70}, Function[t, {
+photonUV[k_] := photonAt[k] >= 62.4;
+photoShot = shot[{56, 70}, Function[t, {
     CanvasRectangle[{1180, 280, 70, 540}, GrayLevel[0.55], "Radius" -> 4], CanvasRectangle[{1180, 280, 14, 540}, GrayLevel[0.8], Opacity -> 0.6],
     CanvasText["zinc", {1215, 262}, sans[28, 400], grey, Alignment -> Center],
     Table[With[{u = (t - photonAt[k]) / 1.1, uv = photonUV[k], y = photonY[k]}, If[0 <= u < 1.7, With[{x = 160 + 1020 Min[u, 1], c = If[uv, violet, RGBColor["#FF4B3E"]], lam = If[uv, 16, 46]}, {
@@ -268,12 +275,12 @@ photoShot = shot[{60.5, 70}, Function[t, {
         If[u < 1, CanvasLine[Table[{x - s, y + 16 Sin[2 Pi s / lam] Exp[-((s - 60) / 45)^2]}, {s, 0, 120, 2}], c, "Thickness" -> 3, "Glow" -> 10], {}],
         If[1 <= u < 1.15, CanvasDisk[{1180, y}, 18 (1.15 - u) / 0.15, c, Opacity -> 0.8, "Glow" -> 14], {}],
         (* an electron freed, only by the ultraviolet *)
-        If[uv && u >= 1, With[{v = u - 1}, {CanvasDisk[{1180 - 600 v, y - 260 v}, 8, cyan, "Glow" -> 14], CanvasText["e\[Minus]", {1196 - 600 v, y - 260 v - 14}, sans[22, 600], cyan]}], {}]}], {}]], {k, 28}],
-    CanvasOpacity[Clip[(t - 61.2) / 0.5, {0, 1}] Clip[(64.6 - t) / 0.4, {0, 1}], CanvasText["red light, however bright: no electron comes out", {160, 200}, sans[34, 400], RGBColor["#FF4B3E"]]],
-    CanvasOpacity[Clip[(t - 65.2) / 0.5, {0, 1}], {CanvasText["ultraviolet: each quantum frees one electron", {160, 200}, sans[34, 400], violet],
+        If[uv && u >= 1, With[{v = u - 1}, {CanvasDisk[{1180 - 600 v, y - 260 v}, 8, cyan, "Glow" -> 14], CanvasText["e\[Minus]", {1196 - 600 v, y - 260 v - 14}, sans[22, 600], cyan]}], {}]}], {}]], {k, 42}],
+    CanvasOpacity[Clip[(t - 56.8) / 0.5, {0, 1}] Clip[(62.4 - t) / 0.4, {0, 1}], CanvasText["red light, however bright: no electron comes out", {160, 200}, sans[34, 400], RGBColor["#FF4B3E"]]],
+    CanvasOpacity[Clip[(t - 63.0) / 0.5, {0, 1}], {CanvasText["ultraviolet: each quantum frees one electron", {160, 200}, sans[34, 400], violet],
         CanvasTeX["E = h\\nu", {1560, 560}, 80, boneC, Alignment -> Center]}]}],
     "Computed: the photoelectric effect, as Einstein explained it in 1905 \[Dash] light in quanta $h\\nu$"];
-photoPart = {footage["f-photoelectric", {56, 60.5}, {60, 64.5}, "PSSC film, 1961: a charged zinc plate and its electroscope", 0.03], photoShot,
+photoPart = {photoShot,
     voice["v-bohr-einstein", 52.9, {0.5, 17.6}, {{52.9, 56}}, {"Niels Bohr", "lecture at Lindau, 1962"},
         {{0, 17.1, "Einstein tried to explain the individual photoeffect by assuming that we had to do with *a transfer of a light quantum*."}}, True, {0.1, 0.1, 0, 0.24}],
     chapter[{52.9, 70}, "1905", "Einstein: light comes in quanta"]};
