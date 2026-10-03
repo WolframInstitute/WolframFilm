@@ -91,6 +91,9 @@ pageTour[img_, keys_, {t0_, t1_}, caption_] := With[{cb = captionBox[caption], d
             cb}]]]];
 chapter[{t0_, t1_}, y_, what_] := {t0, t1} -> Function[t, CanvasOpacity[Clip[Min[(t - t0) / 0.4, (t1 - t) / 0.4], {0, 1}],
     {CanvasText[y, {96, 96}, sans[44, 700], red], CanvasTeX[what, {96, 142}, sans[28, 400], boneC]}]];
+(* a part of the film at a few moments, drawn as the export draws them: on the GPU, or by the front end where it must *)
+preview[part_, ts_List] := With[{g = AnimatedGraphics[{Backdrop[inkC], part}, "Duration" -> 600]},
+    Row[ImageResize[Replace[GPUGraphics[g[#, ImageSize -> 1920]], _Failure :> Rasterize[g[#, ImageSize -> 1920], "Image", ImageResolution -> 72]], 400] & /@ ts, " "]];
 ```
 
 ## The Wave, Computed
@@ -192,6 +195,7 @@ coldOpen = {footage["f-electrons", {0, 13.2}, {0, 72}, "Electrons through two sl
         CanvasOpacity[Clip[(t - 15.7) / 0.5, {0, 1}], {CanvasTeX["\\psi", {960, 965}, 150, boneC, Alignment -> Center],
             CanvasText["THE QUANTUM CENTURY", {960, 1040}, sans[30, 600], red, Alignment -> Center, "Tracking" -> 8]}]}],
         "Computed: electrons through two slits, one at a time"]};
+preview[coldOpen, {6, 14.6, 17}]
 ```
 
 ## 0:18 — 1900: Planck
@@ -233,6 +237,7 @@ planckPart = {footage["f-forge", {18.5, 21.5}, {0, 4}, "Steel glowing in a forge
     voice["v-bohr-planck", 31.5, {0.5, 21.9}, {{50.4, 52.9}}, {"Niels Bohr", "lecture at Lindau, 1962"},
         {{0, 21.4, "The great change came with the discovery of the *universal quantum of action*, in the first year of this century, by Planck."}}, True, {0.1, 0.1, 0, 0.3}],
     chapter[{18.5, 52.9}, "1900", "Planck: energy comes in quanta"]};
+preview[planckPart, {20, 23, 35}]
 ```
 
 ## 0:53 — 1905 to 1913: Light Quanta, and the Atom
@@ -244,6 +249,7 @@ photoPart = {footage["f-photoelectric", {56, 63}, {60, 67}, "PSSC film, 1961: a 
     voice["v-bohr-einstein", 52.9, {0.5, 17.6}, {{52.9, 56}}, {"Niels Bohr", "lecture at Lindau, 1962"},
         {{0, 17.1, "Einstein tried to explain the individual photoeffect by assuming that we had to do with *a transfer of a light quantum*."}}, True, {0.1, 0.1, 0, 0.24}],
     chapter[{52.9, 70}, "1905", "Einstein: light comes in quanta"]};
+preview[photoPart, {55, 60, 66}]
 ```
 
 Hydrogen glows at four visible wavelengths and no others.  Bohr's atom of 1913 explained them: the electron keeps to orbits of radius $\propto n^2$, and each line is a fall to the second.  Bohr himself, in the same lecture, says what it did and did not do: it brought order, but it was unsatisfactory -- the way to Heisenberg.  The Rydberg formula gives the lines, and the music, for a moment, plays them -- the atom's own chord, Hα tuned to A:
@@ -282,6 +288,7 @@ atomPart = {footage["f-spectra", {70, 75}, {115, 119.6}, "Hydrogen glowing, thro
     voice["v-bohr-atom", 70.4, {0.45, 15.3}, None, {"Niels Bohr", "lecture at Lindau, 1962"},
         {{0, 7.6, "\[Ellipsis]to *bring order* in certain fields of experience."}, {7.6, 14.85, "But that was of a *very unsatisfactory nature*."}}],
     chapter[{70, 88}, "1913", "Bohr: the atom has steps"]};
+preview[atomPart, {72, 78, 86}]
 ```
 
 ## 1:20 — 1924 to 1927: Matter Is a Wave
@@ -293,6 +300,7 @@ deBrogliePart = {footage["f-germer", {83.5, 87}, {10, 13.5}, "PSSC film, 1961: L
     voice["v-debroglie", 80, {6, 16.3}, {{80, 83.5}}, {"Louis de Broglie", "French television, 1967"},
         {{0, 4.5, "After all these studies, I had the idea that one had to extend"}, {4.5, 10.3, "to *all material particles*, electrons in particular, the idea that the particle is *accompanied by a wave*."}}],
     chapter[{80, 90.3}, "1924 \[Dash] 1927", "de Broglie: matter is a wave"]};
+preview[deBrogliePart, {81, 85, 89}]
 ```
 
 ## 1:30 — 1925: Helgoland
@@ -323,6 +331,7 @@ helgolandPart = {still[image["helgoland.jpg"], {94.5, 101}, "Helgoland around 19
         {{0, 6.6, "It just so happened that I became a little bit ill,"}, {6.6, 12, "so I had to spend a holiday *on an island*, in order to be free from hay fever,"},
          {12, 16, "and there I had very good time to think about the questions."}, {16, 17.2, "It was there that I really came to this *scheme of quantum mechanics*."}}, False],
     chapter[{90.3, 111.8}, "1925", "Heisenberg: quantities that do not commute"]};
+preview[helgolandPart, {92, 98, 108}]
 ```
 
 Dirac, at Lindau in 1976, on reading Heisenberg's paper:
@@ -331,6 +340,7 @@ Dirac, at Lindau in 1976, on reading Heisenberg's paper:
 diracPart = {voice["v-dirac", 111.8, {0.36, 13.6}, All, {"Paul Dirac", "lecture at Lindau, 1976"},
         {{0, 10.4, "Well, it was quite a *revelation* to me when this discovery of Heisenberg was set up,"}, {10.4, 13.3, "and it showed *how wrong I was* previously."}}],
     chapter[{111.8, 125}, "1925", "Heisenberg\[CloseCurlyQuote]s mechanics reaches Cambridge"]};
+preview[diracPart, {115}]
 ```
 
 ## 2:05 — 1926: ψ
@@ -351,6 +361,7 @@ psiPart = {pageTour[schrodingerPage, {
     chapter[{125, 140}, "1926", "Schr\[ODoubleDot]dinger: the wave equation"],
     {136, 140} -> Function[t, CanvasOpacity[Clip[Min[(t - 136.2) / 0.5, (140 - t) / 0.4], {0, 1}],
         CanvasTeX["i\\hbar\\,\\frac{\\partial\\psi}{\\partial t} = -\\frac{\\hbar^2}{2m}\\frac{\\partial^2\\psi}{\\partial x^2}", {960, 960}, 56, boneC, Alignment -> Center]]]};
+preview[psiPart, {126, 129, 133, 138}]
 ```
 
 Schrödinger, on radio in 1952: everything, absolutely everything, is at once particle and field.  In the atom its standing waves are the orbitals -- a slice through each of hydrogen's, phase as colour:
@@ -374,6 +385,7 @@ orbitalShot[t0_] := Function[t, With[{k = Clip[1 + Floor[(t - t0) / 2.95], {1, 3
 schrodingerPart = {shot[{144, 152.8}, orbitalShot[144], "Computed: hydrogen\[CloseCurlyQuote]s orbitals in 3D \[Dash] where its electron is found, cyan and red the sign of $\\psi$"],
     voice["v-schrodinger", 140, {0, 12.8}, {{140, 144}}, {"Erwin Schr\[ODoubleDot]dinger", "radio talk, 1952"},
         {{0, 12.8, "The view now secured is rather that everything, *absolutely everything*, is *at once particle and field*."}}]};
+preview[schrodingerPart, {142, 148}]
 ```
 
 ## 2:33 — Born: Chance
@@ -401,6 +413,7 @@ bornPart = {shot[{156.5, 164.5}, bornShot[156.5, 177.8], "Computed: electrons me
     voice["v-born-dice", 166.8, {0, 11}, None, {"Max Born", "talk at Lindau, 1965"},
         {{0, 7, "He believed in *fixed laws*, not in a statistical description of nature."}, {7, 11, "\[OpenCurlyDoubleQuote]*God does not play dice*,\[CloseCurlyDoubleQuote] said Einstein."}}],
     chapter[{152.8, 177.8}, "1926", "Born: the wave gives probabilities"]};
+preview[bornPart, {160, 167, 171}]
 ```
 
 ## 2:58 — 1927: Uncertainty
@@ -426,6 +439,7 @@ uncertaintyPart = {uncertaintyShot,
         {{0, 8.9, "In quantum theory it turned out that *one cannot know*, for a particle,"}, {8.9, 13.9, "its *position and velocity both exactly at once*."},
          {13.9, 18.5, "Either you can fix the position very sharply, and then the velocity is *very indeterminate*,"}, {18.5, 21.4, "or the velocity sharply, and then the position is known *very inaccurately*."}}],
     chapter[{177.8, 199.2}, "1927", "Heisenberg: the uncertainty principle"]};
+preview[uncertaintyPart, {180, 190}]
 ```
 
 ## 3:19 — Through Walls
@@ -455,6 +469,7 @@ tunnelShot = shot[{203.5, 207.5}, Function[t, Module[{f = tunnel["Frames"][[Clip
     "Computed: a wave packet meets a wall higher than its energy, and part of it passes through"];
 wallsPart = {footage["f-alpha", {199.2, 203.5}, {6, 10.3}, "Alpha particles tunnelling out of nuclei, tracked in a cloud chamber"], tunnelShot, footage["f-cosmic", {207.5, 211}, {20, 23.5}, "Cosmic rays in a cloud chamber"],
     chapter[{199.2, 211}, "1928", "Gamow: particles tunnel through walls"]};
+preview[wallsPart, {201, 205, 209}]
 ```
 
 ## 3:31 — 1935 to 1982: Entanglement
@@ -517,6 +532,7 @@ entanglePart = {footage["f-spdc", {215, 219}, {0, 4}, "A laser making entangled 
     voice["v-aspect", 224.1, {0.15, 17.25}, {{224.1, 228}}, {"Alain Aspect", "documentary film, 1985"},
         {{0, 5.9, "And we have found experimental results *violating Bell's inequalities*."}, {5.9, 17.1, "So we are compelled to *reject the idea* that the polarisation of the photon was *already existing* just after the emission."}}],
     chapter[{211, 240.9}, "1935 \[Dash] 1982", "Entanglement: from Einstein\[CloseCurlyQuote]s doubt to Bell\[CloseCurlyQuote]s test"]};
+preview[entanglePart, {213, 221, 230}]
 ```
 
 ## 4:01 — Nobody Understands
@@ -553,6 +569,7 @@ feynmanPart = {voice["v-feynman-nobody", 241.75, {0.95, 4.95}, All, {"Richard Fe
         {{0, 4.5, "Don't keep saying to yourself, if you can possibly avoid it, \[OpenCurlyDoubleQuote]*But how can it be like that?*\[CloseCurlyDoubleQuote]"},
          {4.5, 9.8, "Because you'll get *down the drain*, into a blind alley from which nobody has yet escaped."}, {9.8, 11.7, "*Nobody knows* how it can be like that."}}],
     chapter[{240.9, 257.5}, "1948", "Feynman: every path at once"]};
+preview[feynmanPart, {243, 254}]
 ```
 
 ## 4:17 — The World It Built
@@ -567,6 +584,7 @@ builtPart = {footage["f-cold-atom-lab", {257.5, 262.4}, {7.5, 12.4}, "The first 
         {{0, 5.4, "These *wispy clouds of atoms* behave in very strange ways."}, {5.4, 9.4, "They're *no longer distinguishable* as individual particles."},
          {9.4, 15.9, "You really have to describe it more like *atoms acting collectively, as a wave*."}}],
     chapter[{257.5, 273.4}, "1995 \[Dash] 2018", "Atoms in one wave: Bose\[Dash]Einstein condensates"]};
+preview[builtPart, {260, 268, 271}]
 ```
 
 ## 4:33 — Computing with ψ
@@ -652,6 +670,7 @@ computingPart = {feynmanQuote,
          {11.1, 15.9, "That's a one with *twenty-five zeros* following it,"}, {15.9, 19.7, "or a timescale way *longer than the age of the universe*."}}],
     footage["f-ibm-system-two", {366.3, 372}, {80, 85.7}, "IBM Quantum System Two \[CenterDot] IBM Research"],
     chapter[{273.4, 372}, "1981 \[Dash] 2026", "Computing with \[Psi]"]};
+preview[computingPart, {276, 300, 318, 362}]
 ```
 
 ## 6:12 — The Bubble
@@ -738,6 +757,7 @@ skepticsPart = {hypeShot[{375.2, 389.6}],
     voice["v-sabine-burst", 464.9, {23.75, 29.7}, {{464.9, 467.4}}, {"Sabine Hossenfelder", "2022"},
         {{0, 5.95, "This scenario has been dubbed \[OpenCurlyDoubleQuote]the quantum winter\[CloseCurlyDoubleQuote], and *winter is coming*."}}, False],
     chapter[{372, 467.4}, "2014 \[Dash] 2026", "Skeptics"]};
+preview[skepticsPart, {380, 400, 425, 450}]
 ```
 
 ## 7:51 — Outro
@@ -783,6 +803,7 @@ outroPart = {shot[{467.4, 495.5}, Function[t, CanvasOpacity[1 - 0.45 Clip[(t - 4
         MapIndexed[If[#1 === "" || ! (-60 < y0 + 52 #2[[1]] < 1140), {}, CanvasText[#1, {960 - CanvasTextWidth[#1, creditFont[#1]] / 2, y0 + 52 #2[[1]]}, creditFont[#1],
             If[MemberQ[{"Voices", "Footage"}, #1], red, boneC]]] &, credits]]]]};
 creditsTop[495.5] + 52 Length[credits]
+preview[outroPart, {475, 490}]
 ```
 
 ## The Score
