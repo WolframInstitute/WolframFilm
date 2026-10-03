@@ -89,8 +89,9 @@ pageTour[img_, keys_, {t0_, t1_}, caption_] := With[{cb = captionBox[caption], d
                     CanvasRectangle[{180, 860 - 54 Length[lines] - 30, 1560, 54 Length[lines] + 40}, Black, Opacity -> 0.78 a, "Radius" -> 8],
                     MapIndexed[CanvasTeX[#1, {960, 860 - 54 (Length[lines] - #2[[1]]) - 4}, serif[40, True], White, Alignment -> Center, Opacity -> a] &, lines]}]}, {}]],
             cb}]]]];
-chapter[{t0_, t1_}, y_, what_] := {t0, t1} -> Function[t, CanvasOpacity[Clip[Min[(t - t0) / 0.4, (t1 - t) / 0.4], {0, 1}],
-    {CanvasText[y, {96, 96}, sans[44, 700], red], CanvasTeX[what, {96, 142}, sans[28, 400], boneC]}]];
+chapter[{t0_, t1_}, y_, what_] := With[{w = Max[CanvasTextWidth[y, sans[44, 700]], CanvasTeXWidth[what, sans[28, 400]]]}, {t0, t1} -> Function[t, CanvasOpacity[Clip[Min[(t - t0) / 0.4, (t1 - t) / 0.4], {0, 1}],
+    {CanvasGradient[{50, 36, w + 240, 140}, "Horizontal", RGBColor["#0B0C0E"], {{0, 0.92}, {0.7, 0.9}, {1, 0}}],
+     CanvasText[y, {96, 96}, sans[44, 700], red], CanvasTeX[what, {96, 142}, sans[28, 400], boneC]}]]];
 (* a part of the film at a few moments, drawn as the export draws them: on the GPU, or by the front end where it must *)
 preview[part_, ts_List] := With[{g = AnimatedGraphics[{Backdrop[inkC], part}, "Duration" -> 600]},
     Row[ImageResize[Replace[GPUGraphics[g[#, ImageSize -> 1920]], _Failure :> Rasterize[g[#, ImageSize -> 1920], "Image", ImageResolution -> 72]], 400] & /@ ts, " "]];
@@ -730,6 +731,10 @@ stockX[i_] := 200 + 1380 (i - 1) / (Length[stockDays] - 1);
 stockY[r_] := 780 - 520 (Log10[r] - Log10[0.4]) / (Log10[40] - Log10[0.4]);
 stockNames = {{"IonQ", cyan}, {"Rigetti", amber}, {"D-Wave", violet}};
 crashPct = Round[100 (stockRel[[crashDay]] / stockRel[[peakDay]] - 1)];
+(* the labels at the lines' ends, pushed apart where they would overlap *)
+labelY[n_] := Module[{ys = stockY /@ stockRel[[n]] + 8, o, out},
+    o = Ordering[ys]; out = ys;
+    Do[out[[o[[i]]]] = Max[out[[o[[i]]]], out[[o[[i - 1]]]] + 32], {i, 2, 3}]; out];
 stockShot[{t0_, t1_}, tCrash_] := shot[{t0, t1}, Function[t, With[{n = Round[Which[
         t < tCrash, 1 + (peakDay - 1) Clip[(t - t0 - 0.3) / 4.8, {0, 1}],
         t < tCrash + 3.6, crashDay,
@@ -740,7 +745,7 @@ stockShot[{t0_, t1_}, tCrash_] := shot[{t0, t1}, Function[t, With[{n = Round[Whi
     Table[With[{c = stockNames[[k, 2]], pts = Table[{stockX[i], stockY[stockRel[[i, k]]]}, {i, n}]}, {
         CanvasLine[pts, c, "Thickness" -> 3.5, "Glow" -> 10],
         CanvasDisk[Last[pts], 7, c, "Glow" -> 14],
-        CanvasText[stockNames[[k, 1]] <> "  \[Times]" <> TextString[Round[stockRel[[n, k]], If[stockRel[[n, k]] < 3, 0.1, 1]]], Last[pts] + {16, 8 + 26 (k - 2)}, sans[26], c]}], {k, 3}],
+        CanvasText[stockNames[[k, 1]] <> "  \[Times]" <> TextString[Round[stockRel[[n, k]], If[stockRel[[n, k]] < 3, 0.1, 1]]], {Last[pts][[1]] + 16, labelY[n][[k]]}, sans[26], c]}], {k, 3}],
     If[t >= tCrash, With[{a = Clip[(t - tCrash) / 0.4, {0, 1}], x = stockX[crashDay]}, {
         CanvasLine[{{x, 250}, {x, 800}}, RGBColor["#FF4B3E"], "Thickness" -> 3, "Glow" -> 14, Opacity -> a],
         CanvasRectangle[{x - 600, 250, 580, 190}, Black, Opacity -> 0.75 a, "Radius" -> 6],
@@ -766,12 +771,13 @@ skepticsPart = {hypeShot[{375.2, 389.6}],
          {11.72, 15.45, "*not that this was of any use* for real-world issues."}}],
     voice["v-sabine-marketing", 408.6, {5.5, 11.0}, {{408.9, 413.9}}, {"Sabine Hossenfelder", "physicist, on YouTube, 2025"},
         {{0, 5.5, "Well, the *marketing departments* have definitely achieved quantum advantage."}}],
-    stockShot[{414.5, 435.35}, 420.7],
-    voice["v-huang-ces", 414.5, {12.4, 25.5}, None, {"Jensen Huang", "Nvidia, to analysts at CES, 7 January 2025"},
-        {{0, 6.8, "And so if you kind of set *15 years* for very useful quantum computers, that would probably be on the *early side*."},
-         {6.8, 9.76, "If you set *30*, it's probably on the late side."}, {9.76, 13.1, "But if you pick 20, I think a whole bunch of us would believe it."}}],
-    voice["v-huang-public", 428, {21.85, 31.3}, {{435.35, 437.45}}, {"Jensen Huang", "Nvidia GTC, Quantum Day, March 2025"},
-        {{0, 4.48, "And my first reaction was, I didn't know they were public."}, {4.48, 9.45, "How could a quantum computer company *be public*?"}}],
+    stockShot[{414.3, 435.35}, 423.9],
+    (* his own voice, from the analysts' Q&A, as replayed in full by Martin Shkreli's stream *)
+    voice["v-huang-ces2", 414.3, {10.4, 27.35}, None, {"Jensen Huang", "Nvidia, Q&A with analysts at CES, 7 January 2025"},
+        {{0, 7.9, "And so if you kind of said *15 years* for very useful quantum computers,"}, {7.9, 10.3, "that would probably be on the *early side*."},
+         {10.3, 13.3, "If you said *30*, it's probably on the late side,"}, {13.3, 16.95, "but if you picked 20, I think a whole bunch of us would believe it."}}],
+    voice["v-huang-public", 432.35, {26.2, 31.3}, {{435.35, 437.45}}, {"Jensen Huang", "Nvidia GTC, Quantum Day, March 2025"},
+        {{0, 5.1, "How could a quantum computer company *be public*?"}}],
     voice["v-sabine-profitable", 437.9, {6.95, 12.75}, All, {"Sabine Hossenfelder", "physicist, on YouTube, 2026"},
         {{0, 5.8, "Today, the only profitable quantum application has been *forecasting profitable quantum applications*."}}],
     voice["v-kalai-impossible", 444.2, {3.55, 17.9}, {{444.2, 457.3}}, {"Gil Kalai", "mathematician, Hebrew University of Jerusalem, 2014"},

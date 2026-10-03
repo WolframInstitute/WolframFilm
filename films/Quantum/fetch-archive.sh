@@ -96,7 +96,7 @@ yt  v-sabine-advantage CBLVtCYHVO8 200 28
 yt  v-sabine-burst CBLVtCYHVO8 261 32
 yt  v-sabine-marketing gBTS7JZTyZY 106 14
 yt  v-sabine-profitable DX_oIQ-tA6M 202 16
-yt  v-huang-ces oLmokphbjPY 387 29
+yt  v-huang-ces2 EfYiN4nq4KY 226 26
 yt  v-huang-public 9XB-LsfpvCU 208 34
 yt  v-kalai-impossible h6p_ZeMqGIU 143 19
 # daily closes, as Date,IONQ,RGTI,QBTS
